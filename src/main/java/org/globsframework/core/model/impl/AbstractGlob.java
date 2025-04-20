@@ -27,7 +27,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
         buffer.append("}");
     }
 
-    private String escapeQuote(String name) {
+    default String escapeQuote(String name) {
         return name.contains("\"") ? name.replaceAll("\"", "'") : name;
     }
 
@@ -153,7 +153,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
         return getType();
     }
 
-    private boolean reallyEquals(Glob glob) {
+    default boolean reallyEquals(Glob glob) {
         GlobType type = getType();
         for (Field field : type.getFields()) {
             if (!field.valueEqual(getValue(field), glob.getValue(field))) {

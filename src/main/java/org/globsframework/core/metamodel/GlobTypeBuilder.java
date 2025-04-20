@@ -218,11 +218,11 @@ public interface GlobTypeBuilder {
         return declareGlobArrayField(fieldName, globType, Arrays.asList(annotations));
     }
 
-    default GlobUnionField declareGlobUnionField(String fieldName, List<GlobType> types, Glob... annotations) {
+    default GlobUnionField declareGlobUnionField(String fieldName, Collection<GlobType> types, Glob... annotations) {
         return declareGlobUnionField(fieldName, types, Arrays.asList(annotations));
     }
 
-    default GlobArrayUnionField declareGlobUnionArrayField(String fieldName, List<GlobType> types, Glob... annotations) {
+    default GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Collection<GlobType> types, Glob... annotations) {
         return declareGlobUnionArrayField(fieldName, types, Arrays.asList(annotations));
     }
 

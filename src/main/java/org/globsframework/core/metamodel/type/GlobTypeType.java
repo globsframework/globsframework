@@ -7,6 +7,8 @@ import org.globsframework.core.metamodel.fields.GlobArrayUnionField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GlobTypeType {
@@ -36,7 +38,7 @@ public class GlobTypeType {
         TYPE = typeBuilder.unCompleteType();
         kind = typeBuilder.declareStringField("kind");
         fields = typeBuilder.declareGlobUnionArrayField("fields",
-                List.of(
+                Arrays.asList(
                         BooleanFieldType.TYPE, BooleanArrayFieldType.TYPE,
                         StringFieldType.TYPE, StringArrayFieldType.TYPE,
                         DoubleFieldType.TYPE, DoubleArrayFieldType.TYPE,
@@ -48,7 +50,7 @@ public class GlobTypeType {
                         GlobFieldType.TYPE, GlobArrayFieldType.TYPE,
                         GlobUnionFieldType.TYPE, GlobUnionArrayFieldType.TYPE
                 ));
-        annotations = typeBuilder.declareGlobUnionArrayField("annotations", List.of());
+        annotations = typeBuilder.declareGlobUnionArrayField("annotations", Collections.emptyList());
         typeBuilder.complete();
 //        GlobTypeLoaderFactory.create(GlobTypeType.class).load();
     }

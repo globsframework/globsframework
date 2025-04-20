@@ -5,9 +5,15 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record NullableOptional<T>(boolean isSet, T value) {
-
+public class NullableOptional<T> {
     static NullableOptional<?> empty = new NullableOptional<>(false, null);
+    public final boolean isSet;
+    public final T value;
+
+    public NullableOptional(boolean isSet, T value) {
+        this.isSet = isSet;
+        this.value = value;
+    }
 
     public void ifSet(Consumer<? super T> action) {
         if (isSet) {

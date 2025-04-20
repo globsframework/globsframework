@@ -7,7 +7,7 @@ import org.globsframework.core.model.Glob;
 import java.util.Collection;
 import java.util.function.Function;
 
-public non-sealed interface GlobUnionField extends Field, Function<FieldValuesAccessor, Glob> {
+public interface GlobUnionField extends Field, Function<FieldValuesAccessor, Glob> {
     Collection<GlobType> getTargetTypes();
 
     GlobType getTargetType(String name);

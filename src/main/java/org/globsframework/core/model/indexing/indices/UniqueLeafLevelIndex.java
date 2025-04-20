@@ -7,10 +7,7 @@ import org.globsframework.core.model.format.GlobPrinter;
 import org.globsframework.core.model.utils.GlobFunctor;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class UniqueLeafLevelIndex implements UpdatableMultiFieldIndex, GlobRepository.MultiFieldIndexed {
@@ -45,7 +42,7 @@ public class UniqueLeafLevelIndex implements UpdatableMultiFieldIndex, GlobRepos
         if (glob == null) {
             return new ArrayList<>();
         } else {
-            return new ArrayList<>(List.of(glob));
+            return new ArrayList<>(Collections.singletonList(glob));
         }
     }
 

@@ -9,6 +9,7 @@ import org.globsframework.core.utils.TestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,16 +30,16 @@ public class GlobUtilsTest {
         Glob g2 = repository.create(k2);
         Glob g3 = repository.create(k3);
         Glob g4 = repository.create(k4);
-        checkTwoWay(List.of(g1, g2, g3), List.of(g1, g2, g3));
-        checkTwoWay(List.of(g1, g2), List.of(g1, g2, g3));
-        checkTwoWay(List.of(), List.of(g1, g2, g3));
-        checkTwoWay(List.of(), List.of());
-        checkTwoWay(List.of(g1), List.of(g1, g2, g3));
-        checkTwoWay(List.of(g1), List.of(g2, g1, g3));
-        checkTwoWay(List.of(g1, g2, g3), List.of(g1, g2));
-        checkTwoWay(List.of(g1, g3, g2), List.of(g1, g2, g3));
-        checkTwoWay(List.of(g1), List.of(g2));
-        checkTwoWay(List.of(g1, g2), List.of(g3, g4));
+        checkTwoWay(Arrays.asList(g1, g2, g3), Arrays.asList(g1, g2, g3));
+        checkTwoWay(Arrays.asList(g1, g2), Arrays.asList(g1, g2, g3));
+        checkTwoWay(Arrays.asList(), Arrays.asList(g1, g2, g3));
+        checkTwoWay(Arrays.asList(), Arrays.asList());
+        checkTwoWay(Arrays.asList(g1), Arrays.asList(g1, g2, g3));
+        checkTwoWay(Arrays.asList(g1), Arrays.asList(g2, g1, g3));
+        checkTwoWay(Arrays.asList(g1, g2, g3), Arrays.asList(g1, g2));
+        checkTwoWay(Arrays.asList(g1, g3, g2), Arrays.asList(g1, g2, g3));
+        checkTwoWay(Arrays.asList(g1), Arrays.asList(g2));
+        checkTwoWay(Arrays.asList(g1, g2), Arrays.asList(g3, g4));
     }
 
     @Test
@@ -59,8 +60,8 @@ public class GlobUtilsTest {
         l2.add(g2);
         l2.add(null);
         l2.add(g2);
-        checkTwoWay(List.of(g1, g2, g3), l1);
-        checkTwoWay(List.of(g1, g2), l2);
+        checkTwoWay(Arrays.asList(g1, g2, g3), l1);
+        checkTwoWay(Arrays.asList(g1, g2), l2);
     }
 
     private void checkTwoWay(Collection<Glob> from, Collection<Glob> to) {

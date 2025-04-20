@@ -249,7 +249,7 @@ public class GlobMatchers {
     }
 
     public static Predicate<Glob> and(List<Predicate<Glob>> matchers) {
-        Predicate<Glob>[] array = matchers.toArray(Predicate[]::new);
+        Predicate<Glob>[] array = matchers.toArray(new Predicate[0]);
         return and(array);
     }
 

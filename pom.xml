@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
     <artifactId>globs</artifactId>
     <name>Generic Lightweight ObjectS</name>
-    <version>4.1.1</version>
+    <version>3.1.1</version>
 
     <developers>
         <developer>
@@ -121,8 +121,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>org.globsframework</groupId>
             <artifactId>saxstack</artifactId>
-            <version>4.1.1</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
         <!--                <dependency>-->

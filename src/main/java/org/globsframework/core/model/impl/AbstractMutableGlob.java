@@ -143,7 +143,7 @@ public interface AbstractMutableGlob extends AbstractGlob, MutableGlob {
                 fieldValueList.add(new FieldValue(field, doGet(field)));
             }
         }
-        return fieldValueList.toArray(FieldValue[]::new);
+        return fieldValueList.toArray(new FieldValue[0]);
     }
 
     default Object doCheckedGet(Field field) {

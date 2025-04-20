@@ -4,7 +4,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 
 import java.util.function.Function;
 
-public non-sealed interface BooleanArrayField extends Field, Function<FieldValuesAccessor, boolean[]> {
+public interface BooleanArrayField extends Field, Function<FieldValuesAccessor, boolean[]> {
     default boolean[] apply(FieldValuesAccessor glob) {
         return glob.get(this);
     }

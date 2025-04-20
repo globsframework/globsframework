@@ -8,7 +8,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
-import java.util.List;
+import java.util.*;
 
 public class StringFieldType {
     public static final GlobType TYPE;
@@ -29,7 +29,7 @@ public class StringFieldType {
         TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField(ConstantsName.NAME);
         annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS,
-                List.of(KeyField.TYPE, IsTarget.TYPE, MaxSize.TYPE, MultiLineText.TYPE, Required.TYPE,
+                Arrays.asList(KeyField.TYPE, IsTarget.TYPE, MaxSize.TYPE, MultiLineText.TYPE, Required.TYPE,
                         NamingField.TYPE, FieldName.TYPE, EnumAnnotation.TYPE));
         typeBuilder.complete();
 

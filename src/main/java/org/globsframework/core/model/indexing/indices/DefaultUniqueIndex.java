@@ -5,10 +5,7 @@ import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.format.GlobPrinter;
 import org.globsframework.core.model.indexing.IndexedTable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DefaultUniqueIndex implements IndexedTable {
     private Field field;
@@ -53,7 +50,7 @@ public class DefaultUniqueIndex implements IndexedTable {
         if (glob == null) {
             return new ArrayList<>();
         }
-        return new ArrayList<>(List.of(glob));
+        return new ArrayList<>(Collections.singletonList(glob));
     }
 
     public boolean remove(Glob glob) {

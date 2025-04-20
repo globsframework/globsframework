@@ -10,6 +10,7 @@ import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.MutableGlob;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GlobTypeToGlob {
 
@@ -19,7 +20,7 @@ public class GlobTypeToGlob {
 
     private static Collection<Glob> toGlob(GlobType type, Set<GlobType> done) {
         if (done.contains(type)) {
-            return List.of();
+            return Collections.emptyList();
         }
         done.add(type);
         final MutableGlob t = GlobTypeType.TYPE.instantiate()
@@ -30,56 +31,109 @@ public class GlobTypeToGlob {
         List<Glob> fields = new ArrayList<>(type.getFieldCount());
         for (Field field : type.getFields()) {
             fields.add(
-                    switch (field.getDataType()) {
-                        case String -> extractAnnotation(field, StringFieldType.create(field.getName()));
-                        case StringArray -> extractAnnotation(field, StringArrayFieldType.create(field.getName()));
-                        case Double -> extractAnnotation(field, DoubleFieldType.create(field.getName()));
-                        case DoubleArray -> extractAnnotation(field, DoubleArrayFieldType.create(field.getName()));
-                        case BigDecimal -> extractAnnotation(field, BigDecimalFieldType.create(field.getName()));
-                        case BigDecimalArray ->
-                                extractAnnotation(field, BigDecimalArrayFieldType.create(field.getName()));
-                        case Long -> extractAnnotation(field, LongFieldType.create(field.getName()));
-                        case LongArray -> extractAnnotation(field, LongArrayFieldType.create(field.getName()));
-                        case Integer -> extractAnnotation(field, IntegerFieldType.create(field.getName()));
-                        case IntegerArray -> extractAnnotation(field, IntegerArrayFieldType.create(field.getName()));
-                        case Boolean -> extractAnnotation(field, BooleanFieldType.create(field.getName()));
-                        case BooleanArray -> extractAnnotation(field, BooleanArrayFieldType.create(field.getName()));
-                        case Date -> extractAnnotation(field, DateFieldType.create(field.getName()));
-                        case DateTime -> extractAnnotation(field, DateTimeFieldType.create(field.getName()));
-                        case Bytes -> extractAnnotation(field, BytesFieldType.create(field.getName()));
-                        case Glob -> {
-                            final GlobType targetType = ((GlobField) field).getTargetType();
-                            final MutableGlob set = extractAnnotation(field, GlobFieldType.create(field.getName()))
-                                    .set(GlobFieldType.targetType, targetType.getName());
-                            types.addAll(toGlob(targetType, done));
-                            yield set;
-                        }
-                        case GlobArray -> {
-                            final GlobType targetType = ((GlobArrayField) field).getTargetType();
-                            final MutableGlob set = extractAnnotation(field, GlobArrayFieldType.create(field.getName()))
-                                    .set(GlobArrayFieldType.targetType, targetType.getName());
-                            types.addAll(toGlob(targetType, done));
-                            yield set;
-                        }
-                        case GlobUnion -> {
-                            final Collection<GlobType> targetTypes = ((GlobUnionField) field).getTargetTypes();
-                            final MutableGlob set = extractAnnotation(field, GlobUnionFieldType.create(field.getName()))
-                                    .set(GlobUnionFieldType.targetTypes, targetTypes.stream().map(GlobType::getName).toArray(String[]::new));
-                            targetTypes.forEach(globType -> types.addAll(toGlob(globType, done)));
-                            yield set;
-                        }
-                        case GlobUnionArray -> {
-                            final Collection<GlobType> targetTypes = ((GlobArrayUnionField) field).getTargetTypes();
-                            final MutableGlob set = extractAnnotation(field, GlobUnionArrayFieldType.create(field.getName()))
-                                    .set(GlobUnionArrayFieldType.targetTypes, targetTypes.stream().map(GlobType::getName).toArray(String[]::new));
-                            targetTypes.forEach(globType -> types.addAll(toGlob(globType, done)));
-                            yield set;
-                        }
-                    });
+                    extractAnnotation(done, field, types)
+                    );
         }
-        t.set(GlobTypeType.fields, fields.toArray(Glob[]::new));
+        t.set(GlobTypeType.fields, fields.toArray(new Glob[0]));
         t.set(GlobTypeType.annotations, type.streamAnnotations().toArray(Glob[]::new));
         return types;
+    }
+
+    private static Glob extractAnnotation(Set<GlobType> done, Field field, List<Glob> types) {
+        Glob annotation;
+        switch (field.getDataType()) {
+            case String: {
+                annotation = extractAnnotation(field, StringFieldType.create(field.getName()));
+                break;
+            }
+            case StringArray: {
+                annotation = extractAnnotation(field, StringArrayFieldType.create(field.getName()));
+                break;
+            }
+            case Double: {
+                annotation = extractAnnotation(field, DoubleFieldType.create(field.getName()));
+                break;
+            }
+            case DoubleArray: {
+                annotation = extractAnnotation(field, DoubleArrayFieldType.create(field.getName()));
+                break;
+            }
+            case BigDecimal: {
+                annotation = extractAnnotation(field, BigDecimalFieldType.create(field.getName()));
+                break;
+            }
+            case BigDecimalArray: {
+                annotation = extractAnnotation(field, BigDecimalArrayFieldType.create(field.getName()));
+                break;
+            }
+            case Long: {
+                annotation = extractAnnotation(field, LongFieldType.create(field.getName()));
+                break;
+            }
+            case LongArray:{
+                annotation = extractAnnotation(field, LongArrayFieldType.create(field.getName()));
+                break;
+            }
+            case Integer: {
+                annotation = extractAnnotation(field, IntegerFieldType.create(field.getName()));
+                break;
+            }
+            case IntegerArray: {
+                annotation = extractAnnotation(field, IntegerArrayFieldType.create(field.getName()));
+            break;
+            }
+            case Boolean: {
+                annotation = extractAnnotation(field, BooleanFieldType.create(field.getName()));
+            break;
+            }
+            case BooleanArray: {
+                annotation = extractAnnotation(field, BooleanArrayFieldType.create(field.getName()));
+                break;
+            }
+            case Date: {
+                annotation = extractAnnotation(field, DateFieldType.create(field.getName()));
+                break;
+            }
+            case DateTime: {
+                annotation = extractAnnotation(field, DateTimeFieldType.create(field.getName()));
+            break;
+            }
+            case Bytes: {
+                annotation = extractAnnotation(field, BytesFieldType.create(field.getName()));
+                break;
+            }
+            case Glob:  {
+                final GlobType targetType = ((GlobField) field).getTargetType();
+                final MutableGlob set = extractAnnotation(field, GlobFieldType.create(field.getName()))
+                        .set(GlobFieldType.targetType, targetType.getName());
+                types.addAll(toGlob(targetType, done));
+                return set;
+            }
+            case GlobArray: {
+                final GlobType targetType = ((GlobArrayField) field).getTargetType();
+                final MutableGlob set = extractAnnotation(field, GlobArrayFieldType.create(field.getName()))
+                        .set(GlobArrayFieldType.targetType, targetType.getName());
+                types.addAll(toGlob(targetType, done));
+                return set;
+            }
+            case GlobUnion: {
+                final Collection<GlobType> targetTypes = ((GlobUnionField) field).getTargetTypes();
+                final MutableGlob set = extractAnnotation(field, GlobUnionFieldType.create(field.getName()))
+                        .set(GlobUnionFieldType.targetTypes, targetTypes.stream().map(GlobType::getName).toArray(String[]::new));
+                targetTypes.forEach(globType -> types.addAll(toGlob(globType, done)));
+                return set;
+            }
+            case GlobUnionArray: {
+                final Collection<GlobType> targetTypes = ((GlobArrayUnionField) field).getTargetTypes();
+                final MutableGlob set = extractAnnotation(field, GlobUnionArrayFieldType.create(field.getName()))
+                        .set(GlobUnionArrayFieldType.targetTypes, targetTypes.stream().map(GlobType::getName).toArray(String[]::new));
+                targetTypes.forEach(globType -> types.addAll(toGlob(globType, done)));
+                return set;
+            }
+            default:
+                throw new RuntimeException("Unknown type " + field.getDataType());
+        }
+        return annotation;
     }
 
     private static MutableGlob extractAnnotation(Field field, MutableGlob mutableGlob) {
@@ -102,7 +156,7 @@ public class GlobTypeToGlob {
         return main.stream().map(glob -> {
             final String k = glob.getNotNull(GlobTypeType.kind);
             return onGoing.get(k).get();
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     private static GlobType extractGlobType(Map<String, GlobTypeBuilder> onGoing, Glob t, GlobTypeResolver globTypeResolver) {
@@ -151,7 +205,7 @@ public class GlobTypeToGlob {
                 List<GlobType> globTypes = Arrays.stream(targetTypes).map(s -> {
                     final GlobTypeBuilder targetTypeBuilder = onGoing.get(s);
                     return targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(s);
-                }).toList();
+                }).collect(Collectors.toList());
                 globTypeBuilder.addUnionGlobField(field.get(GlobUnionFieldType.name),
                         Arrays.asList(field.getOrEmpty(GlobUnionFieldType.annotations)), globTypes);
             } else if (type == GlobArrayFieldType.TYPE) {
@@ -164,7 +218,7 @@ public class GlobTypeToGlob {
                 List<GlobType> globTypes = Arrays.stream(targetTypes).map(s -> {
                     final GlobTypeBuilder targetTypeBuilder = onGoing.get(s);
                     return targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(s);
-                }).toList();
+                }).collect(Collectors.toList());
                 globTypeBuilder.addUnionGlobField(field.get(GlobUnionArrayFieldType.name),
                         Arrays.asList(field.getOrEmpty(GlobUnionArrayFieldType.annotations)), globTypes);
             } else {

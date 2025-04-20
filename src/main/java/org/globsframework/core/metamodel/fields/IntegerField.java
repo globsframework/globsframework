@@ -4,7 +4,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 
 import java.util.function.Function;
 
-public non-sealed interface IntegerField extends Field, Function<FieldValuesAccessor, Integer> {
+public interface IntegerField extends Field, Function<FieldValuesAccessor, Integer> {
     default Integer apply(FieldValuesAccessor glob) {
         return glob.get(this);
     }

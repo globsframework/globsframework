@@ -6,7 +6,7 @@ import org.globsframework.core.model.Glob;
 
 import java.util.function.Function;
 
-public non-sealed interface GlobField extends Field, Function<FieldValuesAccessor, Glob> {
+public interface GlobField extends Field, Function<FieldValuesAccessor, Glob> {
     GlobType getTargetType();
 
     default Glob apply(FieldValuesAccessor glob) {

@@ -8,6 +8,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DoubleArrayFieldType {
@@ -22,7 +23,7 @@ public class DoubleArrayFieldType {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("DoubleArray");
         TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField(ConstantsName.NAME);
-        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, List.of());
+        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, Collections.emptyList());
         typeBuilder.complete();
 
 //        GlobTypeLoaderFactory.create(DoubleArrayFieldType.class).load();

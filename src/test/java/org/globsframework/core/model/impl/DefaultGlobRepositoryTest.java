@@ -525,7 +525,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
         );
         Glob glob1 = repository.get(getKey(1));
         Glob glob2 = repository.get(getKey(2));
-        repository.deleteGlobs(List.of(glob1, glob2));
+        repository.deleteGlobs(Arrays.asList(glob1, glob2));
         checker.assertEquals(repository, "<dummyObject id='3'/>");
         changeListener.assertLastChangesEqual(
                 "<delete type='dummyObject' id='1' _name='obj1'/>" +
@@ -861,7 +861,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
 
         Glob dummyObject3 =
                 GlobBuilder.init(DummyObject.TYPE).set(DummyObject.ID, 3).get();
-        repository.reset(List.of(dummyObject3), DummyObject.TYPE);
+        repository.reset(Arrays.asList(dummyObject3), DummyObject.TYPE);
 
         changeListener.assertResetListEquals(DummyObject.TYPE);
         trigger.assertResetListEquals(DummyObject.TYPE);
@@ -877,7 +877,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
                         "<dummyObject id='2'/>" +
                         "<dummyObject2 id='1'/>"
         );
-        repository.reset(List.of(), DummyObject.TYPE);
+        repository.reset(Arrays.asList(), DummyObject.TYPE);
 
         changeListener.assertResetListEquals(DummyObject.TYPE);
         trigger.assertResetListEquals(DummyObject.TYPE);
@@ -897,7 +897,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
                 GlobBuilder.init(DummyObject.TYPE).set(DummyObject.ID, 3).get();
         Glob newDummyObject2 =
                 GlobBuilder.init(DummyObject2.TYPE).set(DummyObject2.ID, 2).get();
-        repository.reset(List.of(newDummyObject, newDummyObject2), DummyObject2.TYPE);
+        repository.reset(Arrays.asList(newDummyObject, newDummyObject2), DummyObject2.TYPE);
 
         changeListener.assertResetListEquals(DummyObject2.TYPE);
         trigger.assertResetListEquals(DummyObject2.TYPE);
@@ -944,7 +944,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
 
         Glob dummyObject3 =
                 GlobBuilder.init(DummyObject.TYPE).set(DummyObject.ID, 3).get();
-        repository.reset(List.of(dummyObject3), DummyObject.TYPE);
+        repository.reset(Arrays.asList(dummyObject3), DummyObject.TYPE);
 
         TestUtils.assertEquals(Arrays.asList(
                 "trigger.globsReset.begin 100",
@@ -1104,7 +1104,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
         Glob dummyObject3 =
                 GlobBuilder.init(DummyObjectIndex.TYPE).set(DummyObjectIndex.ID, 3)
                         .set(DummyObjectIndex.UNIQUE_NAME, "name3").get();
-        repository.reset(List.of(dummyObject3), DummyObjectIndex.TYPE);
+        repository.reset(Arrays.asList(dummyObject3), DummyObjectIndex.TYPE);
         assertEquals(1, repository.getAll(DummyObjectIndex.TYPE).size());
         Collection<Glob> shouldBeEmpty = repository.findByIndex(DummyObjectIndex.UNIQUE_NAME_INDEX, "name1");
         assertTrue(shouldBeEmpty.isEmpty());

@@ -124,7 +124,7 @@ public class GlobPrinter {
     public void run(Writer writer) {
         PrintWriter printer = new PrintWriter(writer);
         for (GlobType type : sort(types, GlobTypeComparator.INSTANCE)) {
-            printType(type, globs.stream().filter(glob -> glob.getType() == type).toList(), printer);
+            printType(type, globs.stream().filter(glob -> glob.getType() == type).collect(Collectors.toList()), printer);
         }
     }
 

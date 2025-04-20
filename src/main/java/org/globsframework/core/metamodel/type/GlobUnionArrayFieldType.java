@@ -11,6 +11,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GlobUnionArrayFieldType {
@@ -29,7 +30,7 @@ public class GlobUnionArrayFieldType {
         TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField(ConstantsName.NAME);
         targetTypes = typeBuilder.declareStringArrayField(ConstantsName.TARGET_TYPE, IsTarget.INSTANCE);
-        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, List.of());
+        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, Collections.emptyList());
         typeBuilder.complete();
 
 //        GlobTypeLoaderFactory.create(GlobUnionArrayFieldType.class).load();

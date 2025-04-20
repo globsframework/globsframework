@@ -467,42 +467,94 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 //        MutableGlob glob = FieldName.create(name);
 //        duplicate.put(glob.getKey(), glob);
 
-        Field newField = switch (field.getDataType()) {
-            case String -> factory.addString(name, field.isKeyField(), keyIndex, index,
-                    ((String) field.getDefaultValue()), hashContainer);
-            case StringArray -> factory.addStringArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Double ->
-                    factory.addDouble(name, field.isKeyField(), keyIndex, index, ((Double) field.getDefaultValue()),
-                            hashContainer);
-            case DoubleArray -> factory.addDoubleArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case BigDecimal ->
-                    factory.addBigDecimal(name, field.isKeyField(), keyIndex, index, ((BigDecimal) field.getDefaultValue()),
-                            hashContainer);
-            case BigDecimalArray ->
-                    factory.addBigDecimalArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Long -> factory.addLong(name, field.isKeyField(), keyIndex, index, ((Long) field.getDefaultValue()),
-                    hashContainer);
-            case LongArray -> factory.addLongArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Integer ->
-                    factory.addInteger(name, field.isKeyField(), keyIndex, index, ((Integer) field.getDefaultValue()),
-                            hashContainer);
-            case IntegerArray -> factory.addIntegerArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Boolean ->
-                    factory.addBoolean(name, field.isKeyField(), keyIndex, index, ((Boolean) field.getDefaultValue()),
-                            hashContainer);
-            case BooleanArray -> factory.addBooleanArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Date -> factory.addDate(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Bytes -> factory.addBlob(name, index, hashContainer);
-            case Glob ->
-                    factory.addGlob(name, ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
-            case GlobArray ->
-                    factory.addGlobArray(name, ((GlobArrayField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
-            case GlobUnion ->
-                    factory.addGlobUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
-            case GlobUnionArray ->
-                    factory.addGlobArrayUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
-        };
+        Field newField;
+        switch (field.getDataType()) {
+            case String: {
+                newField = factory.addString(name, field.isKeyField(), keyIndex, index,
+                        ((String) field.getDefaultValue()), hashContainer);
+                break;
+            }
+            case StringArray: {
+                newField = factory.addStringArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Double: {
+                newField = factory.addDouble(name, field.isKeyField(), keyIndex, index, ((Double) field.getDefaultValue()),
+                        hashContainer);
+                break;
+            }
+            case DoubleArray: {
+                newField = factory.addDoubleArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case BigDecimal: {
+                newField = factory.addBigDecimal(name, field.isKeyField(), keyIndex, index, ((BigDecimal) field.getDefaultValue()),
+                        hashContainer);
+                break;
+            }
+            case BigDecimalArray: {
+                newField = factory.addBigDecimalArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Long: {
+                newField = factory.addLong(name, field.isKeyField(), keyIndex, index, ((Long) field.getDefaultValue()),
+                        hashContainer);
+                break;
+            }
+            case LongArray: {
+                newField = factory.addLongArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Integer: {
+                newField = factory.addInteger(name, field.isKeyField(), keyIndex, index, ((Integer) field.getDefaultValue()),
+                        hashContainer);
+                break;
+            }
+            case IntegerArray: {
+                newField = factory.addIntegerArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Boolean: {
+                newField = factory.addBoolean(name, field.isKeyField(), keyIndex, index, ((Boolean) field.getDefaultValue()),
+                        hashContainer);
+                break;
+            }
+            case BooleanArray: {
+                newField = factory.addBooleanArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Date: {
+                newField = factory.addDate(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case DateTime: {
+                newField = factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
+                break;
+            }
+            case Bytes: {
+                newField = factory.addBlob(name, index, hashContainer);
+                break;
+            }
+            case Glob: {
+                newField = factory.addGlob(name, ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                break;
+            }
+            case GlobArray: {
+                newField = factory.addGlobArray(name, ((GlobArrayField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                break;
+            }
+            case GlobUnion: {
+                newField = factory.addGlobUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
+                break;
+            }
+            case GlobUnionArray: {
+                newField = factory.addGlobArrayUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
+                break;
+            }
+            default: {
+                throw new RuntimeException("unknown dataType " + field.getDataType());
+            }
+        }
         index++;
         if (isKeyField) {
             keyIndex++;

@@ -44,7 +44,10 @@ public class SerializationTest {
         final FileInputStream stream = new FileInputStream(file);
         inputStream = new YANBuffereInputStream(stream);
 //        input = new SerializationInputChecker(new DefaultSerializationInput(inputStream));
-        input = new SerializationInputChecker(new ByteBufferSerializationInput(stream.readAllBytes()));
+        final byte[] data = new byte[(int) file.length() + 1];
+        final int read = stream.read(data);
+        input = new SerializationInputChecker(
+                new ByteBufferSerializationInput(data));
     }
 
     @Test

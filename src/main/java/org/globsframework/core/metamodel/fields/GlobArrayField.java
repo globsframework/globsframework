@@ -7,7 +7,7 @@ import org.globsframework.core.model.Glob;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public non-sealed interface GlobArrayField extends Field, Function<FieldValuesAccessor, Glob[]> {
+public interface GlobArrayField extends Field, Function<FieldValuesAccessor, Glob[]> {
     GlobType getTargetType();
 
     default Glob[] apply(FieldValuesAccessor glob) {

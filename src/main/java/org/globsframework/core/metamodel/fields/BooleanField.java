@@ -5,7 +5,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public non-sealed interface BooleanField extends Field, Function<FieldValuesAccessor, Boolean>, Predicate<FieldValuesAccessor> {
+public interface BooleanField extends Field, Function<FieldValuesAccessor, Boolean>, Predicate<FieldValuesAccessor> {
     default Boolean apply(FieldValuesAccessor glob) {
         return glob.get(this);
     }

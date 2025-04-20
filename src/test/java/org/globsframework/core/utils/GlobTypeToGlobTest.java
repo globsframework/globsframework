@@ -11,6 +11,7 @@ import org.globsframework.core.model.Glob;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GlobTypeToGlobTest extends TestCase {
 
@@ -23,7 +24,7 @@ public class GlobTypeToGlobTest extends TestCase {
         Assert.assertEquals(9, first.getFieldCount());
         for (Field field : DummyObject.TYPE.getFields()) {
             final Field newF = first.getField(field.getName());
-            final List<Glob> list = field.streamAnnotations().toList();
+            final List<Glob> list = field.streamAnnotations().collect(Collectors.toList());
             for (Glob an : list) {
                 Assert.assertTrue(newF.hasAnnotation(an.getKey()));
             }

@@ -4,7 +4,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 
 import java.util.function.Function;
 
-public non-sealed interface LongArrayField extends Field, Function<FieldValuesAccessor, long[]> {
+public interface LongArrayField extends Field, Function<FieldValuesAccessor, long[]> {
     default long[] apply(FieldValuesAccessor glob) {
         return glob.get(this);
     }

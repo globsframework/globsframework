@@ -4,7 +4,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 
 import java.util.function.Function;
 
-public non-sealed interface BlobField extends Field, Function<FieldValuesAccessor, byte[]> {
+public interface BlobField extends Field, Function<FieldValuesAccessor, byte[]> {
     default byte[] apply(FieldValuesAccessor glob) {
         return glob.get(this);
     }

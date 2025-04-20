@@ -15,6 +15,7 @@ import org.globsframework.core.utils.exceptions.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ReplicationGlobRepository extends DefaultGlobRepository implements GlobRepository {
     private Set<GlobType> managedTypes = new HashSet<>();
@@ -263,9 +264,9 @@ public class ReplicationGlobRepository extends DefaultGlobRepository implements 
 
     public void deleteGlobs(Collection<Glob> list) throws OperationDenied {
         List<Glob> localDelete = list.stream()
-                .filter(glob -> managedTypes.contains(glob.getType())).toList();
+                .filter(glob -> managedTypes.contains(glob.getType())).collect(Collectors.toList());
         super.deleteGlobs(localDelete);
-        List<Glob> remoteDelete = list.stream().filter(glob -> !managedTypes.contains(glob.getType())).toList();
+        List<Glob> remoteDelete = list.stream().filter(glob -> !managedTypes.contains(glob.getType())).collect(Collectors.toList());
         originalRepository.deleteGlobs(remoteDelete);
     }
 
