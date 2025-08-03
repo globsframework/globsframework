@@ -1,14 +1,10 @@
 package org.globsframework.core.utils.serialization;
 
-import org.globsframework.core.model.ChangeSet;
-import org.globsframework.core.model.Glob;
-
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 public interface SerializedOutput {
-    void writeDate(Date date);
-
     void write(int value);
 
     void writeInteger(Integer value);
@@ -33,11 +29,7 @@ public interface SerializedOutput {
 
     void writeUtf8String(String value);
 
-    void writeGlob(Glob glob);
-
-    void writeKnowGlob(Glob glob);
-
-    void writeChangeSet(ChangeSet changeSet);
+    void write(BigDecimal value);
 
     void write(int[] values);
 
@@ -54,4 +46,8 @@ public interface SerializedOutput {
     default void writeString(String s) {
         writeUtf8String(s);
     }
+
+    void writeDate(LocalDate date);
+
+    void writeDateTime(ZonedDateTime date);
 }

@@ -26,16 +26,20 @@ public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderF
     }
 
     public FunctionalKeyBuilder create() {
-        if (keys.size() == 0) {
-            throw new RuntimeException("No key in functional key for type " + globType);
+        try {
+            if (keys.size() == 0) {
+                throw new RuntimeException("No key in functional key for type " + globType);
+            }
+            if (keys.size() == 1) {
+                return new OneFunctionalKeyBuilder(keys.get(0));
+            }
+            keys.sort(Comparator.comparingInt(Field::getIndex)); // ??supprimer le 11/12/2017
+            if (keys.size() == 2) {
+                return new TwoFunctionalKeyBuilder(keys.get(0), keys.get(1));
+            }
+            return new ManyFunctionalKeyBuilder(keys.toArray(new Field[0]));
+        } finally {
+            keys.clear();
         }
-        if (keys.size() == 1) {
-            return new OneFunctionalKeyBuilder(keys.get(0));
-        }
-        keys.sort(Comparator.comparingInt(Field::getIndex)); // ??supprimer le 11/12/2017
-        if (keys.size() == 2) {
-            return new TwoFunctionalKeyBuilder(keys.get(0), keys.get(1));
-        }
-        return new ManyFunctionalKeyBuilder(keys.toArray(new Field[0]));
     }
 }

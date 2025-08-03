@@ -100,6 +100,6 @@ public class DefaultStringField extends AbstractField implements StringField {
     }
 
     private String escapeString(String value) {
-        return value.contains("\"") ? value.replaceAll("\"", "'") : value;
+        return value.indexOf('"') != -1 ? value.replace('"', '\'') : value;
     }
 }

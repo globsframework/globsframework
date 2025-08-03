@@ -2,10 +2,10 @@ package org.globsframework.core.utils.serialization;
 
 import org.globsframework.core.metamodel.GlobModel;
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.model.ChangeSet;
 import org.globsframework.core.model.Glob;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public interface SerializedInput {
@@ -13,6 +13,8 @@ public interface SerializedInput {
     BigDecimal readBigDecimal();
 
     ZonedDateTime readDateTime();
+
+    LocalDate readDate();
 
     Integer readInteger();
 
@@ -34,12 +36,6 @@ public interface SerializedInput {
 
     byte[] readBytes();
 
-    Glob readGlob(GlobModel model);
-
-    Glob readKnowGlob(GlobType type);
-
-    ChangeSet readChangeSet(GlobModel model);
-
     int[] readIntArray();
 
     long[] readLongArray();
@@ -50,7 +46,6 @@ public interface SerializedInput {
 
     BigDecimal[] readBigDecimalArray();
 
-
     String[] readStringArray();
 
     void close();
@@ -58,15 +53,4 @@ public interface SerializedInput {
     default String readString() {
         return readUtf8String();
     }
-
-//  interface FieldExtension {
-//    <T> T read(SerializedInput input);
-//  }
-//
-//  interface AsyncFieldExtension {
-//    interface Receive<T> {
-//       void readed(T value);
-//    }
-//    <T> Receive<T> read(SerializedInput input);
-//  }
 }

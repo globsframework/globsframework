@@ -15,30 +15,24 @@ public class DefaultGlob128 extends AbstractDefaultGlob {
     public void setSetAt(int index) {
         if (index < 64) {
             set1 |= (1L << index);
-        } else if (index < 128) {
+        } else  {
             set2 |= (1L << (index - 64));
-        } else {
-            throw new RuntimeException("index out of range " + index);
         }
     }
 
     public boolean isSetAt(int index) {
         if (index < 64) {
             return (set1 & (1L << index)) != 0;
-        } else if (index < 128) {
-            return (set2 & (1L << (index - 64))) != 0;
         } else {
-            throw new RuntimeException("index out of range " + index);
+            return (set2 & (1L << (index - 64))) != 0;
         }
     }
 
     public void clearSetAt(int index) {
         if (index < 64) {
             set1 &= ~(1L << index);
-        } else if (index < 128) {
-            set2 &= ~(1L << (index - 64));
         } else {
-            throw new RuntimeException("index out of range " + index);
+            set2 &= ~(1L << (index - 64));
         }
     }
 

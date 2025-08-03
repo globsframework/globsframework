@@ -28,7 +28,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
     }
 
     private String escapeQuote(String name) {
-        return name.contains("\"") ? name.replaceAll("\"", "'") : name;
+        return name.contains("\"") ? name.replace("\"", "'") : name;
     }
 
     default boolean matches(FieldValues values) {
