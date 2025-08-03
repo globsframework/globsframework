@@ -89,12 +89,14 @@ public class SerializationTest {
     public void testGlob() throws Exception {
         Glob glob = GlobBuilder.init(DummyObject.TYPE, createSampleValues()).get();
 
-        output.writeGlob(glob);
+        GlobSerializer serializer = new GlobSerializer(output);
+        serializer.writeGlob(glob);
         output.writeUtf8String("end");
         outputStream.close();
 
         initInputStream(file);
-        Glob newGlob = input.readGlob(DummyModel.get());
+        GlobDeSerializer globDeSerializer = new GlobDeSerializer(input);
+        Glob newGlob = globDeSerializer.readGlob(DummyModel.get());
         assertNotSame(glob, newGlob);
 
 //        assertEquals(glob.getValues(), newGlob.getValues());
@@ -104,66 +106,8 @@ public class SerializationTest {
     }
 
     @Test
-    public void testChangeSet() throws Exception {
-        MutableChangeSet changeSet = new DefaultChangeSet();
-        changeSet.processCreation(KeyBuilder.newKey(DummyObject.TYPE, 1),
-                FieldValuesBuilder.init()
-                        .set(DummyObject.ID, 1)
-                        .set(DummyObject.NAME, "name1")
-                        .get());
-        changeSet.processUpdate(KeyBuilder.newKey(DummyObject.TYPE, 2), DummyObject.NAME, "name2", null);
-        changeSet.processDeletion(KeyBuilder.newKey(DummyObject.TYPE, 3),
-                FieldValuesBuilder.init()
-                        .set(DummyObject.ID, 3)
-                        .set(DummyObject.NAME, "name3")
-                        .set(DummyObject.VALUE, 3.14156)
-                        .get());
-        output.writeChangeSet(changeSet);
-        outputStream.close();
-
-        initInputStream(file);
-        changeSet.toString();
-
-        ChangeSet readChangeSet = input.readChangeSet(DummyModel.get());
-        GlobTestUtils.assertChangesEqual(readChangeSet,
-                "<create type='dummyObject' id='1' name='name1'/>" +
-                        "<update type='dummyObject' id='2' name='name2' _name='(null)'/>" +
-                        "<delete type='dummyObject' id='3' _name='name3' _value='3.14'/>");
-    }
-
-    @Test
-    public void readWriteGlobArray() throws IOException {
-        MutableChangeSet changeSet = new DefaultChangeSet();
-        changeSet.processCreation(KeyBuilder.newKey(DummyObjectWithInner.TYPE, 1),
-                DummyObjectWithInner.TYPE.instantiate()
-                        .set(DummyObjectWithInner.VALUE, DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14))
-                        .set(DummyObjectWithInner.VALUES, new Glob[]{DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 2),
-                                DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 3)})
-                        .set(DummyObjectWithInner.VALUE_UNION, DummyObject.TYPE.instantiate().set(DummyObject.VALUE, 3.14))
-                        .set(DummyObjectWithInner.VALUES_UNION, new Glob[]{DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 2),
-                                DummyObject.TYPE.instantiate().set(DummyObject.VALUE, 3.14 * 3)}));
-
-        changeSet.processUpdate(KeyBuilder.newKey(DummyObjectWithInner.TYPE, 2),
-                DummyObjectWithInner.VALUES, new Glob[]{DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 2),
-                        DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 3)},
-                new Glob[]{DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 1),
-                        DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 2)});
-
-        output.writeChangeSet(changeSet);
-        outputStream.close();
-        initInputStream(file);
-
-        ChangeSet readChangeSet = input.readChangeSet(DummyModel.get());
-        Assert.assertTrue(readChangeSet.containsUpdates(DummyObjectWithInner.VALUES));
-//        GlobTestUtils.assertChangesEqual(readChangeSet,
-//                "<create type='dummyObject' id='1' name='name1'/>" +
-//                        "<update type='dummyObject' id='2' name='name2' _name='(null)'/>" +
-//                        "<delete type='dummyObject' id='3' _name='name3' _value='3.14'/>");
-
-    }
-
-    @Test
     public void withInnerGlob() throws IOException {
+        GlobSerializer globSerializer = new GlobSerializer(output);
         MutableGlob obj1 = DummyObjectWithInner.TYPE.instantiate()
                 .set(DummyObjectWithInner.ID, 1)
                 .set(DummyObjectWithInner.byteArrayData, "Some Data".getBytes(StandardCharsets.UTF_8))
@@ -174,11 +118,12 @@ public class SerializationTest {
                 .set(DummyObjectWithInner.VALUES_UNION, new Glob[]{DummyObjectInner.TYPE.instantiate().set(DummyObjectInner.VALUE, 3.14 * 2),
                         DummyObject.TYPE.instantiate().set(DummyObject.VALUE, 3.14 * 3)});
 
-        output.writeKnowGlob(obj1);
+        globSerializer.writeKnowGlob(obj1);
         outputStream.close();
         initInputStream(file);
 
-        Glob newGlob = input.readKnowGlob(DummyObjectWithInner.TYPE);
+        GlobDeSerializer globDeSerializer = new GlobDeSerializer(input);
+        Glob newGlob = globDeSerializer.readKnowGlob(DummyObjectWithInner.TYPE);
         assertNotSame(obj1, newGlob);
         Assert.assertEquals("Some Data", new String(newGlob.get(DummyObjectWithInner.byteArrayData)));
         Assert.assertEquals(newGlob.get(DummyObjectWithInner.VALUE).get(DummyObjectInner.VALUE), 3.14, 0.01);

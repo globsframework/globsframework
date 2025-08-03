@@ -1,9 +1,8 @@
 package org.globsframework.core.utils.serialization;
 
-import org.globsframework.core.model.ChangeSet;
-import org.globsframework.core.model.Glob;
-
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 class SerializedOutputChecker implements SerializedOutput {
@@ -11,21 +10,6 @@ class SerializedOutputChecker implements SerializedOutput {
 
     public SerializedOutputChecker(DefaultSerializationOutput serializationOutput) {
         this.serializationOutput = serializationOutput;
-    }
-
-    public void writeGlob(Glob glob) {
-        serializationOutput.writeUtf8String("Glob");
-        serializationOutput.writeGlob(glob);
-    }
-
-    public void writeKnowGlob(Glob glob) {
-        serializationOutput.writeUtf8String("KnowGlob");
-        serializationOutput.writeKnowGlob(glob);
-    }
-
-    public void writeChangeSet(ChangeSet changeSet) {
-        serializationOutput.writeUtf8String("ChangeSet");
-        serializationOutput.writeChangeSet(changeSet);
     }
 
     public void write(int[] values) {
@@ -66,6 +50,11 @@ class SerializedOutputChecker implements SerializedOutput {
     public void writeUtf8String(String value) {
         serializationOutput.writeUtf8String("StringUtf8");
         serializationOutput.writeUtf8String(value);
+    }
+
+    public void write(BigDecimal value) {
+        serializationOutput.writeUtf8String("BigDecimal");
+        serializationOutput.write(value);
     }
 
     public void write(boolean value) {
@@ -121,5 +110,15 @@ class SerializedOutputChecker implements SerializedOutput {
     public void write(BigDecimal[] values) {
         serializationOutput.writeUtf8String("BigDecimal[]");
         serializationOutput.write(values);
+    }
+
+    public void writeDate(LocalDate date) {
+        serializationOutput.writeUtf8String("LocalDate");
+        serializationOutput.writeDate(date);
+    }
+
+    public void writeDateTime(ZonedDateTime date) {
+        serializationOutput.writeUtf8String("ZonedDateTime");
+        serializationOutput.writeDateTime(date);
     }
 }

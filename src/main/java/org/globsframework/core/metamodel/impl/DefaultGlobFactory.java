@@ -9,6 +9,7 @@ import org.globsframework.core.model.globaccessor.get.GlobGetAccessor;
 import org.globsframework.core.model.globaccessor.get.impl.*;
 import org.globsframework.core.model.globaccessor.set.GlobSetAccessor;
 import org.globsframework.core.model.globaccessor.set.impl.*;
+import org.globsframework.core.model.impl.AbstractDefaultGlob;
 import org.globsframework.core.model.impl.DefaultGlob;
 import org.globsframework.core.model.impl.DefaultGlob128;
 import org.globsframework.core.model.impl.DefaultGlob64;
@@ -36,7 +37,7 @@ public class DefaultGlobFactory implements GlobFactory {
             setAccessor1[field.getIndex()] = field.safeAccept(setAccessorValueVisitor).setAccessor;
         }
 
-        synchronized (this) {  //I don't know if this enough
+        synchronized (this) {  //I don't know if this enough nether necessary
             if (getAccessor == null) {
                 getAccessor = getAccessor1;
             }
@@ -78,153 +79,172 @@ public class DefaultGlobFactory implements GlobFactory {
         public GlobGetAccessor getAccessor;
 
         public void visitInteger(IntegerField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetIntAccessor() {
                 public Integer get(Glob glob) {
-                    return glob.get(field);
+                    return (Integer) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitIntegerArray(IntegerArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetIntArrayAccessor() {
                 public int[] get(Glob glob) {
-                    return glob.get(field);
+                    return (int[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitDouble(DoubleField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetDoubleAccessor() {
                 public Double get(Glob glob) {
-                    return glob.get(field);
+                    return (double) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitDoubleArray(DoubleArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetDoubleArrayAccessor() {
                 public double[] get(Glob glob) {
-                    return glob.get(field);
+                    return (double[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitBigDecimal(BigDecimalField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBigDecimalAccessor() {
                 public BigDecimal get(Glob glob) {
-                    return glob.get(field);
+                    return (BigDecimal) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitBigDecimalArray(BigDecimalArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBigDecimalArrayAccessor() {
                 public BigDecimal[] get(Glob glob) {
-                    return glob.get(field);
+                    return (BigDecimal[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitString(StringField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetStringAccessor() {
                 public String get(Glob glob) {
-                    return glob.get(field);
+                    return ((AbstractDefaultGlob) glob).get(index).toString();
                 }
             };
         }
 
         public void visitStringArray(StringArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetStringArrayAccessor() {
                 public String[] get(Glob glob) {
-                    return glob.get(field);
+                    return (String[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitBoolean(BooleanField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBooleanAccessor() {
                 public Boolean get(Glob glob) {
-                    return glob.get(field);
+                    return (Boolean) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitBooleanArray(BooleanArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBooleanArrayAccessor() {
                 public boolean[] get(Glob glob) {
-                    return glob.get(field);
+                    return (boolean[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitLong(LongField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetLongAccessor() {
                 public Long get(Glob glob) {
-                    return glob.get(field);
+                    return (Long) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitLongArray(LongArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetLongArrayAccessor() {
                 public long[] get(Glob glob) {
-                    return glob.get(field);
+                    return (long[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitDate(DateField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetDateAccessor() {
                 public LocalDate get(Glob glob) {
-                    return glob.get(field);
+                    return (LocalDate) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitDateTime(DateTimeField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetDateTimeAccessor() {
                 public ZonedDateTime get(Glob glob) {
-                    return glob.get(field);
+                    return (ZonedDateTime) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitBlob(BlobField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBytesAccessor() {
                 public byte[] get(Glob glob) {
-                    return glob.get(field);
+                    return (byte[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitGlob(GlobField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetGlobAccessor() {
                 public Glob get(Glob glob) {
-                    return glob.get(field);
+                    return (Glob) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitGlobArray(GlobArrayField field) {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetGlobArrayAccessor() {
                 public Glob[] get(Glob glob) {
-                    return glob.get(field);
+                    return (Glob[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitUnionGlob(GlobUnionField field) throws Exception {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetGlobUnionAccessor() {
                 public Glob get(Glob glob) {
-                    return glob.get(field);
+                    return (Glob) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
 
         public void visitUnionGlobArray(GlobArrayUnionField field) throws Exception {
+            final int index = field.getIndex();
             getAccessor = new AbstractGlobGetGlobUnionArrayAccessor() {
                 public Glob[] get(Glob glob) {
-                    return glob.get(field);
+                    return (Glob[]) ((AbstractDefaultGlob) glob).get(index);
                 }
             };
         }
@@ -234,153 +254,172 @@ public class DefaultGlobFactory implements GlobFactory {
         public GlobSetAccessor setAccessor;
 
         public void visitInteger(IntegerField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetIntAccessor() {
                 public void set(MutableGlob glob, Integer value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitIntegerArray(IntegerArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetIntArrayAccessor() {
                 public void set(MutableGlob glob, int[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitDouble(DoubleField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetDoubleAccessor() {
                 public void set(MutableGlob glob, Double value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitDoubleArray(DoubleArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetDoubleArrayAccessor() {
                 public void set(MutableGlob glob, double[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitBigDecimal(BigDecimalField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBigDecimalAccessor() {
                 public void set(MutableGlob glob, BigDecimal value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitBigDecimalArray(BigDecimalArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBigDecimalArrayAccessor() {
                 public void set(MutableGlob glob, BigDecimal[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitString(StringField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetStringAccessor() {
                 public void set(MutableGlob glob, String value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitStringArray(StringArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetStringArrayAccessor() {
                 public void set(MutableGlob glob, String[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitBoolean(BooleanField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBooleanAccessor() {
                 public void set(MutableGlob glob, Boolean value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitBooleanArray(BooleanArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBooleanArrayAccessor() {
                 public void set(MutableGlob glob, boolean[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitLong(LongField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetLongAccessor() {
                 public void set(MutableGlob glob, Long value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitLongArray(LongArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetLongArrayAccessor() {
                 public void set(MutableGlob glob, long[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitDate(DateField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetDateAccessor() {
                 public void set(MutableGlob glob, LocalDate value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitDateTime(DateTimeField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetDateTimeAccessor() {
                 public void set(MutableGlob glob, ZonedDateTime value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitBlob(BlobField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBytesAccessor() {
                 public void set(MutableGlob glob, byte[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitGlob(GlobField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetGlobAccessor() {
                 public void set(MutableGlob glob, Glob value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitGlobArray(GlobArrayField field) {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetGlobArrayAccessor() {
                 public void set(MutableGlob glob, Glob[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitUnionGlob(GlobUnionField field) throws Exception {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetGlobUnionAccessor() {
                 public void set(MutableGlob glob, Glob value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }
 
         public void visitUnionGlobArray(GlobArrayUnionField field) throws Exception {
+            final int index = field.getIndex();
             setAccessor = new AbstractGlobSetGlobUnionArrayAccessor() {
                 public void set(MutableGlob glob, Glob[] value) {
-                    glob.set(field, value);
+                    ((AbstractDefaultGlob) glob).set(index, value);
                 }
             };
         }

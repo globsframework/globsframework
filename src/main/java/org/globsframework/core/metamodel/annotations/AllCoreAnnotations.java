@@ -16,5 +16,6 @@ public class AllCoreAnnotations {
                     IgnoredAnnotation.TYPE,
                     Comment.TYPE,
                     NamingField.TYPE, Required.TYPE,
-                    NotUniqueIndex.TYPE, FunctionalFieldOrder.TYPE);
+                    NotUniqueIndex.TYPE, FunctionalFieldOrder.TYPE,
+                    ArraySize.TYPE);
 }

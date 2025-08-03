@@ -49,8 +49,13 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
         return values[field.getIndex()];
     }
 
-    public Object getAccessor(int index) {
+    public Object get(int index) {
         return values[index];
+    }
+
+    public void set(int index, Object value) {
+        values[index] = value;
+        setSetAt(index);
     }
 
     public MutableGlob doSet(Field field, Object value) {

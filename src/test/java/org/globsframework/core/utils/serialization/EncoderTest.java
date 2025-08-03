@@ -41,6 +41,7 @@ public class EncoderTest {
 
     @Test
     public void testEncodesGlobs() throws Exception {
+
         int id = 1;
         int linkId = 33;
         String name = "aName";
@@ -58,9 +59,12 @@ public class EncoderTest {
                 .set(VALUE, value).get();
 
         SerializedByteArrayOutput output = new SerializedByteArrayOutput();
-        output.getOutput().writeGlob(glob);
+        GlobSerializer globSerializer = new GlobSerializer(output.getOutput());
+
+        globSerializer.writeGlob(glob);
         SerializedInput input = output.getInput();
-        Glob decodedGlob = input.readGlob(DummyModel.get());
+        GlobDeSerializer globDeSerializer = new GlobDeSerializer(input);
+        Glob decodedGlob = globDeSerializer.readGlob(DummyModel.get());
 
         assertEquals(1, decodedGlob.get(ID).intValue());
         assertEquals(linkId, decodedGlob.get(LINK_ID).intValue());

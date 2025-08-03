@@ -1,12 +1,9 @@
 package org.globsframework.core.utils.serialization;
 
-import org.globsframework.core.metamodel.GlobModel;
-import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.model.ChangeSet;
-import org.globsframework.core.model.Glob;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class SerializationInputChecker implements SerializedInput {
@@ -14,33 +11,6 @@ public class SerializationInputChecker implements SerializedInput {
 
     public SerializationInputChecker(SerializedInput serializedInput) {
         this.serializedInput = serializedInput;
-    }
-
-    public Glob readGlob(GlobModel model) {
-        String value = serializedInput.readUtf8String();
-        if ("Glob".equals(value)) {
-            return serializedInput.readGlob(model);
-        } else {
-            throw new UnexpectedApplicationState("Glob expected but got " + value);
-        }
-    }
-
-    public Glob readKnowGlob(GlobType type) {
-        String value = serializedInput.readUtf8String();
-        if ("KnowGlob".equals(value)) {
-            return serializedInput.readKnowGlob(type);
-        } else {
-            throw new UnexpectedApplicationState("Known Glob " + type + " expected but got " + value);
-        }
-    }
-
-    public ChangeSet readChangeSet(GlobModel model) {
-        String value = serializedInput.readUtf8String();
-        if ("ChangeSet".equals(value)) {
-            return serializedInput.readChangeSet(model);
-        } else {
-            throw new UnexpectedApplicationState("ChangeSet expected but got " + value);
-        }
     }
 
     public int[] readIntArray() {
@@ -112,10 +82,19 @@ public class SerializationInputChecker implements SerializedInput {
 
     public ZonedDateTime readDateTime() {
         String value = serializedInput.readUtf8String();
-        if ("Date".equals(value)) {
+        if ("ZonedDateTime".equals(value)) {
             return serializedInput.readDateTime();
         } else {
-            throw new UnexpectedApplicationState("Date expected but got " + value);
+            throw new UnexpectedApplicationState("ZonedDateTime expected but got " + value);
+        }
+    }
+
+    public LocalDate readDate() {
+        String value = serializedInput.readUtf8String();
+        if ("LocalDate".equals(value)) {
+            return serializedInput.readDate();
+        } else {
+            throw new UnexpectedApplicationState("LocalDate expected but got " + value);
         }
     }
 
