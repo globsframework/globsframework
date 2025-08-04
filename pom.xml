@@ -38,6 +38,8 @@
     </repositories>
 
     <scm>
+        <connection>scm:git:git@github.com:globsframework/globsframework</connection>
+        <developerConnection>scm:git:git@github.com:globsframework/globsframework</developerConnection>
         <url>https://github.com/globsframework/globsframework</url>
     </scm>
 
