@@ -7,12 +7,13 @@ import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.impl.DefaultGlobModel;
 import org.globsframework.core.metamodel.links.Link;
+import org.globsframework.core.model.Glob;
 import org.globsframework.core.utils.Strings;
 import org.globsframework.core.utils.TestUtils;
 import org.globsframework.core.utils.exceptions.InvalidData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultGlobModelTest {
     private GlobModel inner = new DefaultGlobModel(DummyObject.TYPE);

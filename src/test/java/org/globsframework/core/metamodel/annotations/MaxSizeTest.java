@@ -3,14 +3,12 @@ package org.globsframework.core.metamodel.annotations;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
 import org.globsframework.core.metamodel.fields.GlobField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.model.MutableGlob;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
 public class MaxSizeTest {
 
@@ -21,8 +19,8 @@ public class MaxSizeTest {
                     .set(Dummy_Level1.VALUE_1, "123")
                     .set(Dummy_Level1.VALUE_2, "12345");
             MutableGlob mutableGlob = MaxSize.deepInPlaceTruncate(g1);
-            Assert.assertEquals(mutableGlob.get(Dummy_Level1.VALUE_2), "123");
-            Assert.assertEquals(mutableGlob.get(Dummy_Level1.VALUE_1), "123");
+            assertEquals(mutableGlob.get(Dummy_Level1.VALUE_2), "123");
+            assertEquals(mutableGlob.get(Dummy_Level1.VALUE_1), "123");
 
             MutableGlob g2 = Dummy_Level1.TYPE.instantiate()
                     .set(Dummy_Level1.VALUE_1, "12345")
@@ -44,7 +42,7 @@ public class MaxSizeTest {
 
             MaxSize.deepInPlaceTruncate(g2);
 
-            Assert.assertEquals(g2.get(Dummy_Level1.UNDER).get(Dummy_Level1.VALUE_2), "123");
+            assertEquals(g2.get(Dummy_Level1.UNDER).get(Dummy_Level1.VALUE_2), "123");
 
         }
         {
@@ -56,7 +54,7 @@ public class MaxSizeTest {
 
             MaxSize.deepInPlaceTruncate(g2);
 
-            Assert.assertEquals(g2.get(Dummy_Level1.UNDER).get(Dummy_Level1.VALUE_2), "é");
+            assertEquals(g2.get(Dummy_Level1.UNDER).get(Dummy_Level1.VALUE_2), "é");
 
         }
     }

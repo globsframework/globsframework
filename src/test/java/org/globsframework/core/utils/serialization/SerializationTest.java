@@ -5,20 +5,16 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.DummyObjectInner;
 import org.globsframework.core.metamodel.DummyObjectWithInner;
 import org.globsframework.core.model.*;
-import org.globsframework.core.model.delta.DefaultChangeSet;
-import org.globsframework.core.model.delta.MutableChangeSet;
 import org.globsframework.core.model.utils.GlobBuilder;
 import org.globsframework.core.utils.ArrayTestUtils;
 import org.globsframework.core.utils.TestUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 
 public class SerializationTest {
     protected SerializedOutput output;
@@ -28,7 +24,7 @@ public class SerializationTest {
     private int currentDate;
     private File file;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         file = TestUtils.getFileName(this, "sample.dat");
 //    String fileName = "/tmp/output.bin";
@@ -125,11 +121,11 @@ public class SerializationTest {
         GlobDeSerializer globDeSerializer = new GlobDeSerializer(input);
         Glob newGlob = globDeSerializer.readKnowGlob(DummyObjectWithInner.TYPE);
         assertNotSame(obj1, newGlob);
-        Assert.assertEquals("Some Data", new String(newGlob.get(DummyObjectWithInner.byteArrayData)));
-        Assert.assertEquals(newGlob.get(DummyObjectWithInner.VALUE).get(DummyObjectInner.VALUE), 3.14, 0.01);
-        Assert.assertEquals(newGlob.get(DummyObjectWithInner.VALUE_UNION).get(DummyObject.VALUE), 3.14, 0.01);
-        Assert.assertEquals(newGlob.get(DummyObjectWithInner.VALUES_UNION)[0].get(DummyObjectInner.VALUE), 3.14 * 2, 0.01);
-        Assert.assertEquals(newGlob.get(DummyObjectWithInner.VALUES_UNION)[1].get(DummyObject.VALUE), 3.14 * 3, 0.01);
+        assertEquals("Some Data", new String(newGlob.get(DummyObjectWithInner.byteArrayData)));
+        assertEquals(newGlob.get(DummyObjectWithInner.VALUE).get(DummyObjectInner.VALUE), 3.14, 0.01);
+        assertEquals(newGlob.get(DummyObjectWithInner.VALUE_UNION).get(DummyObject.VALUE), 3.14, 0.01);
+        assertEquals(newGlob.get(DummyObjectWithInner.VALUES_UNION)[0].get(DummyObjectInner.VALUE), 3.14 * 2, 0.01);
+        assertEquals(newGlob.get(DummyObjectWithInner.VALUES_UNION)[1].get(DummyObject.VALUE), 3.14 * 3, 0.01);
     }
 
     //  public void testBigWrite() throws Exception {

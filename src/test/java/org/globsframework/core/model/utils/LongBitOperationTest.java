@@ -1,7 +1,7 @@
 package org.globsframework.core.model.utils;
 
 import org.globsframework.core.utils.NanoChrono;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LongBitOperationTest {
 

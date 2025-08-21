@@ -1,11 +1,8 @@
 package org.globsframework.core.utils.container.specific;
 
-import junit.framework.TestCase;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
-import org.globsframework.core.metamodel.annotations.AutoIncrement;
 import org.globsframework.core.metamodel.annotations.AutoIncrement_;
-import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.model.Glob;
@@ -13,11 +10,14 @@ import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
 import org.globsframework.core.utils.NanoChrono;
 import org.globsframework.core.utils.container.hash.HashContainer;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import java.util.*;
 
-public class HashMapGlobKeyContainerTest extends TestCase {
+public class HashMapGlobKeyContainerTest {
 
     static public class DummyObject {
 
@@ -40,6 +40,7 @@ public class HashMapGlobKeyContainerTest extends TestCase {
         }
     }
 
+    @Test
     public void testInsert() throws Exception {
         List<Glob> globs = new ArrayList<>();
         for (int i = 1; i < 100000; i++) {
@@ -60,6 +61,7 @@ public class HashMapGlobKeyContainerTest extends TestCase {
         System.out.println("HashMapGlobKeyContainerTest.testInsert " + nanoChrono.getElapsedTimeInMS() + " " + container.size());
     }
 
+    @Test
     public void testGet() throws Exception {
         List<Glob> globs = new ArrayList<>();
         for (int i = 1; i < 1000000; i++) {
@@ -79,6 +81,7 @@ public class HashMapGlobKeyContainerTest extends TestCase {
         System.out.println("HashMapGlobKeyContainerTest.testGet " + nanoChrono.getElapsedTimeInMS());
     }
 
+    @Test
     public void testRemove() throws Exception {
         List<Glob> globs = new ArrayList<>();
         for (int i = 1; i < 10000; i++) {
@@ -106,6 +109,7 @@ public class HashMapGlobKeyContainerTest extends TestCase {
         }
     }
 
+    @Test
     public void testRemoveOnApply() {
         runRamdomTest(10);
         runRamdomTest(100);
@@ -130,8 +134,8 @@ public class HashMapGlobKeyContainerTest extends TestCase {
         for (int i = 0; i < 100; i++) {
             KeyGlobFunctorAndRemove functor = new KeyGlobFunctorAndRemove(ref);
             container.applyAndRemoveIfTrue(functor);
-            Assert.assertEquals(count, functor.count);
-            Assert.assertEquals(container.size(), functor.count - functor.removed);
+            assertEquals(count, functor.count);
+            assertEquals(container.size(), functor.count - functor.removed);
             checkSame(container, ref);
             count = ref.size();
         }

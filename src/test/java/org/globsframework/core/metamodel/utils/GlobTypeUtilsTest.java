@@ -4,9 +4,9 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.DummyObject2;
 import org.globsframework.core.metamodel.annotations.NamingField;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobTypeUtilsTest {
     @Test

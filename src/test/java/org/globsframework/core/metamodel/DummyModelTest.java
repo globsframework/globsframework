@@ -2,7 +2,7 @@ package org.globsframework.core.metamodel;
 
 import org.globsframework.core.metamodel.links.Link;
 import org.globsframework.core.utils.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DummyModelTest {
 

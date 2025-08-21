@@ -12,10 +12,9 @@ import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.impl.DefaultGlobModel;
 import org.globsframework.core.utils.TestUtils;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 public class DefaultGlobTypeTest {
     private GlobType globType;
@@ -35,10 +34,10 @@ public class DefaultGlobTypeTest {
     @Test
     public void testFindFieldByAnnotation() {
         Field qty = GlobTypeUtils.findFieldWithAnnotation(TypeWithAnnotation.TYPE, FieldName.create("qty"));
-        Assert.assertSame(qty, TypeWithAnnotation.F1);
+        assertSame(qty, TypeWithAnnotation.F1);
 
         Field sku = GlobTypeUtils.findFieldWithAnnotation(TypeWithAnnotation.TYPE, FieldName.create("ean"));
-        Assert.assertSame(sku, TypeWithAnnotation.F2);
+        assertSame(sku, TypeWithAnnotation.F2);
     }
 
     public static class Type {

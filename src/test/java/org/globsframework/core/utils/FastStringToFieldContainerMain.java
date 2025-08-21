@@ -2,7 +2,7 @@ package org.globsframework.core.utils;
 
 import org.globsframework.core.metamodel.DummyObjectWithDefaultValues;
 import org.globsframework.core.metamodel.fields.Field;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class FastStringToFieldContainerMain {

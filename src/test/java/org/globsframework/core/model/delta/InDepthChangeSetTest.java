@@ -10,8 +10,9 @@ import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
@@ -47,35 +48,35 @@ public class InDepthChangeSetTest {
 
         {
             Set<Key> created = changeSet.getCreated(SubType.TYPE);
-            Assert.assertEquals(created.size(), 2);
-            Assert.assertTrue(created.contains(sub1.getKey()));
-            Assert.assertTrue(created.contains(subD21.getKey()));
+            assertEquals(created.size(), 2);
+            assertTrue(created.contains(sub1.getKey()));
+            assertTrue(created.contains(subD21.getKey()));
         }
         {
             Set<Key> created = changeSet.getCreated(DummyType.TYPE);
-            Assert.assertEquals(created.size(), 1);
-            Assert.assertTrue(created.contains(d1.getKey()));
+            assertEquals(created.size(), 1);
+            assertTrue(created.contains(d1.getKey()));
         }
         {
             Set<Key> created = changeSet.getCreated(SubTypeWWithoutKey.TYPE);
-            Assert.assertEquals(created.size(), 1);
-            Assert.assertTrue(created.contains(subWOK2.getKey()));
+            assertEquals(created.size(), 1);
+            assertTrue(created.contains(subWOK2.getKey()));
         }
         {
             Set<Key> deleted = changeSet.getDeleted(DummyType.TYPE);
-            Assert.assertEquals(deleted.size(), 1);
-            Assert.assertTrue(deleted.contains(d3.getKey()));
+            assertEquals(deleted.size(), 1);
+            assertTrue(deleted.contains(d3.getKey()));
         }
         {
             Set<Key> deleted = changeSet.getDeleted(SubType.TYPE);
-            Assert.assertEquals(deleted.size(), 2);
-            Assert.assertTrue(deleted.contains(sub2.getKey()));
-            Assert.assertTrue(deleted.contains(subD22.getKey()));
+            assertEquals(deleted.size(), 2);
+            assertTrue(deleted.contains(sub2.getKey()));
+            assertTrue(deleted.contains(subD22.getKey()));
         }
         {
             Set<Key> updated = changeSet.getUpdated(DummyType.TYPE);
-            Assert.assertEquals(updated.size(), 1);
-            Assert.assertTrue(updated.contains(d2.getKey()));
+            assertEquals(updated.size(), 1);
+            assertTrue(updated.contains(d2.getKey()));
         }
     }
 

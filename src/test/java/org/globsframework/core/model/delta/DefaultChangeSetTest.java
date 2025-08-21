@@ -11,15 +11,15 @@ import org.globsframework.core.utils.exceptions.InvalidState;
 import org.globsframework.core.xml.XmlChangeSetParser;
 import org.globsframework.core.xml.XmlChangeSetWriter;
 import org.globsframework.core.xml.tests.XmlTestUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
 
 import static org.globsframework.core.model.KeyBuilder.newKey;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultChangeSetTest {
 
@@ -29,7 +29,7 @@ public class DefaultChangeSetTest {
     private DefaultChangeSet newChangeSet = new DefaultChangeSet();
     private FieldValues creationValues;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         key1 = newKey(DummyObject.TYPE, 1);
         creationValues =

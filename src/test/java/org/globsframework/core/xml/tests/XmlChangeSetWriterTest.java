@@ -4,7 +4,7 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.model.FieldValuesBuilder;
 import org.globsframework.core.model.delta.DefaultChangeSet;
 import org.globsframework.core.xml.XmlChangeSetWriter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 

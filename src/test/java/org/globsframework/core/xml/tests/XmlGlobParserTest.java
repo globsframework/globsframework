@@ -9,24 +9,23 @@ import org.globsframework.core.model.*;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemAmbiguity;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.globsframework.core.model.KeyBuilder.newKey;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class XmlGlobParserTest {
     private GlobRepository repository;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         repository = GlobRepositoryBuilder.createEmpty();
     }
-
 
     @Test
     public void testStandardCase() throws Exception {

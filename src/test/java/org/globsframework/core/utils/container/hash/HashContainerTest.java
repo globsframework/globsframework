@@ -1,12 +1,15 @@
 package org.globsframework.core.utils.container.hash;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-public class HashContainerTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
 
+public class HashContainerTest {
+
+    @Test
     public void testName() throws Exception {
         HashContainer<Integer, Integer> container = HashContainer.EMPTY_INSTANCE;
         container = container.put(1, 1);
@@ -25,6 +28,7 @@ public class HashContainerTest extends TestCase {
         assertNull(container.get(4));
     }
 
+    @Test
     public void testMany() throws Exception {
         for (int i = 0; i < 100; i++) {
             HashContainer<Integer, Integer> container = HashContainer.EMPTY_INSTANCE;
@@ -55,6 +59,7 @@ public class HashContainerTest extends TestCase {
         }
     }
 
+    @Test
     public void testIterator() throws Exception {
         HashContainer<Integer, Integer> container = HashContainer.EMPTY_INSTANCE;
         container = container.put(1, 1);
@@ -73,17 +78,18 @@ public class HashContainerTest extends TestCase {
         check(container, create(Arrays.asList(1, 2, 3, 6, 7), Arrays.asList(2, 1, 3, 3, 2)));
     }
 
+    @Test
     public void testRemoveInApply() {
         HashContainer<Integer, Integer> container = HashContainer.EMPTY_INSTANCE;
         container = container.put(1, 1);
         container.applyAndRemoveIfTrue((key, integer) -> true);
-        Assert.assertTrue(container.isEmpty());
+        assertTrue(container.isEmpty());
 
         container = container.put(1, 1);
         container = container.put(2, 2);
         container.applyAndRemoveIfTrue((key, integer) -> key == 2);
-        Assert.assertNull(container.get(2));
-        Assert.assertNotNull(container.get(1));
+        assertNull(container.get(2));
+        assertNotNull(container.get(1));
 
     }
 

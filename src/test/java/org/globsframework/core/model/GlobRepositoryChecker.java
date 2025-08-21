@@ -4,7 +4,8 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.model.utils.GlobMatchers;
 import org.globsframework.core.utils.Utils;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class GlobRepositoryChecker {
     private GlobRepository repository;
@@ -20,7 +21,7 @@ public class GlobRepositoryChecker {
     public Glob doFindUnique(Field field, Object value) {
         Glob glob = repository.findUnique(field.getGlobType(), GlobMatchers.fieldEqualsObject(field, value));
         if (glob == null) {
-            Assert.fail("No object found with " + field.getName() + " = " + value);
+            fail("No object found with " + field.getName() + " = " + value);
         }
         return glob;
     }
@@ -28,7 +29,7 @@ public class GlobRepositoryChecker {
     public void checkFields(Glob glob, FieldValue... values) {
         for (FieldValue value : values) {
             if (!Utils.equal(glob.getValue(value.getField()), value.getValue())) {
-                Assert.fail("Invalid value for " + value.getField() + " - expected: " + value.getValue() +
+                fail("Invalid value for " + value.getField() + " - expected: " + value.getValue() +
                         " but was: " + glob.getValue(value.getField()));
             }
         }

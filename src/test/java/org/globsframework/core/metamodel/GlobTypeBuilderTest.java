@@ -7,10 +7,10 @@ import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.metamodel.utils.GlobTypeUtils;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobTypeBuilderTest {
 
@@ -39,7 +39,7 @@ public class GlobTypeBuilderTest {
         Field[] keyFields = type.getKeyFields();
         assertEquals(1, keyFields.length);
         Field key = keyFields[0];
-        assertTrue(key instanceof IntegerField);
+        assertInstanceOf(IntegerField.class, key);
         assertEquals("id", key.getName());
 
         checkField(type, "string", StringField.class, DataType.String);
@@ -77,7 +77,7 @@ public class GlobTypeBuilderTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testAtLeastOneKeyMustBeDefined() throws Exception {
         try {

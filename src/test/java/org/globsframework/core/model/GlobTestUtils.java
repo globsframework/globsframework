@@ -1,6 +1,5 @@
 package org.globsframework.core.model;
 
-import junit.framework.AssertionFailedError;
 import org.globsframework.core.metamodel.GlobModel;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
@@ -9,6 +8,7 @@ import org.globsframework.core.xml.XmlGlobParser;
 import org.globsframework.core.xml.XmlGlobWriter;
 import org.globsframework.core.xml.tests.XmlComparisonMode;
 import org.globsframework.core.xml.tests.XmlTestUtils;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.StringReader;
 import java.io.StringWriter;

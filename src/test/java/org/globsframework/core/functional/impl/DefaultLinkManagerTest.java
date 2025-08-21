@@ -6,10 +6,11 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.DummyObject2;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.Glob;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultLinkManagerTest {
 
@@ -35,13 +36,13 @@ public class DefaultLinkManagerTest {
 
         Glob a1 = linkManager.get(functionalKeyBuilder.create().set(DummyObject.NAME, "a1")
                 .set(DummyObject.COUNT, 2).getShared());
-        Assert.assertEquals(2, a1.get(DummyObject.ID).intValue());
+        assertEquals(2, a1.get(DummyObject.ID).intValue());
 
         FunctionalKeyBuilder functionalKeyBuilder2 = FunctionalKeyBuilderFactory.create(DummyObject2.TYPE)
                 .add(DummyObject2.LABEL).create();
 
         Glob l2 = linkManager.get(functionalKeyBuilder2.create().set(DummyObject2.LABEL, "l2").getShared());
-        Assert.assertEquals(2, l2.get(DummyObject2.ID).intValue());
+        assertEquals(2, l2.get(DummyObject2.ID).intValue());
 
         FunctionalKeyBuilderFactory functionalKeyBuilderFactory = FunctionalKeyBuilderFactory.create(DummyObject.TYPE);
         for (Field field : DummyObject.TYPE.getFields()) {
@@ -52,7 +53,7 @@ public class DefaultLinkManagerTest {
         Glob l3 = linkManager.get(functionalKeyBuilderAll.create().set(DummyObject.NAME, "a1")
                 .set(DummyObject.ID, 2)
                 .set(DummyObject.COUNT, 2).getShared());
-        Assert.assertEquals(2, l3.get(DummyObject.ID).intValue());
+        assertEquals(2, l3.get(DummyObject.ID).intValue());
 
 
     }

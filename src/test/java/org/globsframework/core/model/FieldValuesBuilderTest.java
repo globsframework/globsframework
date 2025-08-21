@@ -2,10 +2,10 @@ package org.globsframework.core.model;
 
 import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FieldValuesBuilderTest {
     @Test

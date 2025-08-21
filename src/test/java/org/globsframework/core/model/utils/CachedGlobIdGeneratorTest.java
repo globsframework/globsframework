@@ -4,12 +4,12 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.model.repository.CachedGlobIdGenerator;
 import org.globsframework.core.model.repository.GlobIdGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CachedGlobIdGeneratorTest {
 

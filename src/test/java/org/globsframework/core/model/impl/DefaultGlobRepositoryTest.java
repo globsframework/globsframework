@@ -10,15 +10,15 @@ import org.globsframework.core.model.repository.GlobIdGenerator;
 import org.globsframework.core.model.utils.*;
 import org.globsframework.core.utils.TestUtils;
 import org.globsframework.core.utils.exceptions.*;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Predicate;
 
 import static org.globsframework.core.model.FieldValue.value;
-import static org.junit.Assert.*;
 
 public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
 
@@ -319,14 +319,14 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
         assertEquals("foo", dummy.get(DummyObject.NAME));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testNoIdGenerationForCompositeKeys() throws Exception {
         checkCreationWithMissingKeyError(DummyObjectWithCompositeKey.TYPE,
                 "Field 'id1' missing (should not be NULL) for identifying a Glob of type: dummyObjectWithCompositeKey");
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testNoIdGenerationForNonIntegerKeys() throws Exception {
         checkCreationWithMissingKeyError(DummyObjectWithStringKey.TYPE,
@@ -459,7 +459,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
         changeListener.assertLastChangesEqual(
                 "<update type='dummyObject' id='0' name='newName' _name='name'/>"
         );
-        Assert.assertEquals(1.4, repository.get(getKey(0)).get(DummyObject.VALUE), 0.001);
+        assertEquals(1.4, repository.get(getKey(0)).get(DummyObject.VALUE), 0.001);
     }
 
     @Test
@@ -1131,7 +1131,7 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
     }
 
     // The round should be done by the formatter at output level.
-    @Ignore
+    @Disabled
     @Test
     public void testRound() throws Exception {
         initRepository();

@@ -1,15 +1,13 @@
 package org.globsframework.core.utils;
 
 import org.globsframework.core.utils.exceptions.InvalidParameter;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class UtilsTest {
 
@@ -52,13 +50,13 @@ public class UtilsTest {
                             List<String>... result) {
         String actual = Utils.split(input, count).toString() + "\n";
         String expected = Arrays.asList(result).toString() + "\n";
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void testSplitAnEmptyList() throws Exception {
         List<List<String>> result = Utils.split(new ArrayList<String>(), 2);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -66,17 +64,17 @@ public class UtilsTest {
         try {
             Utils.split(Arrays.asList("a", "b"), 0);
         } catch (InvalidParameter e) {
-            Assert.assertEquals("Parameter 'count' must be > 0 - actual: 0", e.getMessage());
+            assertEquals("Parameter 'count' must be > 0 - actual: 0", e.getMessage());
         }
     }
 
     @Test
     public void testMinMax() throws Exception {
-        assertEquals(null, Utils.min());
+        assertNull(Utils.min());
         assertEquals("a", Utils.min("a", "b"));
         assertEquals("a", Utils.min("a", null, "b"));
 
-        assertEquals(null, Utils.max());
+        assertNull(Utils.max());
         assertEquals("b", Utils.max("a", "b"));
         assertEquals("b", Utils.max("a", null, "b"));
     }

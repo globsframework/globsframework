@@ -1,13 +1,16 @@
 package org.globsframework.core.utils.container;
 
-import junit.framework.TestCase;
 import org.globsframework.core.utils.Utils;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.TreeMap;
 
-public class ContainerTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
 
+public class ContainerTest {
+
+    @Test
     public void test() throws Exception {
         Container<Integer, Integer> container = Container.EMPTY_INSTANCE;
         container = container.put(1, 3);
@@ -129,7 +132,7 @@ public class ContainerTest extends TestCase {
         for (Iterator<Integer> iterator = container.values(); iterator.hasNext(); ) {
             Integer val = iterator.next();
             assertNotNull(val);
-            assertEquals(container.getClass().getName(), i * 2, val.intValue());
+            assertEquals(i * 2, val.intValue(), container.getClass().getName());
             i++;
         }
 
@@ -164,8 +167,8 @@ public class ContainerTest extends TestCase {
 
     private void checkRange(Container<Integer, Integer> container, int start, int max) {
         for (int i = start; i <= max; i++) {
-            assertNotNull(container.getClass().getName(), container.get(i));
-            assertEquals(container.getClass().getName(), i * 2, container.get(i).intValue());
+            assertNotNull(container.get(i), container.getClass().getName());
+            assertEquals(i * 2, container.get(i).intValue(), container.getClass().getName());
         }
     }
 }

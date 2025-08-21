@@ -9,10 +9,10 @@ import org.globsframework.core.model.KeyBuilder;
 import org.globsframework.core.model.repository.LocalGlobRepository;
 import org.globsframework.core.model.repository.LocalGlobRepositoryBuilder;
 import org.globsframework.core.utils.exceptions.InvalidState;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.globsframework.core.model.FieldValue.value;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalGlobRepositoryTest {
     private GlobChecker checker = new GlobChecker();

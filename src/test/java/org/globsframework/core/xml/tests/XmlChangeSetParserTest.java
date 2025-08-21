@@ -8,11 +8,11 @@ import org.globsframework.core.model.utils.DefaultFieldValuesWithPrevious;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.xml.XmlChangeSetParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlChangeSetParserTest {
     @Test

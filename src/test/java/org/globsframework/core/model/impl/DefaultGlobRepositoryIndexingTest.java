@@ -7,7 +7,7 @@ import org.globsframework.core.model.repository.LocalGlobRepository;
 import org.globsframework.core.model.repository.LocalGlobRepositoryBuilder;
 import org.globsframework.core.model.utils.GlobFunctor;
 import org.globsframework.core.utils.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.globsframework.core.model.FieldValue.value;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultGlobRepositoryIndexingTest extends DefaultGlobRepositoryTestCase {
 
@@ -66,7 +65,6 @@ public class DefaultGlobRepositoryIndexingTest extends DefaultGlobRepositoryTest
                 value(DummyObjectIndex.DATE, 20040101));
         assertEquals(Arrays.asList(3), findIDByDateIndex(20040101));
     }
-
 
     @Test
     public void testMultifieldUniqueIndex() throws Exception {

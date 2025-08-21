@@ -1,6 +1,5 @@
 package org.globsframework.core.model.utils;
 
-import junit.framework.AssertionFailedError;
 import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.annotations.Target;
@@ -11,7 +10,8 @@ import org.globsframework.core.model.ChangeSet;
 import org.globsframework.core.xml.XmlChangeSetParser;
 import org.globsframework.core.xml.XmlChangeSetVisitor;
 import org.globsframework.core.xml.tests.XmlTestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.StringReader;
 import java.io.StringWriter;

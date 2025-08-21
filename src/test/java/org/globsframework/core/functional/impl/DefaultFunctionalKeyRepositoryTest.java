@@ -7,11 +7,12 @@ import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.DummyObject2;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.Glob;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultFunctionalKeyRepositoryTest {
 
@@ -36,9 +37,9 @@ public class DefaultFunctionalKeyRepositoryTest {
         FunctionalKeyBuilder functionalKeyBuilderMuli = multiFunctionalKeyBuilderFactory.add(DummyObject.NAME).create();
 
         Collection<Glob> a11 = linkManager.get(functionalKeyBuilderMuli.create().set(DummyObject.NAME, "a1").getShared());
-        Assert.assertEquals(2, a11.size());
+        assertEquals(2, a11.size());
 
-        Assert.assertEquals(2, linkManager.getAll(functionalKeyBuilderMuli).count());
+        assertEquals(2, linkManager.getAll(functionalKeyBuilderMuli).count());
     }
 
 
@@ -67,16 +68,16 @@ public class DefaultFunctionalKeyRepositoryTest {
 
         Glob a1 = linkManager.get(functionalKeyBuilder.create().set(DummyObject.NAME, "a1")
                 .set(DummyObject.COUNT, 2).getShared()).iterator().next();
-        Assert.assertEquals(2, a1.get(DummyObject.ID).intValue());
+        assertEquals(2, a1.get(DummyObject.ID).intValue());
 
-        Assert.assertEquals(a1, linkManager.getUnique(functionalKeyBuilder.create().set(DummyObject.NAME, "a1")
+        assertEquals(a1, linkManager.getUnique(functionalKeyBuilder.create().set(DummyObject.NAME, "a1")
                 .set(DummyObject.COUNT, 2).getShared()));
 
         FunctionalKeyBuilder functionalKeyBuilder2 = FunctionalKeyBuilderFactory.create(DummyObject2.TYPE)
                 .add(DummyObject2.LABEL).create();
 
         Glob l2 = linkManager.get(functionalKeyBuilder2.create().set(DummyObject2.LABEL, "l2").getShared()).iterator().next();
-        Assert.assertEquals(2, l2.get(DummyObject2.ID).intValue());
+        assertEquals(2, l2.get(DummyObject2.ID).intValue());
 
         FunctionalKeyBuilderFactory functionalKeyBuilderFactory = FunctionalKeyBuilderFactory.create(DummyObject.TYPE);
         for (Field field : DummyObject.TYPE.getFields()) {
@@ -87,13 +88,13 @@ public class DefaultFunctionalKeyRepositoryTest {
         Glob l3 = linkManager.get(functionalKeyBuilderAll.create().set(DummyObject.NAME, "a1")
                 .set(DummyObject.ID, 2)
                 .set(DummyObject.COUNT, 2).getShared()).iterator().next();
-        Assert.assertEquals(2, l3.get(DummyObject.ID).intValue());
+        assertEquals(2, l3.get(DummyObject.ID).intValue());
 
-        Assert.assertEquals(3, linkManager.getAll(functionalKeyBuilder).count());
+        assertEquals(3, linkManager.getAll(functionalKeyBuilder).count());
 
         FunctionalKeyBuilderFactory multiFunctionalKeyBuilderFactory = FunctionalKeyBuilderFactory.create(DummyObject.TYPE);
         FunctionalKeyBuilder functionalKeyBuilderMuli = multiFunctionalKeyBuilderFactory.add(DummyObject.NAME).create();
 
-//        Assert.assertEquals(3, linkManager.getAll(functionalKeyBuilderMuli).count());
+//        assertEquals(3, linkManager.getAll(functionalKeyBuilderMuli).count());
     }
 }

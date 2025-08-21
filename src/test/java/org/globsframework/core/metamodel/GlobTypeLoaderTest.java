@@ -15,9 +15,9 @@ import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
 import org.globsframework.core.utils.exceptions.MissingInfo;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.junit.Assert.*;
 
 public class GlobTypeLoaderTest {
 
@@ -201,7 +200,7 @@ public class GlobTypeLoaderTest {
         public static IntegerField ID;
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testObjectWithNoKey() throws Exception {
         try {
@@ -323,7 +322,7 @@ public class GlobTypeLoaderTest {
         public static IntegerField LINK;
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testAnObjectWithALinkFieldTargettingANonGlobsObject() throws Exception {
         try {
@@ -450,7 +449,7 @@ public class GlobTypeLoaderTest {
         assertEquals("class annotations", classAnnotation.get(MyAnnotationType.VALUE));
         Collection<Glob> globs = AnObjectWithCustomAnnotations.TYPE.streamAnnotations(MyAnnotationType.TYPE)
                 .collect(Collectors.toList());
-        Assert.assertEquals(1, globs.size());
+        assertEquals(1, globs.size());
     }
 
     @Test
@@ -530,7 +529,7 @@ public class GlobTypeLoaderTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testAnObjectWithADefaultValueTypeError() throws Exception {
         try {
             GlobTypeLoaderFactory.createAndLoad(AnObjectWithADefaultValueTypeError.class);
@@ -619,11 +618,11 @@ public class GlobTypeLoaderTest {
         MutableGlob v1 = AnObjectWithoutKey.TYPE.instantiate()
                 .set(AnObjectWithoutKey.A, 1)
                 .set(AnObjectWithoutKey.B, AnObjectWithoutKey.TYPE.instantiate().set(AnObjectWithoutKey.A, 2));
-        Assert.assertTrue(AnObjectWithoutKey.B.valueOrKeyEqual(v1.get(AnObjectWithoutKey.B), AnObjectWithoutKey.TYPE.instantiate().set(AnObjectWithoutKey.A, 2)));
-        Assert.assertFalse(AnObjectWithoutKey.B.valueOrKeyEqual(v1.get(AnObjectWithoutKey.B), AnObjectWithoutKey.TYPE.instantiate().set(AnObjectWithoutKey.A, 3)));
+        assertTrue(AnObjectWithoutKey.B.valueOrKeyEqual(v1.get(AnObjectWithoutKey.B), AnObjectWithoutKey.TYPE.instantiate().set(AnObjectWithoutKey.A, 2)));
+        assertFalse(AnObjectWithoutKey.B.valueOrKeyEqual(v1.get(AnObjectWithoutKey.B), AnObjectWithoutKey.TYPE.instantiate().set(AnObjectWithoutKey.A, 3)));
 
         //same becauase ID are compare.
-        Assert.assertTrue(AnObjectWithoutKey.C
+        assertTrue(AnObjectWithoutKey.C
                 .valueOrKeyEqual(AnObject.TYPE.instantiate().set(AnObject.ID, 1).set(AnObject.DOUBLE, 2.2),
                         AnObject.TYPE.instantiate().set(AnObject.ID, 1).set(AnObject.DOUBLE, 2.3)));
 

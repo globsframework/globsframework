@@ -7,19 +7,19 @@ import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.GlobRepository;
 import org.globsframework.core.model.GlobRepositoryBuilder;
 import org.globsframework.core.utils.Strings;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 
 import static org.globsframework.core.model.FieldValue.value;
 import static org.globsframework.core.utils.Strings.LINE_SEPARATOR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GlobPrinterTest {
     private GlobRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         repository = GlobRepositoryBuilder.createEmpty();
     }

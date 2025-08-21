@@ -1,8 +1,8 @@
 package org.globsframework.core.utils.serialization;
 
-import junit.framework.TestCase;
 import org.globsframework.core.utils.NanoChrono;
 import org.globsframework.core.utils.TestUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,8 +12,11 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ByteBufferInputStreamTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+public class ByteBufferInputStreamTest {
+
+    @Test
     public void testReadFile() throws IOException {
         File file = TestUtils.getFileName(this, "sample.dat");
         file.getParentFile().mkdirs();

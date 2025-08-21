@@ -3,12 +3,12 @@ package org.globsframework.core.model.impl;
 import org.globsframework.core.metamodel.DummyObjectWithQuadrupleKey;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.KeyBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FourFieldKeyTest {
 
@@ -28,10 +28,10 @@ public class FourFieldKeyTest {
     @Test
     public void test() throws Exception {
         assertEquals(k1a, k1b);
-        assertFalse(k1a.equals(k2));
-        assertFalse(k1b.equals(k2));
+        assertNotEquals(k1a, k2);
+        assertNotEquals(k1b, k2);
 
-        assertTrue(k1a.hashCode() == k1b.hashCode());
+        assertEquals(k1a.hashCode(), k1b.hashCode());
         assertTrue(k1a.hashCode() != k2.hashCode());
         assertTrue(k1b.hashCode() != k2.hashCode());
 

@@ -2,8 +2,9 @@ package org.globsframework.core.metamodel.annotations;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 public class AnnotationsHelperTest {
 
@@ -29,12 +30,12 @@ public class AnnotationsHelperTest {
         AnnotationsHelper.getType(Type1.class);
         try {
             AnnotationsHelper.getType(Type2.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeException e) {
         }
         try {
             AnnotationsHelper.getType(Type3.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeException e) {
         }
     }

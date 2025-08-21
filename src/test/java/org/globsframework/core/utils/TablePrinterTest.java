@@ -1,13 +1,13 @@
 package org.globsframework.core.utils;
 
 import org.globsframework.core.utils.exceptions.InvalidParameter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TablePrinterTest {
     private StringWriter writer = new StringWriter();

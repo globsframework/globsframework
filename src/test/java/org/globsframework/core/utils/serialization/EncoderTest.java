@@ -4,10 +4,10 @@ import org.globsframework.core.metamodel.DummyModel;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.utils.GlobBuilder;
 import org.globsframework.core.utils.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.globsframework.core.metamodel.DummyObject.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EncoderTest {
 

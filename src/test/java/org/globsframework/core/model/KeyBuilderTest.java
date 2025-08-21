@@ -8,13 +8,13 @@ import org.globsframework.core.model.impl.CompositeKey;
 import org.globsframework.core.model.impl.SingleFieldKey;
 import org.globsframework.core.model.utils.FieldValueGetter;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.globsframework.core.model.KeyBuilder.newKey;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KeyBuilderTest {
     @Test

@@ -1,13 +1,16 @@
 package org.globsframework.core.utils;
 
-import junit.framework.AssertionFailedError;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.FieldValuesWithPrevious;
 import org.globsframework.core.model.FieldsValueScanner;
 import org.globsframework.core.model.FieldsValueWithPreviousScanner;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +41,7 @@ public class TestUtils {
             if (!e.getClass().isAssignableFrom(expectedException)) {
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
-                Assert.fail(expectedException.getName() + " expected but was " + e.getClass().getName() + "\n" +
+                fail(expectedException.getName() + " expected but was " + e.getClass().getName() + "\n" +
                         writer.toString());
             }
         }
@@ -46,61 +49,61 @@ public class TestUtils {
 
     public static <T> void assertEquals(T[] expected, T... actual) {
         if (!Arrays.equals(expected, actual)) {
-            Assert.fail("expected: \n" + Arrays.toString(expected) + "\n   but was: " + Arrays.toString(actual));
+            fail("expected: \n" + Arrays.toString(expected) + "\n   but was: " + Arrays.toString(actual));
         }
     }
 
     public static void assertEquals(double precision, double[] actual, double... expected) {
         if (actual.length != expected.length) {
-            Assert.fail("invalid length - expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
+            fail("invalid length - expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
         }
         for (int i = 0; i < expected.length; i++) {
             if (Math.abs(expected[i] - actual[i]) > precision) {
-                Assert.fail("error at position " + i + " - expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
+                fail("error at position " + i + " - expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
             }
         }
     }
 
     public static void assertEquals(double[] actual, double... expected) {
         if (!Arrays.equals(expected, actual)) {
-            Assert.fail("expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
+            fail("expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
         }
     }
 
     public static void assertEquals(int[] actual, int... expected) {
         if (!Arrays.equals(expected, actual)) {
-            Assert.fail("expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
+            fail("expected: " + Arrays.toString(expected) + " but was: " + Arrays.toString(actual));
         }
     }
 
     public static <T> void assertIteratorContains(Iterator<T> iterator, T... values) throws Exception {
         if ((values.length == 0) && iterator.hasNext()) {
-            Assert.fail("Expected empty iterator, but contains at least: " + iterator.next());
+            fail("Expected empty iterator, but contains at least: " + iterator.next());
         }
         for (int i = 0; i < values.length; i++) {
             if (!iterator.hasNext()) {
-                Assert.fail("Iterator has " + i + " elements instead of " + values.length);
+                fail("Iterator has " + i + " elements instead of " + values.length);
             }
             T value = values[i];
             T nextValue = iterator.next();
             if (!Utils.equal(nextValue, value)) {
-                Assert.fail("Error at index " + i + ": expected: " + value + " but was: " + nextValue);
+                fail("Error at index " + i + ": expected: " + value + " but was: " + nextValue);
             }
         }
         if (iterator.hasNext()) {
-            Assert.fail("Iterator has more than " + values.length + " elements, at least: " + iterator.next());
+            fail("Iterator has more than " + values.length + " elements, at least: " + iterator.next());
         }
     }
 
     public static <T> void assertEmpty(Collection<T> list) {
         if (!list.isEmpty()) {
-            Assert.fail("Expected an empty list, but contains: " + list);
+            fail("Expected an empty list, but contains: " + list);
         }
     }
 
     public static <T> void assertEmpty(Object[] array) {
         if (array.length != 0) {
-            Assert.fail("Expected an empty array, but contains: " + Arrays.toString(array));
+            fail("Expected an empty array, but contains: " + Arrays.toString(array));
         }
     }
 
@@ -138,15 +141,15 @@ public class TestUtils {
     }
 
     public static <T> void assertSetEquals(Collection<T> actual, Collection<T> expected) {
-        Assert.assertEquals(new HashSet(expected), new HashSet(actual));
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
     }
 
     public static <T> void assertSetEquals(Iterator<T> actual, T... expected) {
-        Set actualSet = new HashSet();
+        Set<T> actualSet = new HashSet<>();
         while (actual.hasNext()) {
             actualSet.add(actual.next());
         }
-        assertEquals(actualSet, new HashSet(Arrays.asList(expected)));
+        assertEquals(actualSet, new HashSet<>(Arrays.asList(expected)));
     }
 
     public static <T> void assertContained(T[] actualArray, T[] expectedItems) {
@@ -159,26 +162,26 @@ public class TestUtils {
 
     public static <T> void assertContains(Collection<T> actual, T... expectedItems) {
         if (!actual.containsAll(Arrays.asList(expectedItems))) {
-            Assert.fail("Collection: " + actual + "\n does not contain: " + Arrays.toString(expectedItems));
+            fail("Collection: " + actual + "\n does not contain: " + Arrays.toString(expectedItems));
         }
     }
 
     public static <T> void assertNotContains(Collection<T> actual, T... expectedItems) {
         for (T item : expectedItems) {
             if (actual.contains(item)) {
-                Assert.fail("Item '" + item + "' was found - actual collection: " + actual);
+                fail("Item '" + item + "' was found - actual collection: " + actual);
             }
         }
     }
 
     public static void assertDatesEqual(Date date1, Date date2, int margin) throws Exception {
         if (Math.abs(date1.getTime() - date2.getTime()) > margin) {
-            Assert.assertEquals(date1, date2);
+            Assertions.assertEquals(date1, date2);
         }
     }
 
     private static <T> void showFailures(String message, Collection<T> actual, Collection<T> expected) {
-        Assert.fail(message + "\n" +
+        fail(message + "\n" +
                 "expected: " + expected + "\n" +
                 "but was:  " + actual);
     }
@@ -211,7 +214,7 @@ public class TestUtils {
             for (Object key : keys) {
                 text.append("\n").append(key);
             }
-            Assert.fail(text.toString());
+            fail(text.toString());
         }
     }
 

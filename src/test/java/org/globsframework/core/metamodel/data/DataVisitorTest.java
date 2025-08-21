@@ -1,12 +1,12 @@
 package org.globsframework.core.metamodel.data;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class DataVisitorTest {
 
     @Test
-    @Ignore
+    @Disabled
     public void name() {
         DataVisitor dataVisitor = null;
 
