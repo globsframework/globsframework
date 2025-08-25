@@ -8,7 +8,7 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.FieldValues;
 
 public class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
-    private Field field;
+    final Field field;
     private Field fields[];
 
     public OneFunctionalKeyBuilder(Field field) {

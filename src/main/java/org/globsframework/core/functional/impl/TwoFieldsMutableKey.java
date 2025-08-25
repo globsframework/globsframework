@@ -16,6 +16,8 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
 
     TwoFieldsMutableKey(TwoFunctionalKeyBuilder functionalKeyBuilder) {
         this.functionalKeyBuilder = functionalKeyBuilder;
+        this.value1 = NULL_VALUE;
+        this.value2 = NULL_VALUE;
     }
 
     TwoFieldsMutableKey(TwoFunctionalKeyBuilder functionalKeyBuilder, Object value1, Object value2) {
@@ -34,7 +36,8 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     protected Object doGet(Field field) {
-        return field == functionalKeyBuilder.field1 ? value1 : value2;
+        return (field == functionalKeyBuilder.field1 ? getNotNullValue(value1) :
+                field == functionalKeyBuilder.field2 ? getNotNullValue(value2) : null);
     }
 
     public FunctionalKey getShared() {
@@ -42,8 +45,13 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public FunctionalKey create() {
-        return new TwoFieldsMutableKey(functionalKeyBuilder,
-                value1, value2);
+        return new TwoFieldsMutableKey(functionalKeyBuilder, value1, value2);
+    }
+
+    @Override
+    public void unset(Field field) {
+        value1 = NULL_VALUE;
+        value2 = NULL_VALUE;
     }
 
     public boolean contains(Field field) {
@@ -56,20 +64,37 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
-        functionalKeyBuilder.field1.accept(functor, value1);
-        functionalKeyBuilder.field2.accept(functor, value2);
+        if (value1 != NULL_VALUE) {
+            functionalKeyBuilder.field1.accept(functor, value1);
+        }
+        if (value2 != NULL_VALUE) {
+            functionalKeyBuilder.field2.accept(functor, value2);
+        }
         return functor;
     }
 
     public <T extends Functor> T apply(T functor) throws Exception {
-        functor.process(functionalKeyBuilder.field1, value1);
-        functor.process(functionalKeyBuilder.field2, value2);
+        if (value1 != NULL_VALUE) {
+            functor.process(functionalKeyBuilder.field1, value1);
+        }
+        if (value2 != NULL_VALUE) {
+            functor.process(functionalKeyBuilder.field2, value2);
+        }
         return functor;
     }
 
     public FieldValue[] toArray() {
-        return new FieldValue[]{FieldValue.value(functionalKeyBuilder.field1, value1),
-                FieldValue.value(functionalKeyBuilder.field2, value2)};
+        if (value1 == NULL_VALUE && value2 == NULL_VALUE) {
+            return EMPTY.toArray();
+        }
+        if (value1 != NULL_VALUE && value2 != NULL_VALUE) {
+            return new FieldValue[]{FieldValue.value(functionalKeyBuilder.field1, value1),
+                    FieldValue.value(functionalKeyBuilder.field2, value2)};
+        }
+        if (value1 != NULL_VALUE) {
+            return new FieldValue[]{FieldValue.value(functionalKeyBuilder.field1, value1)};
+        }
+        return new FieldValue[]{FieldValue.value(functionalKeyBuilder.field2, value2)};
     }
 
     public FunctionalKeyBuilder getBuilder() {
@@ -103,7 +128,7 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return true;
+        return field == functionalKeyBuilder.field1 ? value1 != NULL_VALUE : value2 != NULL_VALUE;
     }
 
     public String toString() {

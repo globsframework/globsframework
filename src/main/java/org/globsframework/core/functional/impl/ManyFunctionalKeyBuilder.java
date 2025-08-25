@@ -10,8 +10,8 @@ import org.globsframework.core.model.FieldValues;
 import java.util.Arrays;
 
 public class ManyFunctionalKeyBuilder implements FunctionalKeyBuilder {
-    Field fields[];
-    int index[];
+    final Field[] fields;
+    final int[] index;
 
     ManyFunctionalKeyBuilder(Field[] fields) {
         this.fields = fields;

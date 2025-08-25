@@ -9,16 +9,19 @@ import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final ManyFunctionalKeyBuilder functionalKeyBuilder;
-    private Object values[];
+    private final Object[] values;
 
     ManyFieldsMutableKey(ManyFunctionalKeyBuilder functionalKeyBuilder) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         values = new Object[functionalKeyBuilder.fields.length];
+        Arrays.fill(values, NULL_VALUE);
     }
 
     ManyFieldsMutableKey(ManyFunctionalKeyBuilder functionalKeyBuilder, FieldValues fieldValues) {
@@ -27,7 +30,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
         values = new Object[fields.length];
         int i = 0;
         for (Field field : fields) {
-            values[i] = fieldValues.getValue(field);
+            values[i] = fieldValues.isSet(field) ? fieldValues.getValue(field) : NULL_VALUE;
             i++;
         }
     }
@@ -43,7 +46,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     protected Object doGet(Field field) {
-        return values[functionalKeyBuilder.index[field.getIndex()]];
+        return getNotNullValue(values[functionalKeyBuilder.index[field.getIndex()]]);
     }
 
     public FunctionalKey getShared() {
@@ -52,6 +55,11 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
 
     public FunctionalKey create() {
         return new ManyFieldsMutableKey(functionalKeyBuilder, Arrays.copyOf(values, values.length));
+    }
+
+    @Override
+    public void unset(Field field) {
+        Arrays.fill(values, NULL_VALUE);
     }
 
     public boolean contains(Field field) {
@@ -65,7 +73,9 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         Field[] fields = functionalKeyBuilder.fields;
         for (int i = 0; i < values.length; i++) {
-            fields[i].accept(functor, values[i]);
+            if (values[i] != NULL_VALUE) {
+                fields[i].accept(functor, values[i]);
+            }
         }
         return functor;
     }
@@ -73,17 +83,21 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     public <T extends Functor> T apply(T functor) throws Exception {
         Field[] fields = functionalKeyBuilder.fields;
         for (int i = 0; i < values.length; i++) {
-            functor.process(fields[i], values[i]);
+            if (values[i] != NULL_VALUE) {
+                functor.process(fields[i], values[i]);
+            }
         }
         return functor;
     }
 
     public FieldValue[] toArray() {
-        FieldValue fieldValue[] = new FieldValue[values.length];
+        List<FieldValue> fieldValueList = new ArrayList<>();
         for (int i = 0; i < values.length; i++) {
-            fieldValue[i] = FieldValue.value(functionalKeyBuilder.fields[i], values[i]);
+            if (values[i] != NULL_VALUE) {
+                fieldValueList.add(FieldValue.value(functionalKeyBuilder.fields[i], values[i]));
+            }
         }
-        return fieldValue;
+        return fieldValueList.toArray(FieldValue[]::new);
     }
 
     public FunctionalKeyBuilder getBuilder() {
@@ -115,13 +129,13 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return true;
+        return values[functionalKeyBuilder.index[field.getIndex()]] != NULL_VALUE;
     }
 
     public String toString() {
         return "ManyFieldsMutableKey{" +
-                "functionalKeyBuilder=" + functionalKeyBuilder +
-                ", values=" + Arrays.toString(values) +
-                '}';
+               "functionalKeyBuilder=" + functionalKeyBuilder +
+               ", values=" + Arrays.toString(values) +
+               '}';
     }
 }

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public abstract class AbstractFieldValue<T extends FieldSetter> implements FieldSetter<T>, FieldValues {
+    protected static final Object NULL_VALUE = new Object();
 
     protected abstract T doSet(Field field, Object o);
 
@@ -209,5 +210,9 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
 
     public Glob[] get(GlobArrayUnionField field) throws ItemNotFound {
         return (Glob[]) doGet(field);
+    }
+
+    public Object getNotNullValue(Object o) {
+        return o == NULL_VALUE ? null : o;
     }
 }

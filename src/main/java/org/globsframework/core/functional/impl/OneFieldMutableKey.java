@@ -28,7 +28,7 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     protected Object doGet(Field field) {
-        return value;
+        return getNotNullValue(value);
     }
 
     public FunctionalKey getShared() {
@@ -39,8 +39,13 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return new OneFieldMutableKey(functionalKeyBuilder, value);
     }
 
+    @Override
+    public void unset(Field field) {
+        value =  NULL_VALUE;
+    }
+
     public boolean contains(Field field) {
-        return functionalKeyBuilder.getFields()[0] == field;
+        return functionalKeyBuilder.field == field;
     }
 
     public int size() {
@@ -48,17 +53,24 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     public <T extends Functor> T apply(T functor) throws Exception {
-        functor.process(functionalKeyBuilder.getFields()[0], value);
+        if (value != NULL_VALUE) {
+            functor.process(functionalKeyBuilder.getFields()[0], value);
+        }
         return functor;
     }
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
-        functionalKeyBuilder.getFields()[0].accept(functor, value);
+        if (value != NULL_VALUE) {
+            functionalKeyBuilder.getFields()[0].accept(functor, value);
+        }
         return functor;
     }
 
     public FieldValue[] toArray() {
-        return new FieldValue[]{new FieldValue(functionalKeyBuilder.getFields()[0], value)};
+        if (value == NULL_VALUE) {
+            return EMPTY.toArray();
+        }
+        return new FieldValue[]{new FieldValue(functionalKeyBuilder.field, value)};
     }
 
     public FunctionalKeyBuilder getBuilder() {
@@ -87,11 +99,9 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return result;
     }
 
-
     public boolean isSet(Field field) throws ItemNotFound {
-        return true;
+        return value != NULL_VALUE;
     }
-
 
     public String toString() {
         return "OneFieldMutableKey{" +

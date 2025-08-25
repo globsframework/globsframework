@@ -58,7 +58,6 @@ public class DefaultFunctionalKeyRepositoryTest {
                 ).filter(g -> g.getType() == type));
 
         checkUnique(linkManager);
-
     }
 
     private void checkUnique(FunctionalKeyRepository linkManager) {
@@ -85,9 +84,11 @@ public class DefaultFunctionalKeyRepositoryTest {
         }
         FunctionalKeyBuilder functionalKeyBuilderAll = functionalKeyBuilderFactory.create();
 
-        Glob l3 = linkManager.get(functionalKeyBuilderAll.create().set(DummyObject.NAME, "a1")
+        Glob l3 = linkManager.get(functionalKeyBuilderAll.create()
+                .set(DummyObject.NAME, "a1")
                 .set(DummyObject.ID, 2)
-                .set(DummyObject.COUNT, 2).getShared()).iterator().next();
+                .set(DummyObject.COUNT, 2)
+                .getShared()).iterator().next();
         assertEquals(2, l3.get(DummyObject.ID).intValue());
 
         assertEquals(3, linkManager.getAll(functionalKeyBuilder).count());
