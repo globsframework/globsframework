@@ -1,10 +1,5 @@
 package org.globsframework.core.utils.serialization;
 
-import org.globsframework.core.metamodel.GlobModel;
-import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.fields.*;
-import org.globsframework.core.model.*;
-
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -14,7 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 public class ByteBufferSerializationInput implements SerializedInput {
-    private final byte[] data;
+    private byte[] data;
     private int count;
 
     public ByteBufferSerializationInput(byte[] data) {
@@ -22,6 +17,15 @@ public class ByteBufferSerializationInput implements SerializedInput {
     }
 
     public ByteBufferSerializationInput(byte[] data, int offset) {
+        this.data = data;
+        count = offset;
+    }
+
+    public void reset(int offset) {
+        count = offset;
+    }
+
+    public void reset(byte[] data, int offset) {
         this.data = data;
         count = offset;
     }

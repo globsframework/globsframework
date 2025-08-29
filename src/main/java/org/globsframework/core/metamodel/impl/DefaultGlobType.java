@@ -36,6 +36,7 @@ public class DefaultGlobType extends DefaultAnnotations
     private final Map<String, Field> fieldsByName = new HashMap<>();
     private final Map<String, Index> indices = new HashMap<>(2, 1);
     private final Map<Class<?>, Object> registered = new ConcurrentHashMap<>();
+    private Object[] properties = new Object[2];
 
     public DefaultGlobType(String name) {
         this(name, null);
@@ -264,16 +265,15 @@ public class DefaultGlobType extends DefaultAnnotations
         }
     }
 
-    Object[] prop = new Object[2];
-
-    public <T> T get(Property<T> property) {
+    synchronized public <T> T get(Property<T> property) {
         int index = property.getIndex();
-        if (prop.length < index) {
-            prop = Arrays.copyOf(prop, index + 2);
+        if (properties.length < index) {
+            properties = Arrays.copyOf(properties, index + 2);
         }
-        if (prop[index] == null) {
-            return (T) (prop[index] = property.build( this ));
+        final Object p = properties[index];
+        if (p == null) {
+            return (T) (properties[index] = property.build( this ));
         }
-        return (T) prop[index];
+        return (T) p;
     }
 }
