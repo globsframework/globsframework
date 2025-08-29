@@ -51,7 +51,7 @@ public class DefaultGlobFactory implements GlobFactory {
         return type;
     }
 
-    public MutableGlob create() {
+    public MutableGlob create(Object context) {
         if (type.getFieldCount() <= 64) {
             return new DefaultGlob64(type);
         }

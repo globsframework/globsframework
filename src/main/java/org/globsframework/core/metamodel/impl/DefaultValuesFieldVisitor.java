@@ -7,6 +7,8 @@ import org.globsframework.core.model.MutableGlob;
 import java.math.BigDecimal;
 
 public class DefaultValuesFieldVisitor extends FieldVisitorWithContext.AbstractFieldVisitor<MutableGlob> {
+    public static final DefaultValuesFieldVisitor INSTANCE = new DefaultValuesFieldVisitor();
+
     public void visitInteger(IntegerField field, MutableGlob context) throws Exception {
         if (field.hasAnnotation(DefaultInteger.KEY)) {
             context.set(field.asIntegerField(), (int) field.getDefaultValue());
