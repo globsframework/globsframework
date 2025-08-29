@@ -12,7 +12,7 @@ public interface GlobFactory {
 
     GlobType getGlobType();
 
-    MutableGlob create();
+    MutableGlob create(Object context);
 
     GlobSetAccessor getSetValueAccessor(Field field);
 

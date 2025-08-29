@@ -62,12 +62,20 @@ public interface GlobType extends MutableAnnotations {
 //    GlobGetAccessor getAccessor(Field field);
 
     default MutableGlob instantiate() {
-        return getGlobFactory().create();
+        return instantiate(null);
+    }
+
+    default MutableGlob instantiate(Object context) {
+        return getGlobFactory().create(context);
     }
 
     default MutableGlob instantiateWithDefaults() {
-        MutableGlob glob = getGlobFactory().create();
-        FieldVisitorWithContext<MutableGlob> visitor = new DefaultValuesFieldVisitor();
+        return instantiateWithDefaults(null);
+    }
+
+    default MutableGlob instantiateWithDefaults(Object context) {
+        MutableGlob glob = instantiate(context);
+        FieldVisitorWithContext<MutableGlob> visitor = DefaultValuesFieldVisitor.INSTANCE;
         streamFields().forEach(field -> field.safeAccept(visitor, glob));
         return glob;
     }
