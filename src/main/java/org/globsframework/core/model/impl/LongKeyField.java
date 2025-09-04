@@ -50,17 +50,15 @@ public class LongKeyField extends AbstractKey {
         if (o == null) {
             return false;
         }
-        if (o.getClass().equals(LongKeyField.class)) {
-            LongKeyField otherSingleFieldKey = (LongKeyField) o;
+        if (o instanceof LongKeyField otherSingleFieldKey) {
             return otherSingleFieldKey.getGlobType() == keyField.getGlobType() &&
                     (!otherSingleFieldKey.isNull && !isNull) ? keyField.valueEqual(otherSingleFieldKey.value, value) :
                     otherSingleFieldKey.isNull && isNull;
         }
 
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key otherKey)) {
             return false;
         }
-        Key otherKey = (Key) o;
         return keyField.getGlobType() == otherKey.getGlobType()
                 && keyField.valueEqual(isNull ? null : value, otherKey.getValue(keyField));
     }

@@ -77,18 +77,16 @@ public class TwoFieldKey extends AbstractKey {
         if (o == null) {
             return false;
         }
-        if (o.getClass().equals(TwoFieldKey.class)) {
-            TwoFieldKey twoFieldKey = (TwoFieldKey) o;
+        if (o instanceof TwoFieldKey twoFieldKey) {
             Field[] keyFields = type.getKeyFields();
             return type == twoFieldKey.getGlobType() &&
                     keyFields[0].valueEqual(twoFieldKey.value1, value1) &&
                     keyFields[1].valueEqual(twoFieldKey.value2, value2);
         }
 
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key otherKey)) {
             return false;
         }
-        Key otherKey = (Key) o;
         Field[] keyFields = type.getKeyFields();
         return type == otherKey.getGlobType()
                 && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))

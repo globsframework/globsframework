@@ -170,12 +170,11 @@ public class EmptyKey implements Key {
         if (o == null) {
             return false;
         }
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key key)) {
             return false;
         }
 
-        Key key = (Key) o;
-        return type.equals(key.getGlobType());
+        return type == key.getGlobType();
     }
 
     public int hashCode() {

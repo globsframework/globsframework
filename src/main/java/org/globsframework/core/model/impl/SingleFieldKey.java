@@ -61,16 +61,14 @@ public class SingleFieldKey extends AbstractKey {
         if (o == null) {
             return false;
         }
-        if (o.getClass().equals(SingleFieldKey.class)) {
-            SingleFieldKey otherSingleFieldKey = (SingleFieldKey) o;
+        if (o instanceof SingleFieldKey otherSingleFieldKey) {
             return otherSingleFieldKey.keyField == keyField &&
                     keyField.valueEqual(otherSingleFieldKey.value, value);
         }
 
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key otherKey)) {
             return false;
         }
-        Key otherKey = (Key) o;
         return keyField.getGlobType() == otherKey.getGlobType()
                 && keyField.valueEqual(value, otherKey.getValue(keyField));
     }

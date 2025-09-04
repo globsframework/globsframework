@@ -73,12 +73,11 @@ public class CompositeKey extends AbstractKey {
             return false;
         }
 
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key otherKey)) {
             return false;
         }
 
-        Key otherKey = (Key) o;
-        if (!type.equals(otherKey.getGlobType())) {
+        if (type != otherKey.getGlobType()) {
             return false;
         }
 
