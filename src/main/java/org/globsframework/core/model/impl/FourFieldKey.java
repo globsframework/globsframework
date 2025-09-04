@@ -103,8 +103,7 @@ public class FourFieldKey extends AbstractKey {
         if (o == null) {
             return false;
         }
-        if (o.getClass() == FourFieldKey.class) {
-            FourFieldKey otherSingleFieldKey = (FourFieldKey) o;
+        if (o instanceof FourFieldKey otherSingleFieldKey) {
             Field[] keyFields = getGlobType().getKeyFields();
             return type == otherSingleFieldKey.getGlobType() &&
                     keyFields[0].valueEqual(otherSingleFieldKey.value1, value1) &&
@@ -113,10 +112,9 @@ public class FourFieldKey extends AbstractKey {
                     keyFields[3].valueEqual(otherSingleFieldKey.value4, value4);
         }
 
-        if (!Key.class.isAssignableFrom(o.getClass())) {
+        if (!(o instanceof Key otherKey)) {
             return false;
         }
-        Key otherKey = (Key) o;
         Field[] keyFields = type.getKeyFields();
         return type == otherKey.getGlobType()
                 && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))
