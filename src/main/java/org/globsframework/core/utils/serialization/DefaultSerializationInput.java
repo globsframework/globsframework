@@ -7,7 +7,6 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -18,9 +17,24 @@ public class DefaultSerializationInput implements SerializedInput {
     public static final int MAX_SIZE_FOR_BYTES = Integer.getInteger(ORG_GLOBSFRAMWORK_SERIALIZATION_MAX_LEN, 512 * 1024);
     private final InputStream inputStream;
     public int count;
+    private byte[] buffer = new byte[1024];
+    private char[] array = new char[20];
 
     public DefaultSerializationInput(InputStream inputStream) {
         this.inputStream = inputStream;
+    }
+
+    void readSize(int reserve) {
+        try {
+            if (reserve > buffer.length) {
+                buffer = new byte[reserve + 1024];
+            }
+            if (inputStream.read(buffer, 0, reserve) != reserve) {
+                throw new EOFIOFailure("eof");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int[] readIntArray() {
@@ -147,17 +161,11 @@ public class DefaultSerializationInput implements SerializedInput {
     }
 
     public int readNotNullInt() {
-        int ch1 = read();
-        int ch2 = read();
-        int ch3 = read();
-        int ch4 = read();
-        return toInt(ch1, ch2, ch3, ch4);
-    }
-
-    public static int toInt(int ch1, int ch2, int ch3, int ch4) {
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
-            throw new EOFIOFailure("eof");
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0x0));
+        readSize(4);
+        return (((buffer[0]) << 24) +
+                ((buffer[1] & 255) << 16) +
+                ((buffer[2] & 255) << 8) +
+                ((buffer[3] & 255)));
     }
 
     private boolean isNull() {
@@ -176,12 +184,77 @@ public class DefaultSerializationInput implements SerializedInput {
         return Double.longBitsToDouble(readNotNullLong());
     }
 
+    /*
+    code from DataInputStream
+     */
     public String readUtf8String() {
-        byte[] bytes = readBytes();
-        if (bytes == null) {
+        int utflen = readNotNullInt();
+        if (utflen == -1) {
             return null;
         }
-        return new String(bytes, StandardCharsets.UTF_8);
+        readSize(utflen);
+        byte[] bytearr = buffer;
+        if (array.length < utflen) {
+            array = new char[utflen + 10];
+        }
+        char[] chararr = array;
+
+        int c, char2, char3;
+        int count = 0;
+        int chararr_count = 0;
+
+        while (count < utflen) {
+            c = (int) bytearr[count] & 0xff;
+            if (c > 127) break;
+            count++;
+            chararr[chararr_count++] = (char) c;
+        }
+
+        while (count < utflen) {
+            c = (int) bytearr[count] & 0xff;
+            switch (c >> 4) {
+                case 0, 1, 2, 3, 4, 5, 6, 7 -> {
+                    /* 0xxxxxxx*/
+                    count++;
+                    chararr[chararr_count++] = (char) c;
+                }
+                case 12, 13 -> {
+                    /* 110x xxxx   10xx xxxx*/
+                    count += 2;
+                    if (count > utflen)
+                        throw new RuntimeException(
+                                "malformed input: partial character at end");
+                    char2 = (int) bytearr[count - 1];
+                    if ((char2 & 0xC0) != 0x80)
+                        throw new RuntimeException(
+                                "malformed input around byte " + count);
+                    chararr[chararr_count++] = (char) (((c & 0x1F) << 6) |
+                                                       (char2 & 0x3F));
+                }
+                case 14 -> {
+                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
+                    count += 3;
+                    if (count > utflen)
+                        throw new RuntimeException(
+                                "malformed input: partial character at end");
+                    char2 = (int) bytearr[count - 2];
+                    char3 = (int) bytearr[count - 1];
+                    if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
+                        throw new RuntimeException(
+                                "malformed input around byte " + (count - 1));
+                    chararr[chararr_count++] = (char) (((c & 0x0F) << 12) |
+                                                       ((char2 & 0x3F) << 6) |
+                                                       ((char3 & 0x3F) << 0));
+                }
+                default ->
+                    /* 10xx xxxx,  1111 xxxx */
+                        throw new RuntimeException(
+                                "malformed input around byte " + count);
+            }
+        }
+        // The number of chars produced may be less than utflen
+        return new String(chararr, 0, chararr_count);
+
     }
 
     public Boolean readBoolean() {
@@ -197,14 +270,20 @@ public class DefaultSerializationInput implements SerializedInput {
     }
 
     public long readNotNullLong() {
-        return (((long) read() << 56) +
-                ((long) (read()) << 48) +
-                ((long) (read()) << 40) +
-                ((long) (read()) << 32) +
-                ((long) (read()) << 24) +
-                ((long) (read()) << 16) +
-                ((long) (read()) << 8) +
-                ((read())));
+        readSize(8);
+        return readReservedLong();
+    }
+
+    private long readReservedLong() {
+        count += 8;
+        return (((long)buffer[0] << 56) +
+                ((long)(buffer[1] & 255) << 48) +
+                ((long)(buffer[2] & 255) << 40) +
+                ((long)(buffer[3] & 255) << 32) +
+                ((long)(buffer[4] & 255) << 24) +
+                ((buffer[5] & 255) << 16) +
+                ((buffer[6] & 255) <<  8) +
+                ((buffer[7] & 255)));
     }
 
     private int read() {
@@ -221,7 +300,8 @@ public class DefaultSerializationInput implements SerializedInput {
     }
 
     public byte readByte() {
-        return (byte) (read());
+        readSize(1);
+        return buffer[0];
     }
 
     public byte[] readBytes() {

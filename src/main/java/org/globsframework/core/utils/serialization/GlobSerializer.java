@@ -15,82 +15,81 @@ public class GlobSerializer {
 
     public void writeGlob(Glob glob) {
         output.writeUtf8String(glob.getType().getName());
-        OutputStreamFieldVisitor visitor = new OutputStreamFieldVisitor(glob, output);
         for (Field field : glob.getType().getFields()) {
-            field.safeAccept(visitor);
+            field.safeAccept(OutputStreamFieldVisitor.INSTANCE, glob, output);
         }
     }
 
     public void writeKnowGlob(Glob glob) {
-        OutputStreamFieldVisitor visitor = new OutputStreamFieldVisitor(glob, output);
         for (Field field : glob.getType().getFields()) {
-            field.safeAccept(visitor);
+            field.safeAccept(OutputStreamFieldVisitor.INSTANCE, glob, output);
         }
     }
 
-    private class OutputStreamFieldVisitor implements FieldVisitor {
-        private Glob glob;
-        private final SerializedOutput output;
+    private static class OutputStreamFieldVisitor implements FieldVisitorWithTwoContext<Glob, SerializedOutput> {
+        public final static OutputStreamFieldVisitor INSTANCE = new OutputStreamFieldVisitor();
 
-        public OutputStreamFieldVisitor(Glob glob, SerializedOutput output) {
-            this.glob = glob;
-            this.output = output;
-        }
-
-        public void visitInteger(IntegerField field) {
+        public void visitInteger(IntegerField field, Glob glob, SerializedOutput output) {
             output.writeInteger(glob.get(field));
         }
 
-        public void visitIntegerArray(IntegerArrayField field) {
+        public void visitIntegerArray(IntegerArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitDouble(DoubleField field) {
+        public void visitDouble(DoubleField field, Glob glob, SerializedOutput output) {
             output.writeDouble(glob.get(field));
         }
 
-        public void visitDoubleArray(DoubleArrayField field) {
+        public void visitDoubleArray(DoubleArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitBigDecimal(BigDecimalField field) {
+        public void visitBigDecimal(BigDecimalField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitBigDecimalArray(BigDecimalArrayField field) {
+        public void visitBigDecimalArray(BigDecimalArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitString(StringField field) {
+        public void visitString(StringField field, Glob glob, SerializedOutput output) {
             output.writeUtf8String(glob.get(field));
         }
 
-        public void visitStringArray(StringArrayField field) {
+        public void visitStringArray(StringArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitBoolean(BooleanField field) {
+        public void visitBoolean(BooleanField field, Glob glob, SerializedOutput output) {
             output.writeBoolean(glob.get(field));
         }
 
-        public void visitBooleanArray(BooleanArrayField field) {
+        public void visitBooleanArray(BooleanArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitBlob(BlobField field) {
+        public void visitBlob(BlobField field, Glob glob, SerializedOutput output) {
             output.writeBytes(glob.get(field));
         }
 
-        public void visitGlob(GlobField field) throws Exception {
-            Glob glob = this.glob.get(field);
-            output.write(glob != null);
-            if (glob != null) {
-                writeKnowGlob(glob);
+
+        public void writeKnowGlob(Glob glob, SerializedOutput output) {
+            for (Field field : glob.getType().getFields()) {
+                field.safeAccept(this, glob, output);
             }
         }
 
-        public void visitGlobArray(GlobArrayField field) throws Exception {
-            Glob[] globs = glob.get(field);
+        public void visitGlob(GlobField field, Glob data, SerializedOutput output) throws Exception {
+            Glob glob = data.get(field);
+            output.write(glob != null);
+            if (glob != null) {
+                writeKnowGlob(glob, output);
+            }
+        }
+
+        public void visitGlobArray(GlobArrayField field, Glob data, SerializedOutput output) throws Exception {
+            Glob[] globs = data.get(field);
             if (globs == null) {
                 output.write(-1);
             } else {
@@ -98,23 +97,29 @@ public class GlobSerializer {
                 for (Glob glob : globs) {
                     output.write(glob != null);
                     if (glob != null) {
-                        writeKnowGlob(glob);
+                        writeKnowGlob(glob, output);
                     }
                 }
             }
 
         }
-
-        public void visitUnionGlob(GlobUnionField field) throws Exception {
-            Glob glob = this.glob.get(field);
-            output.write(glob != null);
-            if (glob != null) {
-                writeGlob(glob);
+        public void writeGlob(Glob glob, SerializedOutput output) {
+            output.writeUtf8String(glob.getType().getName());
+            for (Field field : glob.getType().getFields()) {
+                field.safeAccept(this, glob, output);
             }
         }
 
-        public void visitUnionGlobArray(GlobArrayUnionField field) throws Exception {
-            Glob[] globs = glob.get(field);
+        public void visitUnionGlob(GlobUnionField field, Glob data, SerializedOutput output) throws Exception {
+            Glob glob = data.get(field);
+            output.write(glob != null);
+            if (glob != null) {
+                writeGlob(glob, output);
+            }
+        }
+
+        public void visitUnionGlobArray(GlobArrayUnionField field, Glob data, SerializedOutput output) throws Exception {
+            Glob[] globs = data.get(field);
             if (globs == null) {
                 output.write(-1);
             } else {
@@ -122,31 +127,30 @@ public class GlobSerializer {
                 for (Glob glob : globs) {
                     output.write(glob != null);
                     if (glob != null) {
-                        writeGlob(glob);
+                        writeGlob(glob, output);
                     }
                 }
             }
         }
 
-        public void visitLong(LongField field) {
+        public void visitLong(LongField field, Glob glob, SerializedOutput output) {
             output.writeLong(glob.get(field));
         }
 
-        public void visitLongArray(LongArrayField field) {
+        public void visitLongArray(LongArrayField field, Glob glob, SerializedOutput output) {
             output.write(glob.get(field));
         }
 
-        public void visitDate(DateField field) {
+        public void visitDate(DateField field, Glob glob, SerializedOutput output) {
             writeDate(glob.get(field), output);
         }
 
-        public void visitDateTime(DateTimeField field) {
+        public void visitDateTime(DateTimeField field, Glob glob, SerializedOutput output) {
             writeDateTime(glob.get(field), output);
         }
     }
 
-
-    private void writeDate(LocalDate date, SerializedOutput output) {
+    private static void writeDate(LocalDate date, SerializedOutput output) {
         if (date == null) {
             output.write(Integer.MIN_VALUE);
         } else {
@@ -156,7 +160,7 @@ public class GlobSerializer {
         }
     }
 
-    private void writeDateTime(ZonedDateTime date, SerializedOutput output) {
+    private static void writeDateTime(ZonedDateTime date, SerializedOutput output) {
         if (date == null) {
             output.write(Integer.MIN_VALUE);
         } else {

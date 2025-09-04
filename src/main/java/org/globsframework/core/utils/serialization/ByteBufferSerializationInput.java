@@ -158,16 +158,12 @@ public class ByteBufferSerializationInput implements SerializedInput {
     }
 
     private int readI() {
+        int p = count;
         count += 4;
-        int ch1 = data[count - 4] & 0xff;
-        int ch2 = data[count - 3] & 0xff;
-        int ch3 = data[count - 2] & 0xff;
-        int ch4 = data[count - 1] & 0xff;
-        return toInt(ch1, ch2, ch3, ch4);
-    }
-
-    public static int toInt(int ch1, int ch2, int ch3, int ch4) {
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0x0));
+        return (((data[p]) << 24)
+                + ((data[p + 1] & 0xff) << 16)
+                + ((data[p + 2] & 0xff) << 8)
+                + ((data[p + 3] & 0xff) << 0x0));
     }
 
     private boolean isNull() {
@@ -212,15 +208,16 @@ public class ByteBufferSerializationInput implements SerializedInput {
     }
 
     private long readL() {
+        int p = count;
         count += 8;
-        return (((long) (data[count - 8] & 0xff) << 56) +
-                ((long) (data[count - 7] & 0xff) << 48) +
-                ((long) (data[count - 6] & 0xff) << 40) +
-                ((long) (data[count - 5] & 0xff) << 32) +
-                ((long) (data[count - 4] & 0xff) << 24) +
-                ((long) (data[count - 3] & 0xff) << 16) +
-                ((long) (data[count - 2] & 0xff) << 8) +
-                ((data[count - 1] & 0xff)));
+        return (((long) (data[p]) << 56) +
+                ((long) (data[p + 1] & 0xff) << 48) +
+                ((long) (data[p + 2] & 0xff) << 40) +
+                ((long) (data[p + 3] & 0xff) << 32) +
+                ((long) (data[p + 4] & 0xff) << 24) +
+                ((long) (data[p + 5] & 0xff) << 16) +
+                ((long) (data[p + 6] & 0xff) << 8) +
+                ((data[p + 7] & 0xff)));
     }
 
     private int read() {

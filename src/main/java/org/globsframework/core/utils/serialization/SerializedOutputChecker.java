@@ -3,12 +3,11 @@ package org.globsframework.core.utils.serialization;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 class SerializedOutputChecker implements SerializedOutput {
-    private final DefaultSerializationOutput serializationOutput;
+    private final SerializedOutput serializationOutput;
 
-    public SerializedOutputChecker(DefaultSerializationOutput serializationOutput) {
+    public SerializedOutputChecker(SerializedOutput serializationOutput) {
         this.serializationOutput = serializationOutput;
     }
 
@@ -20,11 +19,6 @@ class SerializedOutputChecker implements SerializedOutput {
     public void write(long[] values) {
         serializationOutput.writeUtf8String("long[]");
         serializationOutput.write(values);
-    }
-
-    public void writeDate(Date date) {
-        serializationOutput.writeUtf8String("Date");
-        serializationOutput.writeDate(date);
     }
 
     public void write(int value) {

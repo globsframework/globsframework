@@ -1,7 +1,6 @@
 package org.globsframework.core.utils.serialization;
 
 import org.globsframework.core.utils.exceptions.InvalidData;
-import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,10 +15,12 @@ import static org.globsframework.core.utils.serialization.DefaultSerializationIn
 
 public class DefaultSerializationOutput implements SerializedOutput {
     private final ByteOutput outputStream;
+    private final byte[] buffer = new byte[8];
 
     public interface ByteOutput {
-        void writeOutputByte(int b) throws IOException;
-        void writeOutputBytes(byte[] b) throws IOException;
+        void writeOutputByte(int b);
+
+        void writeOutputBytes(byte[] b, int len);
     }
 
     public DefaultSerializationOutput(ByteOutput outputStream) {
@@ -28,12 +29,20 @@ public class DefaultSerializationOutput implements SerializedOutput {
 
     public DefaultSerializationOutput(OutputStream outputStream) {
         this.outputStream = new ByteOutput() {
-            public void writeOutputByte(int b) throws IOException {
-                outputStream.write(b);
+            public void writeOutputByte(int b)  {
+                try {
+                    outputStream.write(b);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
-            public void writeOutputBytes(byte[] b) throws IOException {
-                outputStream.write(b);
+            public void writeOutputBytes(byte[] b, int len)  {
+                try {
+                    outputStream.write(b, 0, len);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }
@@ -98,15 +107,11 @@ public class DefaultSerializationOutput implements SerializedOutput {
     }
 
     public void write(int value) {
-        try {
-            outputStream.writeOutputByte((value >>> 24) & 0xFF);
-            outputStream.writeOutputByte((value >>> 16) & 0xFF);
-            outputStream.writeOutputByte((value >>> 8) & 0xFF);
-            outputStream.writeOutputByte((value >>> 0) & 0xFF);
-//            value >>= 8;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        buffer[0] = (byte) ((value >>> 24) & 0xFF);
+        buffer[1] = (byte) ((value >>> 16) & 0xFF);
+        buffer[2] = (byte) ((value >>> 8) & 0xFF);
+        buffer[3] = (byte) ((value >>> 0) & 0xFF);
+        outputStream.writeOutputBytes(buffer, 4);
     }
 
     public void writeInteger(Integer value) {
@@ -119,18 +124,15 @@ public class DefaultSerializationOutput implements SerializedOutput {
     }
 
     public void write(long value) {
-        try {
-            outputStream.writeOutputByte((byte) (value >>> 56));
-            outputStream.writeOutputByte((byte) (value >>> 48));
-            outputStream.writeOutputByte((byte) (value >>> 40));
-            outputStream.writeOutputByte((byte) (value >>> 32));
-            outputStream.writeOutputByte((byte) (value >>> 24));
-            outputStream.writeOutputByte((byte) (value >>> 16));
-            outputStream.writeOutputByte((byte) (value >>> 8));
-            outputStream.writeOutputByte((byte) (value >>> 0));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        buffer[0] = (byte) ((value >>> 56) & 0xFF);
+        buffer[1] = (byte) ((value >>> 48) & 0xFF);
+        buffer[2] = (byte) ((value >>> 40) & 0xFF);
+        buffer[3] = (byte) ((value >>> 32) & 0xFF);
+        buffer[4] = (byte) ((value >>> 24) & 0xFF);
+        buffer[5] = (byte) ((value >>> 16) & 0xFF);
+        buffer[6] = (byte) ((value >>> 8) & 0xFF);
+        buffer[7] = (byte) ((value >>> 0) & 0xFF);
+        outputStream.writeOutputBytes(buffer, 8);
     }
 
     public void writeLong(Long value) {
@@ -155,14 +157,6 @@ public class DefaultSerializationOutput implements SerializedOutput {
         }
     }
 
-    public void writeDate(Date date) {
-        if (date == null) {
-            write(-1L);
-        } else {
-            write(date.getTime());
-        }
-    }
-
     public void writeUtf8String(String value) {
         if (value == null) {
             writeBytes(null);
@@ -184,51 +178,35 @@ public class DefaultSerializationOutput implements SerializedOutput {
     }
 
     public void write(boolean[] value) {
-        try {
-            if (value == null) {
-                write(-1);
-                return;
-            }
-            write(value.length);
-            for (boolean b : value) {
-                outputStream.writeOutputByte(b ? 1 : 0);
-            }
-        } catch (IOException e) {
-            throw new UnexpectedApplicationState(e);
+        if (value == null) {
+            write(-1);
+            return;
+        }
+        write(value.length);
+        for (boolean b : value) {
+            outputStream.writeOutputByte(b ? 1 : 0);
         }
     }
 
     public void writeByte(int value) {
-        try {
-            outputStream.writeOutputByte(value);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        outputStream.writeOutputByte(value);
     }
 
     public void writeByte(byte value) {
-        try {
-            outputStream.writeOutputByte(value);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        outputStream.writeOutputByte(value);
     }
 
     public void writeBytes(byte[] value) {
-        try {
-            if (value == null) {
-                int value1 = -1;
-                write(value1);
-                return;
-            }
-            if (MAX_SIZE_FOR_BYTES != -1 && value.length > MAX_SIZE_FOR_BYTES) {
-                throw new InvalidData("More than " + MAX_SIZE_FOR_BYTES + " bytes to write  (" + value.length + ") see " + ORG_GLOBSFRAMWORK_SERIALIZATION_MAX_LEN);
-            }
-            write(value.length);
-            outputStream.writeOutputBytes(value);
-        } catch (IOException e) {
-            throw new UnexpectedApplicationState(e);
+        if (value == null) {
+            int value1 = -1;
+            write(value1);
+            return;
         }
+        if (MAX_SIZE_FOR_BYTES != -1 && value.length > MAX_SIZE_FOR_BYTES) {
+            throw new InvalidData("More than " + MAX_SIZE_FOR_BYTES + " bytes to write  (" + value.length + ") see " + ORG_GLOBSFRAMWORK_SERIALIZATION_MAX_LEN);
+        }
+        write(value.length);
+        outputStream.writeOutputBytes(value, value.length);
     }
 
     public void writeDate(LocalDate date) {

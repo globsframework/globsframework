@@ -23,6 +23,7 @@ public class SerializationTest {
     protected SerializedInput input;
     private int currentDate;
     private File file;
+    private DefaultBufferedSerializationOutput bufferedSerializationOutput;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -31,31 +32,47 @@ public class SerializationTest {
         file.getParentFile().mkdirs();
 
         outputStream = new BufferedOutputStream(new FileOutputStream(file));
-        output = new SerializedOutputChecker(new DefaultSerializationOutput(outputStream));
+        bufferedSerializationOutput = new DefaultBufferedSerializationOutput(outputStream);
+        output = new SerializedOutputChecker(bufferedSerializationOutput);
+//        output = new SerializedOutputChecker(new KryoSerializationOutput(kOutput));
     }
 
     private void initInputStream(File file) throws IOException {
         //    inputStream = new FileInputStream(fileName);
-//    inputStream = new BufferedInputStream(new FileInputStream(fileName));
-        final FileInputStream stream = new FileInputStream(file);
-        inputStream = new YANBuffereInputStream(stream);
-//        input = new SerializationInputChecker(new DefaultSerializationInput(inputStream));
-        input = new SerializationInputChecker(new ByteBufferSerializationInput(stream.readAllBytes()));
+    inputStream = new BufferedInputStream(new FileInputStream(file));
+//        inputStream = new FileInputStream(file);
+//        input = new SerializationInputChecker(new KryoSerializationInput(new Input(inputStream)));
+//        inputStream = new YANBuffereInputStream(inputStream);
+        input = new SerializationInputChecker(new DefaultSerializationInput(inputStream));
+//        input = new SerializationInputChecker(new ByteBufferSerializationInput(stream.readAllBytes()));
     }
 
     @Test
     public void testSimpleValues() throws Exception {
         output.write(3);
+        output.write(-3);
+        output.write(Integer.MAX_VALUE);
+        output.write(Integer.MIN_VALUE);
         output.write(33L);
+        output.write(-33L);
+        output.write(Long.MAX_VALUE);
+        output.write(Long.MIN_VALUE);
         output.write(6.33);
         output.write(false);
         output.write(new int[]{3, 5, 9});
+        bufferedSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
 
         assertEquals(3, input.readNotNullInt());
+        assertEquals(-3, input.readNotNullInt());
+        assertEquals(Integer.MAX_VALUE, input.readNotNullInt());
+        assertEquals(Integer.MIN_VALUE, input.readNotNullInt());
         assertEquals(33L, input.readNotNullLong());
+        assertEquals(-33L, input.readNotNullLong());
+        assertEquals(Long.MAX_VALUE, input.readNotNullLong());
+        assertEquals(Long.MIN_VALUE, input.readNotNullLong());
         assertEquals(6.33, input.readNotNullDouble(), 0.0001);
         assertEquals(false, input.readBoolean());
         ArrayTestUtils.assertEquals(new int[]{3, 5, 9}, input.readIntArray());
@@ -70,6 +87,7 @@ public class SerializationTest {
         output.writeDouble(6.33);
         output.writeInteger(4);
         output.writeLong(666L);
+        bufferedSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
@@ -88,6 +106,7 @@ public class SerializationTest {
         GlobSerializer serializer = new GlobSerializer(output);
         serializer.writeGlob(glob);
         output.writeUtf8String("end");
+        bufferedSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
@@ -115,6 +134,7 @@ public class SerializationTest {
                         DummyObject.TYPE.instantiate().set(DummyObject.VALUE, 3.14 * 3)});
 
         globSerializer.writeKnowGlob(obj1);
+        bufferedSerializationOutput.flush();
         outputStream.close();
         initInputStream(file);
 
