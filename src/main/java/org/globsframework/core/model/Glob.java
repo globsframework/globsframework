@@ -18,7 +18,16 @@ public interface Glob extends FieldValues {
 
     MutableGlob duplicate();
 
+    void reserve(int key) throws ReservationException;
+
+    void release(int key) throws ReservationException;
+
+    boolean isReserved();
+
+    boolean isReservedBy(int key);
+
     default Key getNewKey() {
         return KeyBuilder.createFromValues(getType(), this);
     }
+
 }

@@ -2,12 +2,14 @@ package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
+import org.globsframework.core.model.ReservationException;
 
 import java.util.BitSet;
 
 public class DefaultGlob extends AbstractDefaultGlob {
     protected int hashCode;
     protected final BitSet isSet;
+    private int reserve = -1;
 
     public DefaultGlob(GlobType type) {
         super(type);
@@ -46,4 +48,43 @@ public class DefaultGlob extends AbstractDefaultGlob {
         return hashCode != 0;
     }
 
+    @Override
+    public void checkReserved() {
+        if (reserve == 0) {
+            throw new ReservationException("Data not reserved");
+        }
+    }
+
+    @Override
+    public void reserve(int key) {
+        if (key == 0 || key == -1) {
+            throw new ReservationException("Reserved key 0 or -1 not valid. Got " + key);
+        }
+        if (reserve != 0 && reserve != -1) {
+            throw new ReservationException("Already reserved by " + key);
+        }
+        reserve = key;
+    }
+
+    @Override
+    public void release(int key) {
+        if (reserve != 0 && reserve != -1) {
+            if (reserve != key) {
+                throw new ReservationException("Can not release data : reserved by " + reserve + " != " + key);
+            }
+            reserve = 0;
+        } else {
+            throw new ReservationException("Can not release not own Glob '" + key + "'");
+        }
+    }
+
+    @Override
+    public boolean isReserved() {
+        return reserve != 0 && reserve != -1;
+    }
+
+    @Override
+    public boolean isReservedBy(int key) {
+        return reserve == key && key != -1 && key != 0;
+    }
 }

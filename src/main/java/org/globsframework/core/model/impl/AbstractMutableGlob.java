@@ -147,9 +147,14 @@ public interface AbstractMutableGlob extends AbstractGlob, MutableGlob {
     }
 
     default Object doCheckedGet(Field field) {
-        FieldCheck.check(field, getType());
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, getType());
+            checkReserved();
+        }
         return doGet(field);
     }
+
+    void checkReserved();
 
     default MutableGlob setObject(Field field, Object value) {
         if (FieldCheck.CheckGlob.shouldCheck) {
@@ -157,6 +162,7 @@ public interface AbstractMutableGlob extends AbstractGlob, MutableGlob {
                 throw new RuntimeException(field.getFullName() + " is a key value and the hashCode is already computed.");
             }
             FieldCheck.check(field, getType(), value);
+            checkReserved();
         }
         return doSet(field, value);
     }
