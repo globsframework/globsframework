@@ -8,6 +8,8 @@ import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
+import java.util.Objects;
+
 public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final OneFunctionalKeyBuilder functionalKeyBuilder;
@@ -81,20 +83,19 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o instanceof OneFieldMutableKey that) {
+            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
+                return false;
+            }
+            return Objects.equals(value, that.value);
+        }
+        else {
             return false;
         }
-
-        OneFieldMutableKey that = (OneFieldMutableKey) o;
-
-        if (!functionalKeyBuilder.equals(that.functionalKeyBuilder)) {
-            return false;
-        }
-        return value != null ? value.equals(that.value) : that.value == null;
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.hashCode();
+        int result = functionalKeyBuilder.getType().hashCode();
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }

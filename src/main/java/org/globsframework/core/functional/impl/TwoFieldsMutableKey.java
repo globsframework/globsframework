@@ -8,6 +8,8 @@ import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
+import java.util.Objects;
+
 public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final TwoFunctionalKeyBuilder functionalKeyBuilder;
@@ -105,23 +107,21 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o instanceof TwoFieldsMutableKey that) {
+            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
+                return false;
+            }
+            if (!Objects.equals(value1, that.value1)) {
+                return false;
+            }
+            return Objects.equals(value2, that.value2);
+        } else {
             return false;
         }
-
-        TwoFieldsMutableKey that = (TwoFieldsMutableKey) o;
-
-        if (!functionalKeyBuilder.equals(that.functionalKeyBuilder)) {
-            return false;
-        }
-        if (value1 != null ? !value1.equals(that.value1) : that.value1 != null) {
-            return false;
-        }
-        return value2 != null ? value2.equals(that.value2) : that.value2 == null;
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.hashCode();
+        int result = functionalKeyBuilder.getType().hashCode();
         result = 31 * result + (value1 != null ? value1.hashCode() : 0);
         result = 31 * result + (value2 != null ? value2.hashCode() : 0);
         return result;

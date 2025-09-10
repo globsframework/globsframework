@@ -12,6 +12,15 @@ import org.globsframework.core.model.Glob;
 import org.junit.jupiter.api.Assertions;
 import org.openjdk.jmh.annotations.*;
 
+/*
+SerializerPerf.kryoSerialization  thrpt    4  17610255.662 ± 717297.099  ops/s
+
+SerializerPerf.globSerialization  thrpt    4  20433136.709 ± 1282358.244  ops/s
+
+SerializerPerf.globSerialization  thrpt    4  19825251.414 ± 1616578.957  ops/s ==> stableValue
+
+ */
+
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 2, time = 3)
 @Measurement(iterations = 2, time = 3)
