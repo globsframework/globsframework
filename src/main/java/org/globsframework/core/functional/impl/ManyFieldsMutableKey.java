@@ -108,20 +108,19 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o instanceof ManyFieldsMutableKey that) {
+            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
+                return false;
+            }
+            return Arrays.equals(values, that.values);
+        }
+        else {
             return false;
         }
-
-        ManyFieldsMutableKey that = (ManyFieldsMutableKey) o;
-
-        if (!functionalKeyBuilder.equals(that.functionalKeyBuilder)) {
-            return false;
-        }
-        return Arrays.equals(values, that.values);
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.hashCode();
+        int result = functionalKeyBuilder.getType().hashCode();
         for (Object value : values) {
             result = 31 * result + (value == null ? 0 : value.hashCode());
         }

@@ -110,11 +110,11 @@ public class TwoFieldsMutableKeyTest {
         assertEquals(key1, key2);
         assertEquals(key1.hashCode(), key2.hashCode());
 
-        // Different builder instance (same fields) => NOT equal
+        // Different builder instance (same fields) => equal
         TwoFunctionalKeyBuilder otherBuilder = new TwoFunctionalKeyBuilder(ID1, ID2);
         TwoFieldsMutableKey key3 = new TwoFieldsMutableKey(otherBuilder);
         key3.set(ID1, 7).set(ID2, 9);
-        assertNotEquals(key1, key3);
+        assertEquals(key1, key3);
 
         // Different values => NOT equal
         TwoFieldsMutableKey key4 = new TwoFieldsMutableKey(builder);

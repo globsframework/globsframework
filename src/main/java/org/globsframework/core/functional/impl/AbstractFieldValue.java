@@ -110,7 +110,7 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
     protected abstract Object doGet(Field field);
 
     public boolean isNull(Field field) throws ItemNotFound {
-        return doGet(field) != null;
+        return doGet(field) == null;
     }
 
     public Object getValue(Field field) throws ItemNotFound {
