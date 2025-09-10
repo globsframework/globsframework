@@ -7,9 +7,9 @@ import org.globsframework.core.model.ReservationException;
 import java.util.BitSet;
 
 public class DefaultGlob extends AbstractDefaultGlob {
-    protected int hashCode;
-    protected final BitSet isSet;
-    private int reserve = -1;
+    private int hashCode;
+    private final BitSet isSet;
+    private int reserve = 0;
 
     public DefaultGlob(GlobType type) {
         super(type);
@@ -50,41 +50,56 @@ public class DefaultGlob extends AbstractDefaultGlob {
 
     @Override
     public void checkReserved() {
-        if (reserve == 0) {
+        if (reserve < 0) {
             throw new ReservationException("Data not reserved");
         }
     }
 
     @Override
     public void reserve(int key) {
-        if (key == 0 || key == -1) {
-            throw new ReservationException("Reserved key 0 or -1 not valid. Got " + key);
+        if (key <= 0) {
+            throw new ReservationException("Reserved key <= 0 Got " + key);
         }
-        if (reserve != 0 && reserve != -1) {
+        if (reserve > 0) {
             throw new ReservationException("Already reserved by " + key);
         }
         reserve = key;
     }
 
     @Override
-    public void release(int key) {
-        if (reserve != 0 && reserve != -1) {
+    public boolean release(int key) {
+        if (key <= 0) {
+            throw new ReservationException("Released key <= 0 Got " + key);
+        }
+        if (reserve == -key) {
+            return false;
+        }
+        if (reserve != 0) {
             if (reserve != key) {
                 throw new ReservationException("Can not release data : reserved by " + reserve + " != " + key);
             }
-            reserve = 0;
+            reserve = -key;
         } else {
             throw new ReservationException("Can not release not own Glob '" + key + "'");
         }
+        hashCode = 0;
+        isSet.clear();
+        return true;
+    }
+
+    @Override
+    public void unReserve() {
+        hashCode = 0;
+        reserve = 0;
     }
 
     @Override
     public boolean isReserved() {
-        return reserve != 0 && reserve != -1;
+        return reserve > 0;
     }
 
     @Override
     public boolean isReservedBy(int key) {
-        return reserve == key && key != -1 && key != 0;
+        return key > 0 && reserve == key;
     }
 }
