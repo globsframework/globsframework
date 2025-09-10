@@ -20,7 +20,10 @@ public interface Glob extends FieldValues {
 
     void reserve(int key) throws ReservationException;
 
-    void release(int key) throws ReservationException;
+    // return true if the reservation was successful and false if it was already released by the same key.
+    boolean release(int key) throws ReservationException;
+
+    void unReserve();
 
     boolean isReserved();
 
