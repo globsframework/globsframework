@@ -2,6 +2,7 @@ package org.globsframework.core.model;
 
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 
 public interface FieldsValueWithPreviousScanner extends FieldsValueScanner {
     <T extends FieldValueVisitor> T acceptOnPrevious(T functor) throws Exception;
@@ -90,6 +91,11 @@ public interface FieldsValueWithPreviousScanner extends FieldsValueScanner {
 
         public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
             scanner.accept(functor.withoutKey());
+            return functor;
+        }
+
+        public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+            scanner.accept(functor.withoutKey(), ctx);
             return functor;
         }
 

@@ -2,6 +2,7 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.FieldsValueScanner;
@@ -51,7 +52,13 @@ public class DefaultFieldValues extends AbstractMutableFieldValues {
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         for (Map.Entry<Field, Object> entry : values.entrySet()) {
-            entry.getKey().accept(functor, entry.getValue());
+            entry.getKey().acceptValue(functor, entry.getValue());
+        }
+        return functor;
+    }
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (Map.Entry<Field, Object> entry : values.entrySet()) {
+            entry.getKey().acceptValue(functor, entry.getValue(), ctx);
         }
         return functor;
     }

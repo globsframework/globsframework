@@ -38,9 +38,11 @@ public sealed interface Field extends MutableAnnotations
 
     <T extends FieldVisitorWithTwoContext<C, D>, C, D> T safeAccept(T visitor, C ctx1, D ctx2);
 
-    void accept(FieldValueVisitor visitor, Object value) throws Exception;
+    <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception;
 
-    void safeAccept(FieldValueVisitor visitor, Object value);
+    <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value);
+
+    <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception;
 
     <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context);
 

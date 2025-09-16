@@ -3,6 +3,7 @@ package org.globsframework.core.model.delta;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.*;
 import org.globsframework.core.model.impl.AbstractFieldValuesWithPrevious;
 import org.globsframework.core.utils.Unset;
@@ -228,7 +229,7 @@ class DefaultDeltaGlob extends AbstractFieldValuesWithPrevious implements DeltaG
         for (Field field : key.getGlobType().getFields()) {
             Object value = previousValues[field.getIndex()];
             if ((value != Unset.VALUE)) {
-                field.accept(functor, value);
+                field.acceptValue(functor, value);
             }
         }
         return functor;
@@ -259,7 +260,17 @@ class DefaultDeltaGlob extends AbstractFieldValuesWithPrevious implements DeltaG
         for (Field field : key.getGlobType().getFields()) {
             Object value = values[field.getIndex()];
             if ((value != Unset.VALUE)) {
-                field.accept(functor, value);
+                field.acceptValue(functor, value);
+            }
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (Field field : key.getGlobType().getFields()) {
+            Object value = values[field.getIndex()];
+            if ((value != Unset.VALUE)) {
+                field.acceptValue(functor, value, ctx);
             }
         }
         return functor;

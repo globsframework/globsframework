@@ -5,6 +5,7 @@ import org.globsframework.core.functional.FunctionalKeyBuilder;
 import org.globsframework.core.functional.MutableFunctionalKey;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
@@ -67,15 +68,25 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         if (value1 != NULL_VALUE) {
-            functionalKeyBuilder.field1.accept(functor, value1);
+            functionalKeyBuilder.field1.acceptValue(functor, value1);
         }
         if (value2 != NULL_VALUE) {
-            functionalKeyBuilder.field2.accept(functor, value2);
+            functionalKeyBuilder.field2.acceptValue(functor, value2);
         }
         return functor;
     }
 
-    public <T extends Functor> T apply(T functor) throws Exception {
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T visitor, CTX ctx) throws Exception {
+        if (value1 != NULL_VALUE) {
+            functionalKeyBuilder.field1.acceptValue(visitor, value1, ctx);
+        }
+        if (value2 != NULL_VALUE) {
+            functionalKeyBuilder.field2.acceptValue(visitor, value2, ctx);
+        }
+        return visitor;
+    }
+
+        public <T extends Functor> T apply(T functor) throws Exception {
         if (value1 != NULL_VALUE) {
             functor.process(functionalKeyBuilder.field1, value1);
         }

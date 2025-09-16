@@ -54,7 +54,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
 
     default <T extends FieldValueVisitor> T acceptOnKeyField(T functor) throws Exception {
         for (Field field : getType().getFields()) {
-            field.accept(functor, doGet(field));
+            field.acceptValue(functor, doGet(field));
         }
         return functor;
     }
@@ -62,7 +62,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
     default <T extends FieldValueVisitor> T safeAcceptOnKeyField(T functor) {
         try {
             for (Field field : getType().getKeyFields()) {
-                field.accept(functor, doGet(field));
+                field.acceptValue(functor, doGet(field));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -117,7 +117,14 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
 
             public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
                 for (Field field : type.getKeyFields()) {
-                    field.accept(functor, AbstractGlob.this.doGet(field));
+                    field.acceptValue(functor, AbstractGlob.this.doGet(field));
+                }
+                return functor;
+            }
+
+            public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+                for (Field field : type.getKeyFields()) {
+                    field.acceptValue(functor, AbstractGlob.this.doGet(field), ctx);
                 }
                 return functor;
             }

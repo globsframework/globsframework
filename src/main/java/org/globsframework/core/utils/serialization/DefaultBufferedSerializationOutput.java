@@ -57,6 +57,10 @@ public class DefaultBufferedSerializationOutput implements SerializedOutput {
         buffer = new byte[bufferSize];
     }
 
+    public byte[] getBuffer() {
+        return buffer;
+    }
+
     public void write(int[] values) {
         if (values == null) {
             write(-1);

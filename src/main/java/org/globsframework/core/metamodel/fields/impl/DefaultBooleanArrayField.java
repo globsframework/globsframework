@@ -68,13 +68,15 @@ public class DefaultBooleanArrayField extends AbstractField implements BooleanAr
         }
     }
 
-    public void accept(FieldValueVisitor visitor, Object value) throws Exception {
+    public <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception {
         visitor.visitBooleanArray(this, (boolean[]) value);
+        return visitor;
     }
 
-    public void safeAccept(FieldValueVisitor visitor, Object value) {
+    public <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value) {
         try {
             visitor.visitBooleanArray(this, (boolean[]) value);
+            return visitor;
         } catch (RuntimeException e) {
             throw new RuntimeException("On " + this, e);
         } catch (Exception e) {
@@ -96,6 +98,11 @@ public class DefaultBooleanArrayField extends AbstractField implements BooleanAr
         } else {
             buffer.append(Arrays.toString(((boolean[]) value)));
         }
+    }
+
+    public <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception {
+        visitor.visitBooleanArray(this, (boolean[]) value, context);
+        return visitor;
     }
 
     public <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context) {

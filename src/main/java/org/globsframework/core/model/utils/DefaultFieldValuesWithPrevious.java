@@ -3,6 +3,7 @@ package org.globsframework.core.model.utils;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.FieldsValueWithPreviousScanner;
@@ -89,7 +90,7 @@ public class DefaultFieldValuesWithPrevious extends AbstractFieldValuesWithPrevi
         for (Field field : type.getFields()) {
             int index = field.getIndex();
             if (previousValues[index] != Unset.VALUE) {
-                field.accept(functor, previousValues[index]);
+                field.acceptValue(functor, previousValues[index]);
             }
         }
         return functor;
@@ -119,7 +120,17 @@ public class DefaultFieldValuesWithPrevious extends AbstractFieldValuesWithPrevi
         for (Field field : type.getFields()) {
             int index = field.getIndex();
             if (values[index] != Unset.VALUE) {
-                field.accept(functor, values[index]);
+                field.acceptValue(functor, values[index]);
+            }
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (Field field : type.getFields()) {
+            int index = field.getIndex();
+            if (values[index] != Unset.VALUE) {
+                field.acceptValue(functor, values[index], ctx);
             }
         }
         return functor;

@@ -73,18 +73,25 @@ public class DefaultGlobField extends AbstractField implements GlobField {
         }
     }
 
-    public void accept(FieldValueVisitor visitor, Object value) throws Exception {
+    public <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception {
         visitor.visitGlob(this, (Glob) value);
+        return visitor;
     }
 
-    public void safeAccept(FieldValueVisitor visitor, Object value) {
+    public <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value) {
         try {
             visitor.visitGlob(this, (Glob) value);
+            return visitor;
         } catch (RuntimeException e) {
             throw new RuntimeException("On " + this, e);
         } catch (Exception e) {
             throw new UnexpectedApplicationState("On " + this, e);
         }
+    }
+
+    public <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception {
+        visitor.visitGlob(this, (Glob) value, context);
+        return visitor;
     }
 
     public <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context) {
@@ -101,19 +108,19 @@ public class DefaultGlobField extends AbstractField implements GlobField {
 
     public boolean valueEqual(Object o1, Object o2) {
         return (o1 == null) && (o2 == null) ||
-                !((o1 == null) || (o2 == null)) && isSameGlob(getTargetType(), (Glob) o1, (Glob) o2);
+               !((o1 == null) || (o2 == null)) && isSameGlob(getTargetType(), (Glob) o1, (Glob) o2);
     }
 
     public boolean valueOrKeyEqual(Object o1, Object o2) {
         return (o1 == null) && (o2 == null) ||
-                !((o1 == null) || (o2 == null)) && isSameKeyOrGlob(getTargetType(), (Glob) o1, (Glob) o2);
+               !((o1 == null) || (o2 == null)) && isSameKeyOrGlob(getTargetType(), (Glob) o1, (Glob) o2);
     }
 
     public void checkValue(Object object) throws InvalidParameter {
         if ((object != null) && ((!(object instanceof Glob)) || ((Glob) object).getType() != getTargetType())) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
-                    + ") is not authorized for field: " + getName() +
-                    " (expected Glob)");
+                                       + ") is not authorized for field: " + getName() +
+                                       " (expected Glob)");
         }
     }
 

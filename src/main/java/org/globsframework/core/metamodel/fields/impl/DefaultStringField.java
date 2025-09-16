@@ -8,8 +8,6 @@ import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
-import java.util.LinkedHashMap;
-
 public class DefaultStringField extends AbstractField implements StringField {
 
     public DefaultStringField(String name, GlobType globType, int index, boolean isKeyField,
@@ -65,18 +63,25 @@ public class DefaultStringField extends AbstractField implements StringField {
         }
     }
 
-    public void accept(FieldValueVisitor visitor, Object value) throws Exception {
+    public <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception {
         visitor.visitString(this, (String) value);
+        return visitor;
     }
 
-    public void safeAccept(FieldValueVisitor visitor, Object value) {
+    public <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value) {
         try {
             visitor.visitString(this, (String) value);
+            return visitor;
         } catch (RuntimeException e) {
             throw new RuntimeException("On " + this, e);
         } catch (Exception e) {
             throw new UnexpectedApplicationState("On " + this, e);
         }
+    }
+
+    public <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception {
+        visitor.visitString(this, (String) value, context);
+        return visitor;
     }
 
     public <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context) {

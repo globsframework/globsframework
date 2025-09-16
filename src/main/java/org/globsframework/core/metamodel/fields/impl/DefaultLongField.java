@@ -64,18 +64,25 @@ public class DefaultLongField extends AbstractField implements LongField {
         }
     }
 
-    public void accept(FieldValueVisitor visitor, Object value) throws Exception {
+    public <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception {
         visitor.visitLong(this, (Long) value);
+        return visitor;
     }
 
-    public void safeAccept(FieldValueVisitor visitor, Object value) {
+    public <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value) {
         try {
             visitor.visitLong(this, (Long) value);
+            return visitor;
         } catch (RuntimeException e) {
             throw new RuntimeException("On " + this, e);
         } catch (Exception e) {
             throw new UnexpectedApplicationState("On " + this, e);
         }
+    }
+
+    public <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception {
+        visitor.visitLong(this, (Long) value, context);
+        return visitor;
     }
 
     public <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context) {

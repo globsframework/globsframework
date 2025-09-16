@@ -5,6 +5,7 @@ import org.globsframework.core.functional.FunctionalKeyBuilder;
 import org.globsframework.core.functional.MutableFunctionalKey;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
@@ -74,7 +75,17 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
         Field[] fields = functionalKeyBuilder.fields;
         for (int i = 0; i < values.length; i++) {
             if (values[i] != NULL_VALUE) {
-                fields[i].accept(functor, values[i]);
+                fields[i].acceptValue(functor, values[i]);
+            }
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        Field[] fields = functionalKeyBuilder.fields;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != NULL_VALUE) {
+                fields[i].safeAcceptValue(functor, values[i], ctx);
             }
         }
         return functor;

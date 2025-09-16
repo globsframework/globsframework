@@ -2,6 +2,7 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.impl.AbstractFieldValues;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
@@ -48,7 +49,14 @@ public class ArrayFieldValues implements AbstractFieldValues {
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         for (FieldValue value : values) {
-            value.getField().accept(functor, value.getValue());
+            value.getField().acceptValue(functor, value.getValue());
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (FieldValue value : values) {
+            value.getField().acceptValue(functor, value.getValue(), ctx);
         }
         return functor;
     }

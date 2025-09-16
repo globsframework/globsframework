@@ -34,6 +34,9 @@ public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
         public <T extends FieldValueVisitor> T accept(T functor) {
             return functor;
         }
+        public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+            return functor;
+        }
 
         public Double get(DoubleField field) throws ItemNotFound {
             throw new ItemNotFound(field.getName());

@@ -1,5 +1,6 @@
 package org.globsframework.core.metamodel.fields;
 
+import org.globsframework.core.metamodel.fields.impl.FieldValueVisitorButKey;
 import org.globsframework.core.model.Glob;
 
 import java.math.BigDecimal;
@@ -45,91 +46,95 @@ public interface FieldValueVisitorWithContext<Context> {
 
     void visitUnionGlobArray(GlobArrayUnionField field, Glob[] value, Context context) throws Exception;
 
+    default FieldValueVisitorWithContext<Context> withoutKey() {
+        return FieldValueVisitorWithContextButKey.create(this);
+    }
+
     class AbstractFieldValueVisitor<Context> implements FieldValueVisitorWithContext<Context> {
 
         public void visitInteger(IntegerField field, Integer value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitIntegerArray(IntegerArrayField field, int[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitDouble(DoubleField field, Double value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitDoubleArray(DoubleArrayField field, double[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitBigDecimal(BigDecimalField field, BigDecimal value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitBigDecimalArray(BigDecimalArrayField field, BigDecimal[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitString(StringField field, String value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitStringArray(StringArrayField field, String[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitBoolean(BooleanField field, Boolean value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitBooleanArray(BooleanArrayField field, boolean[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitBlob(BlobField field, byte[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitGlob(GlobField field, Glob value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitUnionGlob(GlobUnionField field, Glob value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitUnionGlobArray(GlobArrayUnionField field, Glob[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitGlobArray(GlobArrayField field, Glob[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitLong(LongField field, Long value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitLongArray(LongArrayField field, long[] value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitDate(DateField field, LocalDate value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
         public void visitDateTime(DateTimeField field, ZonedDateTime value, Context context) throws Exception {
-            notManaged(field, value);
+            notManaged(field, value, context);
         }
 
-        public void notManaged(Field field, Object value) throws Exception {
+        public void notManaged(Field field, Object value, Context context) throws Exception {
         }
 
     }
 
     class AbstractWithErrorVisitor<Context> extends AbstractFieldValueVisitor<Context> {
-        public void notManaged(Field field, Object value) throws Exception {
+        public void notManaged(Field field, Object value, Context context) throws Exception {
             throw new RuntimeException(field.getFullName() + " of type " + field.getDataType() + " not managed.");
         }
     }

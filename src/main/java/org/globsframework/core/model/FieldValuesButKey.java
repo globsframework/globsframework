@@ -47,6 +47,11 @@ public class FieldValuesButKey implements FieldValues {
         return functor;
     }
 
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        fieldValues.accept(functor.withoutKey(), ctx);
+        return functor;
+    }
+
     public <T extends FieldValueVisitor> T safeAccept(T functor) {
         fieldValues.safeAccept(functor.withoutKey());
         return functor;

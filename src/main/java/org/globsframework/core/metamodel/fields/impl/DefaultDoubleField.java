@@ -63,18 +63,25 @@ public class DefaultDoubleField extends AbstractField implements DoubleField {
         }
     }
 
-    public void accept(FieldValueVisitor visitor, Object value) throws Exception {
+    public <T extends FieldValueVisitor> T acceptValue(T visitor, Object value) throws Exception {
         visitor.visitDouble(this, (Double) value);
+        return visitor;
     }
 
-    public void safeAccept(FieldValueVisitor visitor, Object value) {
+    public <T extends FieldValueVisitor> T safeAcceptValue(T visitor, Object value) {
         try {
             visitor.visitDouble(this, (Double) value);
+            return visitor;
         } catch (RuntimeException e) {
             throw new RuntimeException("On " + this, e);
         } catch (Exception e) {
             throw new UnexpectedApplicationState("On " + this, e);
         }
+    }
+
+    public <T extends FieldValueVisitorWithContext<Context>, Context> T acceptValue(T visitor, Object value, Context context) throws Exception {
+        visitor.visitDouble(this, (Double) value, context);
+        return visitor;
     }
 
     public <T extends FieldValueVisitorWithContext<Context>, Context> T safeAcceptValue(T visitor, Object value, Context context) {
@@ -90,7 +97,7 @@ public class DefaultDoubleField extends AbstractField implements DoubleField {
 
     public boolean valueEqual(Object o1, Object o2) {
         return (o1 == null) && (o2 == null) ||
-                !((o1 == null) || (o2 == null)) &&
-                        ((Double) o1).doubleValue() == ((Double) o2).doubleValue();
+               !((o1 == null) || (o2 == null)) &&
+               ((Double) o1).doubleValue() == ((Double) o2).doubleValue();
     }
 }

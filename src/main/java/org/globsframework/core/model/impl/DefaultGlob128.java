@@ -114,4 +114,11 @@ public class DefaultGlob128 extends AbstractDefaultGlob {
     public boolean isReservedBy(int key) {
         return key > 0 && reserve == key;
     }
+    @Override
+    public void checkWasReservedBy(int key) {
+        if (key <= 0 || reserve != -key) {
+            throw new ReservationException("Data was not reserved by " + reserve + " != " + key);
+        }
+    }
+
 }

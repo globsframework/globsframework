@@ -3,6 +3,7 @@ package org.globsframework.core.model.utils;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.MutableFieldValues;
@@ -47,7 +48,17 @@ public class GlobArrayFieldValues extends AbstractMutableFieldValues {
         for (Field field : type.getFields()) {
             Object value = values[field.getIndex()];
             if (value != Unset.VALUE) {
-                field.accept(functor, value);
+                field.acceptValue(functor, value);
+            }
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (Field field : type.getFields()) {
+            Object value = values[field.getIndex()];
+            if (value != Unset.VALUE) {
+                field.acceptValue(functor, value, ctx);
             }
         }
         return functor;

@@ -3,6 +3,7 @@ package org.globsframework.core.model.impl;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
@@ -27,8 +28,19 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         for (Field field : type.getFields()) {
-            if (isSet(field)) { //  || field.isKeyField()
-                field.accept(functor, values[field.getIndex()]);
+            final int index = field.getIndex();
+            if (isSetAt(index)) { //  || field.isKeyField()
+                field.acceptValue(functor, values[index]);
+            }
+        }
+        return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        for (Field field : type.getFields()) {
+            final int index = field.getIndex();
+            if (isSetAt(index)) {
+                field.acceptValue(functor, values[index], ctx);
             }
         }
         return functor;

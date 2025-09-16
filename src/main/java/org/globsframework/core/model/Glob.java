@@ -33,4 +33,5 @@ public interface Glob extends FieldValues {
         return KeyBuilder.createFromValues(getType(), this);
     }
 
+    void checkWasReservedBy(int key);
 }

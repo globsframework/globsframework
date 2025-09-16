@@ -2,18 +2,26 @@ package org.globsframework.core.utils.serialization;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultBufferedSerializationOutputTest {
+
+    @Test
+    void testLargeBuffer() {
+        final byte[] buffer = new byte[1024 * 1024];
+        DefaultBufferedSerializationOutput out = new DefaultBufferedSerializationOutput(buffer);
+        final ZonedDateTime zdt = writeValues(out);
+        final int position = out.position();
+        ByteBufferSerializationInput in = new ByteBufferSerializationInput(buffer, position);
+        check(in, zdt);
+    }
 
     @Test
     public void roundTripWithSmallBuffer_ByteOutput() {
@@ -25,6 +33,24 @@ public class DefaultBufferedSerializationOutputTest {
         DefaultBufferedSerializationOutput out = new DefaultBufferedSerializationOutput(sink, 16);
 
         // Write a variety of values (keep byte[] small to avoid the writeBytes large-else path)
+        final ZonedDateTime zdt = writeValues(out);
+
+        out.flush();
+        byte[] data = baos.toByteArray();
+        assertTrue(data.length > 0);
+
+        // Read back with ByteBufferSerializationInput which understands the same encoding
+        ByteBufferSerializationInput in = new ByteBufferSerializationInput(data, data.length);
+        check(in, zdt);
+        // Ensure we've consumed all data
+        assertEquals(data.length, in.position());
+
+        DefaultSerializationInput inDefault = new DefaultSerializationInput(new ByteArrayInputStream(data));
+        check(inDefault, zdt);
+
+    }
+
+    private static ZonedDateTime writeValues(DefaultBufferedSerializationOutput out) {
         out.write(3);
         out.write(-3);
         out.write(Integer.MAX_VALUE);
@@ -57,20 +83,7 @@ public class DefaultBufferedSerializationOutputTest {
         out.writeDate(LocalDate.of(2020, 2, 29));
         ZonedDateTime zdt = ZonedDateTime.of(2021, 3, 14, 1, 59, 26, 123456789, ZoneId.of("UTC"));
         out.writeDateTime(zdt);
-        out.flush();
-
-        byte[] data = baos.toByteArray();
-        assertTrue(data.length > 0);
-
-        // Read back with ByteBufferSerializationInput which understands the same encoding
-        ByteBufferSerializationInput in = new ByteBufferSerializationInput(data);
-        check(in, zdt);
-        // Ensure we've consumed all data
-        assertEquals(data.length, in.position());
-
-        DefaultSerializationInput inDefault = new DefaultSerializationInput(new ByteArrayInputStream(data));
-        check(inDefault, zdt);
-
+        return zdt;
     }
 
     private static void check(SerializedInput in, ZonedDateTime zdt) {

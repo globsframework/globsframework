@@ -19,15 +19,23 @@ public abstract class AbstractKey implements
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         Field[] fields = getGlobType().getKeyFields();
         for (Field field : fields) {
-            field.accept(functor, doGetValue(field));
+            field.acceptValue(functor, doGetValue(field));
         }
         return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T visitor, CTX ctx) throws Exception {
+        Field[] fields = getGlobType().getKeyFields();
+        for (Field field : fields) {
+            field.acceptValue(visitor, doGetValue(field), ctx);
+        }
+        return visitor;
     }
 
     public <T extends FieldValueVisitor> T acceptOnKeyField(T functor) throws Exception {
         Field[] keyFields = getGlobType().getKeyFields();
         for (Field keyField : keyFields) {
-            keyField.accept(functor, doGetValue(keyField));
+            keyField.acceptValue(functor, doGetValue(keyField));
         }
         return functor;
     }
@@ -36,7 +44,7 @@ public abstract class AbstractKey implements
         try {
             Field[] keyFields = getGlobType().getKeyFields();
             for (Field keyField : keyFields) {
-                keyField.accept(functor, doGetValue(keyField));
+                keyField.acceptValue(functor, doGetValue(keyField));
             }
             return functor;
         } catch (RuntimeException e) {

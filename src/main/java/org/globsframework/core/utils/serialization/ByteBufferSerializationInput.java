@@ -10,24 +10,40 @@ import java.util.Arrays;
 
 public class ByteBufferSerializationInput implements SerializedInput {
     private byte[] data;
+    private int len;
     private int count;
 
-    public ByteBufferSerializationInput(byte[] data) {
+    public ByteBufferSerializationInput(byte[] data, int len) {
         this.data = data;
+        this.len = len;
+        if (len > data.length) {
+            throw new RuntimeException("Data size too small offset " + 0 + " len " + len + " array size " + data.length);
+        }
     }
 
-    public ByteBufferSerializationInput(byte[] data, int offset) {
+    public ByteBufferSerializationInput(byte[] data, int offset, int len) {
         this.data = data;
         count = offset;
+        if (len - offset > data.length) {
+            throw new RuntimeException("Data size too small offset " + offset + " len " + len + " array size " + data.length);
+        }
     }
 
-    public void reset(int offset) {
+    public void reset(int offset, int len) {
         count = offset;
+        this.len = len;
+        if (len - offset > data.length) {
+            throw new RuntimeException("Data size too small offset " + offset + " len " + len + " array size " + data.length);
+        }
     }
 
-    public void reset(byte[] data, int offset) {
+    public void reset(byte[] data, int offset, int len) {
         this.data = data;
         count = offset;
+        this.len = len;
+        if (len - offset > data.length) {
+            throw new RuntimeException("Data size too small offset " + offset + " len " + len + " array size " + data.length);
+        }
     }
 
     public int position() {
@@ -160,6 +176,9 @@ public class ByteBufferSerializationInput implements SerializedInput {
     private int readI() {
         int p = count;
         count += 4;
+        if (count > len) {
+            throw new RuntimeException("EOF reached");
+        }
         return (((data[p]) << 24)
                 + ((data[p + 1] & 0xff) << 16)
                 + ((data[p + 2] & 0xff) << 8)
@@ -188,6 +207,9 @@ public class ByteBufferSerializationInput implements SerializedInput {
         }
         int offset = count;
         count += length;
+        if (count > len) {
+            throw new RuntimeException("EOF reached " + count + " " + len);
+        }
         return new String(data, offset, length, StandardCharsets.UTF_8);
     }
 
@@ -210,6 +232,9 @@ public class ByteBufferSerializationInput implements SerializedInput {
     private long readL() {
         int p = count;
         count += 8;
+        if (count > len) {
+            throw new RuntimeException("EOF reached");
+        }
         return (((long) (data[p]) << 56) +
                 ((long) (data[p + 1] & 0xff) << 48) +
                 ((long) (data[p + 2] & 0xff) << 40) +
@@ -221,7 +246,12 @@ public class ByteBufferSerializationInput implements SerializedInput {
     }
 
     private int read() {
-        return data[count++] & 0xff;
+        int p = count;
+        count += 1;
+        if (count > len) {
+            throw new RuntimeException("EOF reached");
+        }
+        return data[p] & 0xff;
     }
 
     public byte readByte() {
@@ -235,6 +265,9 @@ public class ByteBufferSerializationInput implements SerializedInput {
         }
         int offset = count;
         count += length;
+        if (count > len) {
+            throw new RuntimeException("EOF reached");
+        }
         return Arrays.copyOfRange(data, offset, count);
     }
 

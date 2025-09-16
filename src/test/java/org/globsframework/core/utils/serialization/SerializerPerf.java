@@ -95,6 +95,7 @@ public class SerializerPerf {
             age = globTypeBuilder.declareIntegerField("age");
             height = globTypeBuilder.declareDoubleField("height");
             globTypeBuilder.complete();
+
         }
     }
 

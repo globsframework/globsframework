@@ -3,6 +3,7 @@ package org.globsframework.core.model.delta;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.impl.AbstractFieldValues;
@@ -55,10 +56,20 @@ class DeltaFieldValuesFromArray implements AbstractFieldValues {
         for (Field field : type.getFields()) {
             Object value = values[field.getIndex()];
             if (value != Unset.VALUE && !field.isKeyField()) {
-                field.accept(functor, value);
+                field.acceptValue(functor, value);
             }
         }
         return functor;
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+      for (Field field : type.getFields()) {
+          Object value = values[field.getIndex()];
+          if (value != Unset.VALUE && !field.isKeyField()) {
+              field.acceptValue(functor, value, ctx);
+          }
+      }
+      return functor;
     }
 
     public <T extends FieldValues.Functor>

@@ -329,6 +329,10 @@ public class GlobBuilder implements FieldSetter<GlobBuilder>, FieldValues {
         return mutableGlob.accept(functor);
     }
 
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
+        return mutableGlob.accept(functor, ctx);
+    }
+
     public <T extends FieldValueVisitor> T safeAccept(T functor) {
         return mutableGlob.safeAccept(functor);
     }

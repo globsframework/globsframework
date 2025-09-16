@@ -2,6 +2,7 @@ package org.globsframework.core.model;
 
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 
 public interface FieldsValueScanner {
     static FieldsValueScanner from(FieldValue[] fieldValues) {
@@ -16,10 +17,18 @@ public interface FieldsValueScanner {
 
             public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
                 for (FieldValue fieldValue : fieldValues) {
-                    fieldValue.getField().safeAccept(functor, fieldValue.getValue());
+                    fieldValue.getField().acceptValue(functor, fieldValue.getValue());
                 }
                 return functor;
             }
+
+            public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception{
+                for (FieldValue fieldValue : fieldValues) {
+                    fieldValue.getField().acceptValue(functor, fieldValue.getValue(), ctx);
+                }
+                return functor;
+            }
+
         };
     }
 
@@ -40,6 +49,18 @@ public interface FieldsValueScanner {
     default <T extends FieldValueVisitor> T safeAccept(T functor) {
         try {
             return accept(functor);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception;
+
+    default <CTX, T extends FieldValueVisitorWithContext<CTX>> T safeAccept(T functor, CTX ctx) {
+        try {
+            return accept(functor, ctx);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -84,6 +105,11 @@ public interface FieldsValueScanner {
 
         public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
             valueScanner.accept(functor.withoutKey());
+            return functor;
+        }
+
+        public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception{
+            valueScanner.accept(functor.withoutKey(), ctx);
             return functor;
         }
 

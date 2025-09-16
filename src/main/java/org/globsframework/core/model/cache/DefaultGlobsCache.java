@@ -4,6 +4,7 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.MutableGlob;
+import org.globsframework.core.model.ReservationException;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -35,41 +36,49 @@ public class DefaultGlobsCache implements GlobsCache {
     }
 
     public void release(Glob glob, int id) {
-        if (glob.isReserved() && glob instanceof MutableGlob mutableGlob) {
-            final GlobType type = glob.getType();
-            for (Field field : type.getFields()) {
-                Object value = mutableGlob.getValue(field);
-                mutableGlob.unset(field);
-                if (value != null) {
-                    switch (field) {
-                        case GlobField f -> release((Glob) value, id);
-                        case GlobUnionField f -> release((Glob) value, id);
-                        case GlobArrayField f -> {
-                            for (Glob d : ((Glob[]) value)) {
-                                release(d, id);
+        if (glob.isReservedBy(id)) {
+            if (glob instanceof MutableGlob mutableGlob) {
+                final GlobType type = glob.getType();
+                for (Field field : type.getFields()) {
+                    Object value = mutableGlob.getValue(field);
+                    mutableGlob.unset(field);
+                    if (value != null) {
+                        switch (field) {
+                            case GlobField f -> release((Glob) value, id);
+                            case GlobUnionField f -> release((Glob) value, id);
+                            case GlobArrayField f -> {
+                                for (Glob d : ((Glob[]) value)) {
+                                    if (d != null) {
+                                        release(d, id);
+                                    }
+                                }
+                            }
+                            case GlobArrayUnionField f -> {
+                                for (Glob d : ((Glob[]) value)) {
+                                    if (d != null) {
+                                        release(d, id);
+                                    }
+                                }
+                            }
+                            default -> {
                             }
                         }
-                        case GlobArrayUnionField f -> {
-                            for (Glob d : ((Glob[]) value)) {
-                                release(d, id);
-                            }
-                        }
-                        default -> {
+                    }
+                }
+                if (glob.release(id)) {
+                    final Deque<MutableGlob> cache = globs.get(type);
+                    if (cache == null) {
+                        return;
+                    }
+                    synchronized (cache) {
+                        if (cache.size() < maxGlobsInCache) {
+                            cache.add(mutableGlob);
                         }
                     }
                 }
             }
-            if (glob.release(id)) {
-                final Deque<MutableGlob> cache = globs.get(type);
-                if (cache == null) {
-                    return;
-                }
-                synchronized (cache) {
-                    if (cache.size() < maxGlobsInCache) {
-                        cache.add(mutableGlob);
-                    }
-                }
-            }
+        } else {
+            glob.checkWasReservedBy(id);
         }
     }
 }

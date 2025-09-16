@@ -25,7 +25,7 @@ public class SerializedInputOutputFactory {
     }
 
     public static SerializedInput init(byte[] bytes) {
-        return new ByteBufferSerializationInput(bytes);
+        return new ByteBufferSerializationInput(bytes, bytes.length);
     }
 
     public static SerializedOutput initCompressed(OutputStream outputStream) {
