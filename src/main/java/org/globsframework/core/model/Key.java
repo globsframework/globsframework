@@ -2,6 +2,7 @@ package org.globsframework.core.model;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
+import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 
 public interface Key extends FieldValuesAccessor, Comparable<Key> {
     GlobType getGlobType();
@@ -17,6 +18,22 @@ public interface Key extends FieldValuesAccessor, Comparable<Key> {
 
     <T extends FieldValueVisitor>
     T safeAcceptOnKeyField(T functor);
+
+    <CTX, T extends FieldValueVisitorWithContext<CTX>>
+    T acceptOnKeyField(T functor, CTX ctx) throws Exception;
+
+    default <CTX, T extends FieldValueVisitorWithContext<CTX>>
+     T safeAcceptOnKeyField(T functor, CTX ctx) {
+       try {
+           return acceptOnKeyField(functor, ctx);
+       }
+       catch (RuntimeException e) {
+           throw e;
+       }
+       catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+     }
 
     FieldValues asFieldValues();
 

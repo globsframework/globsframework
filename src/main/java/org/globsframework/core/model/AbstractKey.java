@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public abstract class AbstractKey implements
-        AbstractFieldValues,  MutableKey {
+        AbstractFieldValues, MutableKey {
 
     public boolean contains(Field field) {
         return field.getGlobType() == getGlobType() && field.isKeyField();
@@ -71,6 +71,14 @@ public abstract class AbstractKey implements
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>>
+    T acceptOnKeyField(T functor, CTX ctx) throws Exception {
+        for (Field keyField : getGlobType().getKeyFields()) {
+            keyField.acceptValue(functor, doGetValue(keyField), ctx);
+        }
+        return functor;
     }
 
     public FieldValues asFieldValues() {

@@ -147,6 +147,11 @@ public class EmptyKey implements Key {
         return functor;
     }
 
+    public <CTX, T extends FieldValueVisitorWithContext<CTX>>
+    T acceptOnKeyField(T functor, CTX ctx) throws Exception {
+        return functor;
+    }
+
     public <T extends FieldValueVisitor> T acceptOnKeyField(T functor) throws Exception {
         return functor;
     }

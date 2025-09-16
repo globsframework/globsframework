@@ -84,8 +84,18 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
             for (Field field : getType().getKeyFields()) {
                 functor.process(field, doGet(field));
             }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        return functor;
+    }
+
+    default <CTX, T extends FieldValueVisitorWithContext<CTX>>
+    T acceptOnKeyField(T functor, CTX ctx) throws Exception{
+        for (Field field : getType().getKeyFields()) {
+            field.acceptValue(functor, doGet(field), ctx);
         }
         return functor;
     }
