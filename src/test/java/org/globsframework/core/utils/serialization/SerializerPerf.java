@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Assertions;
 import org.openjdk.jmh.annotations.*;
 
 /*
-SerializerPerf.kryoSerialization  thrpt    4  17610255.662 ± 717297.099  ops/s
+SerializerPerf.kryoSerialization  thrpt    4  17914585.504 ± 1063948.419  ops/s
 
-SerializerPerf.globSerialization  thrpt    4  20433136.709 ± 1282358.244  ops/s
+SerializerPerf.globSerialization  thrpt    4  23118365.205 ± 1452776.565  ops/s
 
 SerializerPerf.globSerialization  thrpt    4  19825251.414 ± 1616578.957  ops/s ==> stableValue
 
@@ -28,7 +28,7 @@ SerializerPerf.globSerialization  thrpt    4  19825251.414 ± 1616578.957  ops/s
 @State(Scope.Thread)
 public class SerializerPerf {
 
-    private DefaultBufferedSerializationOutput serializationOutput;
+    private ByteBufferSerializationOutput serializationOutput;
     private GlobSerializer globSerializer;
     private Glob data;
     private Kryo kryo;
@@ -37,7 +37,7 @@ public class SerializerPerf {
 
     @Setup
     public void setUp() {
-        serializationOutput = new DefaultBufferedSerializationOutput(new byte[1024 * 1024]);
+        serializationOutput = new ByteBufferSerializationOutput(new byte[1024 * 1024]);
         globSerializer = new GlobSerializer(serializationOutput);
         data = NoTypicalBeanType.TYPE.instantiate()
                 .set(NoTypicalBeanType.fistName, "Marcel")

@@ -11,12 +11,12 @@ import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DefaultBufferedSerializationOutputTest {
+public class ByteBufferSerializationOutputTest {
 
     @Test
     void testLargeBuffer() {
         final byte[] buffer = new byte[1024 * 1024];
-        DefaultBufferedSerializationOutput out = new DefaultBufferedSerializationOutput(buffer);
+        ByteBufferSerializationOutput out = new ByteBufferSerializationOutput(buffer);
         final ZonedDateTime zdt = writeValues(out);
         final int position = out.position();
         ByteBufferSerializationInput in = new ByteBufferSerializationInput(buffer, position);
@@ -27,10 +27,10 @@ public class DefaultBufferedSerializationOutputTest {
     public void roundTripWithSmallBuffer_ByteOutput() {
         // Capture bytes written by the buffered output
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DefaultBufferedSerializationOutput.ByteOutput sink = (bytes, len) -> baos.write(bytes, 0, len);
+        ByteBufferSerializationOutput.ByteOutput sink = (bytes, len) -> baos.write(bytes, 0, len);
 
         // Use a very small buffer to force multiple flushes during writes
-        DefaultBufferedSerializationOutput out = new DefaultBufferedSerializationOutput(sink, 16);
+        ByteBufferSerializationOutput out = new ByteBufferSerializationOutput(sink, 16);
 
         // Write a variety of values (keep byte[] small to avoid the writeBytes large-else path)
         final ZonedDateTime zdt = writeValues(out);
@@ -50,7 +50,7 @@ public class DefaultBufferedSerializationOutputTest {
 
     }
 
-    private static ZonedDateTime writeValues(DefaultBufferedSerializationOutput out) {
+    private static ZonedDateTime writeValues(ByteBufferSerializationOutput out) {
         out.write(3);
         out.write(-3);
         out.write(Integer.MAX_VALUE);
@@ -124,7 +124,7 @@ public class DefaultBufferedSerializationOutputTest {
     public void flushAtBoundary_equalsDefaultSerializationOutput() {
         // Prepare two outputs writing the same ints using different implementations
         ByteArrayOutputStream baosBuffered = new ByteArrayOutputStream();
-        DefaultBufferedSerializationOutput buffered = new DefaultBufferedSerializationOutput((bytes, len) -> baosBuffered.write(bytes, 0, len), 4);
+        ByteBufferSerializationOutput buffered = new ByteBufferSerializationOutput((bytes, len) -> baosBuffered.write(bytes, 0, len), 4);
 
         ByteArrayOutputStream baosDefault = new ByteArrayOutputStream();
         DefaultSerializationOutput defaultOut = new DefaultSerializationOutput(new DefaultSerializationOutput.ByteOutput() {

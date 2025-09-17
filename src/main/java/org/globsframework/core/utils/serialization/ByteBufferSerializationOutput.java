@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public class DefaultBufferedSerializationOutput implements SerializedOutput {
+public class ByteBufferSerializationOutput implements SerializedOutput {
     private final ByteOutput outputStream;
     private final byte[] buffer;
     private int position = 0;
@@ -15,7 +15,7 @@ public class DefaultBufferedSerializationOutput implements SerializedOutput {
         void writeOutputBytes(byte[] b, int len);
     }
 
-    public DefaultBufferedSerializationOutput(byte[] buffer) {
+    public ByteBufferSerializationOutput(byte[] buffer) {
         this.buffer = buffer;
         outputStream = (b, len) -> {
             throw new RuntimeException("Not implemented");
@@ -30,20 +30,20 @@ public class DefaultBufferedSerializationOutput implements SerializedOutput {
         position = 0;
     }
 
-    public DefaultBufferedSerializationOutput(ByteOutput outputStream) {
+    public ByteBufferSerializationOutput(ByteOutput outputStream) {
         this(outputStream, 8192);
     }
 
-    public DefaultBufferedSerializationOutput(ByteOutput outputStream, int bufferSize) {
+    public ByteBufferSerializationOutput(ByteOutput outputStream, int bufferSize) {
         this.outputStream = outputStream;
         buffer = new byte[bufferSize];
     }
 
-    public DefaultBufferedSerializationOutput(OutputStream outputStream) {
+    public ByteBufferSerializationOutput(OutputStream outputStream) {
         this(outputStream, 8192);
     }
 
-    public DefaultBufferedSerializationOutput(OutputStream outputStream, int bufferSize) {
+    public ByteBufferSerializationOutput(OutputStream outputStream, int bufferSize) {
         this.outputStream = new ByteOutput() {
 
             public void writeOutputBytes(byte[] b, int len) {
@@ -239,27 +239,43 @@ public class DefaultBufferedSerializationOutput implements SerializedOutput {
             final int strlen = str.length();
             int utflen = strlen; // optimized for ASCII
 
-            for (int i = 0; i < strlen; i++) {
-                int c = str.charAt(i);
-                if (c >= 0x80 || c == 0)
-                    utflen += (c >= 0x800) ? 2 : 1;
-            }
-
-            if (reserve(utflen + 4)) {
-                writeUncheckedInt(utflen);
-                write(str, 0, strlen, buffer, position);
-                position += utflen;
-            } else {
-                writeUncheckedInt(utflen);
-                int startAt = 0;
-                while (true) {
-                    final int toRead = Math.min(strlen - startAt, (buffer.length - position) / 3 - 1);
-                    position = write(str, startAt, toRead, buffer, position);
-                    startAt += toRead;
-                    if (startAt == strlen) {
-                        return;
-                    }
+            boolean enoughSpace = 4 + strlen * 3 < buffer.length - position;
+            if (!enoughSpace) {
+                enoughSpace = 4 + strlen * 3 < buffer.length;
+                if (enoughSpace) {
                     flush();
+                }
+            }
+            if (enoughSpace) {
+                int previousPos  = position;
+                position += 4; // place for int
+                int newPos = write(str, 0, strlen, buffer, position);
+                position = previousPos;
+                writeUncheckedInt(newPos - previousPos - 4);
+                position = newPos;
+            } else {
+                for (int i = 0; i < strlen; i++) {
+                    int c = str.charAt(i);
+                    if (c >= 0x80 || c == 0)
+                        utflen += (c >= 0x800) ? 2 : 1;
+                }
+
+                if (reserve(utflen + 4)) {
+                    writeUncheckedInt(utflen);
+                    write(str, 0, strlen, buffer, position);
+                    position += utflen;
+                } else {
+                    writeUncheckedInt(utflen);
+                    int startAt = 0;
+                    while (true) {
+                        final int toRead = Math.min(strlen - startAt, (buffer.length - position) / 3 - 1);
+                        position = write(str, startAt, toRead, buffer, position);
+                        startAt += toRead;
+                        if (startAt == strlen) {
+                            return;
+                        }
+                        flush();
+                    }
                 }
             }
         }
@@ -268,7 +284,7 @@ public class DefaultBufferedSerializationOutput implements SerializedOutput {
     private int write(String str, int startAt, int strlen, byte[] buffer, int position) {
         int i;
         strlen += startAt;
-        for (i = startAt; i < strlen; i++) { // optimized for initial run of ASCII
+        for (i = startAt; i < strlen; i++) {
             int c = str.charAt(i);
             if (c >= 0x80 || c == 0) break;
             buffer[position++] = (byte) c;

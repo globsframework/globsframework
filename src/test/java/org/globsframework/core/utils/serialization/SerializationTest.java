@@ -23,7 +23,7 @@ public class SerializationTest {
     protected SerializedInput input;
     private int currentDate;
     private File file;
-    private DefaultBufferedSerializationOutput bufferedSerializationOutput;
+    private ByteBufferSerializationOutput byteBufferSerializationOutput;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -32,8 +32,8 @@ public class SerializationTest {
         file.getParentFile().mkdirs();
 
         outputStream = new BufferedOutputStream(new FileOutputStream(file));
-        bufferedSerializationOutput = new DefaultBufferedSerializationOutput(outputStream);
-        output = new SerializedOutputChecker(bufferedSerializationOutput);
+        byteBufferSerializationOutput = new ByteBufferSerializationOutput(outputStream);
+        output = new SerializedOutputChecker(byteBufferSerializationOutput);
 //        output = new SerializedOutputChecker(new KryoSerializationOutput(kOutput));
     }
 
@@ -60,7 +60,7 @@ public class SerializationTest {
         output.write(6.33);
         output.write(false);
         output.write(new int[]{3, 5, 9});
-        bufferedSerializationOutput.flush();
+        byteBufferSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
@@ -87,7 +87,7 @@ public class SerializationTest {
         output.writeDouble(6.33);
         output.writeInteger(4);
         output.writeLong(666L);
-        bufferedSerializationOutput.flush();
+        byteBufferSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
@@ -106,7 +106,7 @@ public class SerializationTest {
         GlobSerializer serializer = new GlobSerializer(output);
         serializer.writeGlob(glob);
         output.writeUtf8String("end");
-        bufferedSerializationOutput.flush();
+        byteBufferSerializationOutput.flush();
         outputStream.close();
 
         initInputStream(file);
@@ -134,7 +134,7 @@ public class SerializationTest {
                         DummyObject.TYPE.instantiate().set(DummyObject.VALUE, 3.14 * 3)});
 
         globSerializer.writeKnowGlob(obj1);
-        bufferedSerializationOutput.flush();
+        byteBufferSerializationOutput.flush();
         outputStream.close();
         initInputStream(file);
 
