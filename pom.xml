@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <artifactId>globs</artifactId>
     <name>Generic Lightweight ObjectS</name>
-    <version>4.9.0</version>
+    <version>4.10-SNAPSHOT</version>
 
     <developers>
         <developer>
@@ -40,7 +40,7 @@
         <connection>scm:git:git@github.com:globsframework/globsframework</connection>
         <developerConnection>scm:git:git@github.com:globsframework/globsframework</developerConnection>
         <url>https://github.com/globsframework/globsframework</url>
-      <tag>4.9.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <profiles>
