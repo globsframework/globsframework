@@ -30,6 +30,10 @@ public class ByteBufferSerializationOutput implements SerializedOutput {
         position = 0;
     }
 
+    public void reset(int position) {
+        this.position = position;
+    }
+
     public ByteBufferSerializationOutput(ByteOutput outputStream) {
         this(outputStream, 8192);
     }

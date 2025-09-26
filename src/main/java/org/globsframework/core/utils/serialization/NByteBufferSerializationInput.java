@@ -13,10 +13,30 @@ public class NByteBufferSerializationInput implements SerializedInput {
     private final NextBuffer nextBuffer;
     private ByteBuffer data;
     private byte[] buffer = new byte[1024];
+    private int readCount;
+    private int readLimit = Integer.MAX_VALUE;
 
     public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer) {
         this.data = data;
         this.nextBuffer = nextBuffer;
+    }
+
+    public void limit(int limit) {
+        readLimit = limit;
+        readCount = 0;
+    }
+    public void resetLimit() {
+        readLimit = Integer.MAX_VALUE;
+        readCount = 0;
+    }
+
+   public void readToLimit() {
+        if (readLimit == Integer.MAX_VALUE) {
+            return;
+        }
+        while (readCount < readLimit) {
+            read();
+        }
     }
 
     public interface NextBuffer {
@@ -147,7 +167,8 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     private int readI() {
-        if (data.remaining() >= 4){
+        checkLimit(4);
+        if (data.remaining() >= 4) {
             return data.getInt();
         }
         blockingRead(4);
@@ -192,10 +213,19 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     public double readNotNullDouble() {
-        if (data.remaining() >= 8){
+        checkLimit(8);
+        if (data.remaining() >= 8) {
             return data.getDouble();
         }
-        return Double.longBitsToDouble(readNotNullLong());
+        blockingRead(8);
+        return Double.longBitsToDouble((((long) (buffer[0]) << 56) +
+                                        ((long) (buffer[1] & 0xff) << 48) +
+                                        ((long) (buffer[2] & 0xff) << 40) +
+                                        ((long) (buffer[3] & 0xff) << 32) +
+                                        ((long) (buffer[4] & 0xff) << 24) +
+                                        ((long) (buffer[5] & 0xff) << 16) +
+                                        ((long) (buffer[6] & 0xff) << 8) +
+                                        ((buffer[7] & 0xff))));
     }
 
     public String readUtf8String() {
@@ -206,13 +236,13 @@ public class NByteBufferSerializationInput implements SerializedInput {
         if (length == 0) {
             return "";
         }
+        checkLimit(length);
         if (data.remaining() >= length) {
             if (buffer == null || buffer.length < length) {
                 buffer = new byte[length];
             }
             data.get(buffer, 0, length);
-        }
-        else {
+        } else {
             blockingRead(length);
         }
         return new String(buffer, 0, length, StandardCharsets.UTF_8);
@@ -235,7 +265,8 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     private long readL() {
-        if (data.remaining() >= 8){
+        checkLimit(8);
+        if (data.remaining() >= 8) {
             return data.getLong();
         }
         blockingRead(8);
@@ -246,15 +277,23 @@ public class NByteBufferSerializationInput implements SerializedInput {
                 ((long) (buffer[4] & 0xff) << 24) +
                 ((long) (buffer[5] & 0xff) << 16) +
                 ((long) (buffer[6] & 0xff) << 8) +
-                (       (buffer[7] & 0xff)));
+                ((buffer[7] & 0xff)));
     }
 
     private int read() {
-        if (data.remaining() >= 1){
+        checkLimit(1);
+        if (data.remaining() >= 1) {
             return data.get() & 0xff;
         }
         blockingRead(1);
         return buffer[0] & 0xff;
+    }
+
+    private void checkLimit(int wantedToRead) {
+        readCount += wantedToRead;
+        if (readCount > readLimit) {
+            throw new LimitReachedException();
+        }
     }
 
     public byte readByte() {
@@ -269,12 +308,12 @@ public class NByteBufferSerializationInput implements SerializedInput {
         if (length == 0) {
             return new byte[0];
         }
-        if (data.remaining() >= length){
+        checkLimit(length);
+        if (data.remaining() >= length) {
             byte[] tmp = new byte[length];
             data.get(tmp, 0, length);
             return tmp;
-        }
-        else {
+        } else {
             blockingRead(length);
             return Arrays.copyOfRange(buffer, 0, length);
         }
