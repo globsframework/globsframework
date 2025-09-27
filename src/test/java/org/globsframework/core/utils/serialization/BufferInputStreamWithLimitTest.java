@@ -108,4 +108,29 @@ class BufferInputStreamWithLimitTest {
         assertEquals(2, in.read());
         assertEquals(-1, in.read());
     }
+
+    @Test
+    void adjustLimitOnArrayReadAfterExhaust() throws IOException {
+        byte[] data = range(12);
+        BufferInputStreamWithLimit in = new BufferInputStreamWithLimit(new ByteArrayInputStream(data), 4);
+        in.limit(8);
+
+        // Consume exactly one full internal buffer using single-byte reads
+        assertEquals(0, in.read());
+        assertEquals(1, in.read());
+        assertEquals(2, in.read());
+        assertEquals(3, in.read());
+
+        // Now currentPos == count; the next array read will trigger the branch at line 73
+        byte[] buf = new byte[3];
+        int r = in.read(buf, 0, 3);
+        assertEquals(3, r);
+        assertArrayEquals(new byte[]{4, 5, 6}, buf);
+
+        // We had limit 8, consumed 7 so far; one more byte should be allowed
+        assertEquals(7, in.read());
+
+        // Any further read (even 1 byte) must hit the limit due to the adjusted limit at line 73
+        assertThrows(LimitReachedException.class, () -> in.read(new byte[1], 0, 1));
+    }
 }

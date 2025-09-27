@@ -70,12 +70,17 @@ public class BufferInputStreamWithLimit extends InputStream {
             return length;
         }
         if (limit != Integer.MAX_VALUE) {
-            limit = limit - currentPos - len;
+            limit = limit - currentPos;
         }
         currentPos = 0;
         if (len > buffer.length) {
             count = 0;
-            return inputStream.read(b, off, len);
+            final int read = inputStream.read(b, off, len);
+            if (read == -1) {
+                return -1;
+            }
+            currentPos = read;
+            return read;
         }
         count = inputStream.read(buffer);
         if (count == -1) {

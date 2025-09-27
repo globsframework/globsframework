@@ -16,7 +16,6 @@ public class DefaultSerializationInput implements SerializedInput {
     public static final String ORG_GLOBSFRAMWORK_SERIALIZATION_MAX_LEN = "org.globsframwork.serialization.max.len";
     public static final int MAX_SIZE_FOR_BYTES = Integer.getInteger(ORG_GLOBSFRAMWORK_SERIALIZATION_MAX_LEN, 512 * 1024);
     private final InputStream inputStream;
-    public int count;
     private byte[] buffer = new byte[1024];
     private char[] array = new char[20];
 
@@ -29,12 +28,23 @@ public class DefaultSerializationInput implements SerializedInput {
             if (reserve > buffer.length) {
                 buffer = new byte[reserve + 1024];
             }
-            if (inputStream.read(buffer, 0, reserve) != reserve) {
-                throw new EOFIOFailure("eof");
+            int totalRead;
+            if ((totalRead = inputStream.read(buffer, 0, reserve)) != reserve) {
+                loopRead(reserve, totalRead);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void loopRead(int reserve, int totalRead) throws IOException {
+        do {
+            int read = inputStream.read(buffer, totalRead, reserve - totalRead);
+            if (read == -1) {
+                throw new EOFIOFailure("Missing data in buffer expected " + reserve + " but was " + totalRead);
+            }
+            totalRead += read;
+        } while (totalRead != reserve);
     }
 
     public int[] readIntArray() {
@@ -275,7 +285,6 @@ public class DefaultSerializationInput implements SerializedInput {
     }
 
     private long readReservedLong() {
-        count += 8;
         return (((long)buffer[0] << 56) +
                 ((long)(buffer[1] & 255) << 48) +
                 ((long)(buffer[2] & 255) << 40) +
@@ -292,7 +301,6 @@ public class DefaultSerializationInput implements SerializedInput {
             if (i == -1) {
                 throw new EOFIOFailure("eof");
             }
-            count++;
             return i;
         } catch (IOException e) {
             throw new EOFIOFailure(e);
@@ -325,7 +333,6 @@ public class DefaultSerializationInput implements SerializedInput {
                 }
                 readed += readSize;
             }
-            count += readed;
             return bytes;
         } catch (IOException e) {
             throw new UnexpectedApplicationState(e);
