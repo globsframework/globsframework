@@ -71,12 +71,6 @@ class BufferInputStreamWithLimitTest {
 
         boolean done = in.readToLimit();
         assertFalse(done, "Should return false because it consumed bytes to reach the limit");
-
-        // Any additional read should trigger the limit
-        assertThrows(LimitReachedException.class, in::read);
-
-        // Reset and ensure we can continue
-        in.resetLimit();
         assertEquals(3, in.read()); // next byte after 0,1,2
     }
 

@@ -292,7 +292,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
     private void checkLimit(int wantedToRead) {
         readCount += wantedToRead;
         if (readCount > readLimit) {
-            throw new LimitReachedException();
+            throw new LimitReachedException(readCount, readLimit, data.remaining());
         }
     }
 

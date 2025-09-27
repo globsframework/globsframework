@@ -32,8 +32,12 @@ public class BufferInputStreamWithLimit extends InputStream {
     public boolean readToLimit() throws IOException {
         if (limit != currentPos) {
             while (currentPos < limit) {
-                read();
+                if (read() == -1) {
+                    limit = Integer.MAX_VALUE;
+                    return false;
+                }
             }
+            limit = Integer.MAX_VALUE;
             return false;
         } else {
             limit = Integer.MAX_VALUE;
@@ -53,14 +57,14 @@ public class BufferInputStreamWithLimit extends InputStream {
             currentPos = 0;
         }
         if (currentPos >= limit) {
-            throw new LimitReachedException();
+            throw new LimitReachedException(currentPos, limit, count);
         }
         return buffer[currentPos++] & 0xFF;
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
         if (currentPos + len > limit) {
-            throw new LimitReachedException();
+            throw new LimitReachedException(currentPos, limit, count);
         }
         int available = count - currentPos;
         if (available > 0) {
