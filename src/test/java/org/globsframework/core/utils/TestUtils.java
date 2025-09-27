@@ -141,7 +141,19 @@ public class TestUtils {
     }
 
     public static <T> void assertSetEquals(Collection<T> actual, Collection<T> expected) {
-        assertEquals(new HashSet<>(expected), new HashSet<>(actual));
+        if ((expected.isEmpty())) {
+            assertEmpty(actual);
+        }
+        if (expected.size() != actual.size()) {
+            showFailures("Invalid number of items", actual, expected);
+        }
+        int index = 0;
+        for (T anExpected : expected) {
+            if (!actual.contains(anExpected)) {
+                showFailures("Error at item " + index + " " + anExpected + " not found", actual, expected);
+            }
+            index++;
+        }
     }
 
     public static <T> void assertSetEquals(Iterator<T> actual, T... expected) {
