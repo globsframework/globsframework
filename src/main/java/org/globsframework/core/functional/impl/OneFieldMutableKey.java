@@ -42,9 +42,11 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return new OneFieldMutableKey(functionalKeyBuilder, value);
     }
 
-    @Override
     public void unset(Field field) {
-        value =  NULL_VALUE;
+        if (field == functionalKeyBuilder.field) {
+            value = NULL_VALUE;
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public boolean contains(Field field) {
@@ -103,13 +105,11 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.getType().hashCode();
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        return result;
+        return 31 + (value != null ? value.hashCode() : 0);
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return value != NULL_VALUE;
+        return field == functionalKeyBuilder.field && value != NULL_VALUE;
     }
 
     public String toString() {

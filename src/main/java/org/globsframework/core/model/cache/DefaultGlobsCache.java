@@ -10,29 +10,35 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class DefaultGlobsCache implements GlobsCache {
+    private static int INITIAL_SIZE = Integer.getInteger("globs.cache.initialSize", 128);
     private final int maxGlobsInCache;
-    private final Map<GlobType, Deque<MutableGlob>> globs = new ConcurrentHashMap<>();
+    private final Map<GlobType, Deque<MutableGlob>> globs;
 
     public DefaultGlobsCache(int maxGlobsInCache) {
-        this.maxGlobsInCache = maxGlobsInCache;
+        this(maxGlobsInCache, INITIAL_SIZE);
     }
 
+    public DefaultGlobsCache(int maxGlobsInCache, int initialCacheSize) {
+        this.maxGlobsInCache = maxGlobsInCache;
+        globs = new ConcurrentHashMap<>(initialCacheSize);
+    }
+
+    static Function<GlobType, Deque<MutableGlob>> f = (t) -> new ArrayDeque<>();
+
     public MutableGlob newGlob(GlobType globType, int id) {
-        final Deque<MutableGlob> compute = globs.computeIfAbsent(globType, (t) -> new ArrayDeque<>());
-        final MutableGlob data;
+        final Deque<MutableGlob> compute = globs.computeIfAbsent(globType, f);
+        MutableGlob data;
         synchronized (compute) {
             data = compute.poll();
         }
         if (data == null) {
-            final MutableGlob instantiate = globType.instantiate();
-            instantiate.reserve(id);
-            return instantiate;
-        } else {
-            data.reserve(id);
-            return data;
+            data = globType.instantiate();
         }
+        data.reserve(id);
+        return data;
     }
 
     public void release(Glob glob, int id) {

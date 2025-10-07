@@ -27,7 +27,6 @@ SerializerPerf.globSerialization  thrpt    4  19825251.414 ± 1616578.957  ops/s
 @Fork(2)
 @State(Scope.Thread)
 public class SerializerPerf {
-
     private ByteBufferSerializationOutput serializationOutput;
     private GlobSerializer globSerializer;
     private Glob data;
@@ -95,7 +94,6 @@ public class SerializerPerf {
             age = globTypeBuilder.declareIntegerField("age");
             height = globTypeBuilder.declareDoubleField("height");
             globTypeBuilder.complete();
-
         }
     }
 

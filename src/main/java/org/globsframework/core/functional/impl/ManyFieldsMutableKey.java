@@ -8,6 +8,7 @@ import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
+import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.ArrayList;
@@ -42,12 +43,27 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     protected MutableFunctionalKey doSet(Field field, Object o) {
-        values[functionalKeyBuilder.index[field.getIndex()]] = o;
-        return this;
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+
+        final int index = functionalKeyBuilder.index[field.getIndex()];
+        if (index >= 0) {
+            values[index] = o;
+            return this;
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     protected Object doGet(Field field) {
-        return getNotNullValue(values[functionalKeyBuilder.index[field.getIndex()]]);
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = functionalKeyBuilder.index[field.getIndex()];
+        if (index >= 0) {
+            return getNotNullValue(values[index]);
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public FunctionalKey getShared() {
@@ -58,9 +74,16 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
         return new ManyFieldsMutableKey(functionalKeyBuilder, Arrays.copyOf(values, values.length));
     }
 
-    @Override
     public void unset(Field field) {
-        Arrays.fill(values, NULL_VALUE);
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = functionalKeyBuilder.index[field.getIndex()];
+        if (index >= 0 ){
+            values[index] = NULL_VALUE;
+            return;
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public boolean contains(Field field) {
@@ -131,7 +154,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.getType().hashCode();
+        int result = 1; // make hash stable => GlobType is not part of the hash
         for (Object value : values) {
             result = 31 * result + (value == null ? 0 : value.hashCode());
         }
@@ -139,7 +162,14 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return values[functionalKeyBuilder.index[field.getIndex()]] != NULL_VALUE;
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = functionalKeyBuilder.index[field.getIndex()];
+        if (index >= 0) {
+            return values[index] != NULL_VALUE;
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public String toString() {

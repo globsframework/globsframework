@@ -32,15 +32,18 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     protected MutableFunctionalKey doSet(Field field, Object o) {
         if (functionalKeyBuilder.field1 == field) {
             value1 = o;
-        } else {
+        } else if (functionalKeyBuilder.field2 == field) {
             value2 = o;
+        } else {
+            throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
         }
         return this;
     }
 
     protected Object doGet(Field field) {
-        return (field == functionalKeyBuilder.field1 ? getNotNullValue(value1) :
-                field == functionalKeyBuilder.field2 ? getNotNullValue(value2) : null);
+        if (field == functionalKeyBuilder.field1) return getNotNullValue(value1);
+        if (field == functionalKeyBuilder.field2) return getNotNullValue(value2);
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public FunctionalKey getShared() {
@@ -51,10 +54,16 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
         return new TwoFieldsMutableKey(functionalKeyBuilder, value1, value2);
     }
 
-    @Override
     public void unset(Field field) {
-        value1 = NULL_VALUE;
-        value2 = NULL_VALUE;
+        if (field == functionalKeyBuilder.field1) {
+            value1 = NULL_VALUE;
+        }
+        else if (field == functionalKeyBuilder.field2) {
+            value2 = NULL_VALUE;
+        }
+        else {
+            throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
+        }
     }
 
     public boolean contains(Field field) {
@@ -132,14 +141,16 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public int hashCode() {
-        int result = functionalKeyBuilder.getType().hashCode();
+        int result = 1;
         result = 31 * result + (value1 != null ? value1.hashCode() : 0);
         result = 31 * result + (value2 != null ? value2.hashCode() : 0);
         return result;
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return field == functionalKeyBuilder.field1 ? value1 != NULL_VALUE : value2 != NULL_VALUE;
+        if (field == functionalKeyBuilder.field1) return value1 != NULL_VALUE;
+        if (field == functionalKeyBuilder.field2) return value2 != NULL_VALUE;
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public String toString() {
