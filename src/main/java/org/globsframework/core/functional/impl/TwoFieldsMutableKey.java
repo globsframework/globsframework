@@ -7,6 +7,7 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
+import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.Objects;
@@ -55,6 +56,9 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public void unset(Field field) {
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
         if (field == functionalKeyBuilder.field1) {
             value1 = NULL_VALUE;
         }
