@@ -9,6 +9,10 @@ import org.globsframework.core.metamodel.utils.MutableAnnotations;
 import org.globsframework.core.model.GlobFactory;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
+import org.globsframework.core.model.globaccessor.get.GlobGetAccessor;
+import org.globsframework.core.model.globaccessor.get.GlobGetGlobAccessor;
+import org.globsframework.core.model.globaccessor.set.GlobSetAccessor;
+import org.globsframework.core.model.globaccessor.set.GlobSetGlobAccessor;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.Collection;
@@ -59,7 +63,13 @@ public interface GlobType extends MutableAnnotations {
 
     String describe();
 
-//    GlobGetAccessor getAccessor(Field field);
+    default <T extends GlobGetAccessor> T getGetAccessor(Field field){
+        return (T) getGlobFactory().getGetValueAccessor(field);
+    }
+
+    default <T extends GlobSetAccessor> T getSetAccessor(Field field){ // write code in factory
+        return (T) getGlobFactory().getSetValueAccessor(field);
+    }
 
     default MutableGlob instantiate() {
         return instantiate(null);

@@ -4,7 +4,9 @@ import org.globsframework.core.model.Glob;
 
 public interface GlobGetAccessor {
 
+    Object getValue(Glob glob);
+
     boolean isSet(Glob glob);
 
-    Object getValue(Glob glob);
+    boolean isNull(Glob glob);
 }

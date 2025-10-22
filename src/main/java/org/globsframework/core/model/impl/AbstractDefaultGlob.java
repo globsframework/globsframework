@@ -65,6 +65,10 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
         return values[index];
     }
 
+    public boolean isNull(int index) {
+        return values[index] == null;
+    }
+
     public void set(int index, Object value) {
         values[index] = value;
         setSetAt(index);

@@ -85,6 +85,12 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Integer get(Glob glob) {
                     return (Integer) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -98,6 +104,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public int[] get(Glob glob) {
                     return (int[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -111,6 +122,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Double get(Glob glob) {
                     return (Double) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -124,6 +140,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public double[] get(Glob glob) {
                     return (double[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -136,6 +157,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 @Override
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
+                }
+
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
                 }
 
                 public BigDecimal get(Glob glob) {
@@ -151,6 +177,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public BigDecimal[] get(Glob glob) {
                     return (BigDecimal[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -164,6 +195,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public String get(Glob glob) {
                     return (String)((AbstractDefaultGlob) glob).get(index);
                 }
@@ -177,6 +213,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public String[] get(Glob glob) {
                     return (String[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -190,6 +231,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Boolean get(Glob glob) {
                     return (Boolean) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -203,6 +249,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public boolean[] get(Glob glob) {
                     return (boolean[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -216,6 +267,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Long get(Glob glob) {
                     return (Long) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -229,6 +285,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public long[] get(Glob glob) {
                     return (long[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -242,6 +303,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public LocalDate get(Glob glob) {
                     return (LocalDate) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -255,6 +321,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public ZonedDateTime get(Glob glob) {
                     return (ZonedDateTime) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -268,6 +339,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public byte[] get(Glob glob) {
                     return (byte[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -281,6 +357,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Glob get(Glob glob) {
                     return (Glob) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -294,6 +375,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Glob[] get(Glob glob) {
                     return (Glob[]) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -307,6 +393,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Glob get(Glob glob) {
                     return (Glob) ((AbstractDefaultGlob) glob).get(index);
                 }
@@ -320,6 +411,11 @@ public class DefaultGlobFactory implements GlobFactory {
                 public boolean isSet(Glob glob) {
                     return ((AbstractDefaultGlob) glob).isSetAt(index);
                 }
+                @Override
+                public boolean isNull(Glob glob) {
+                    return ((AbstractDefaultGlob) glob).isNull(index);
+                }
+
                 public Glob[] get(Glob glob) {
                     return (Glob[]) ((AbstractDefaultGlob) glob).get(index);
                 }

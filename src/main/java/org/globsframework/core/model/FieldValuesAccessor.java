@@ -26,6 +26,10 @@ public interface FieldValuesAccessor {
 
     boolean isSet(Field field) throws ItemNotFound;
 
+    default boolean isNotSet(Field field) throws ItemNotFound {
+        return !isSet(field);
+    }
+
     boolean isNull(Field field) throws ItemNotFound;
 
     default boolean isNotNull(Field field) throws ItemNotFound {
