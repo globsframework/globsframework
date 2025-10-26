@@ -20,4 +20,6 @@ public interface GlobTypeLoader {
     GlobTypeLoader defineMultiFieldNotUniqueIndex(MultiFieldNotUniqueIndex index, Field... fields);
 
     <T> GlobTypeLoader register(Class<T> klass, T t);
+
+    <T> GlobTypeLoader register(Field field, Class<T> klass, T t);
 }

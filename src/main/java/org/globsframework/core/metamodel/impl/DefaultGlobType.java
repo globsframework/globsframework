@@ -35,7 +35,7 @@ public class DefaultGlobType extends DefaultAnnotations
     private final String name;
     private final Map<String, Field> fieldsByName = new HashMap<>();
     private final Map<String, Index> indices = new HashMap<>(2, 1);
-    private final Map<Class<?>, Object> registered = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Object> registered = new HashMap<>();
     private Object[] properties = new Object[2];
 
     public DefaultGlobType(String name) {

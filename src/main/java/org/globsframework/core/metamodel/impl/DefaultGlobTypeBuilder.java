@@ -515,6 +515,11 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return this;
     }
 
+    public <T> GlobTypeBuilder register(Field field, Class<T> klass, T t) {
+        ((AbstractField) field).register(klass, t);
+        return this;
+    }
+
     public GlobType get() {
         type.completeInit();
         return type;

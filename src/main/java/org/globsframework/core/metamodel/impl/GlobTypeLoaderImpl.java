@@ -482,4 +482,9 @@ public class GlobTypeLoaderImpl implements GlobTypeLoader {
         registered.put(klass, t);
         return this;
     }
+
+    public <T> GlobTypeLoader register(Field field, Class<T> klass, T t) {
+        ((AbstractField) field).register(klass, t);
+        return this;
+    }
 }

@@ -10,6 +10,9 @@ import org.globsframework.core.utils.Utils;
 import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 abstract public class AbstractField extends DefaultAnnotations {
     private final int index;
     private final int keyIndex;
@@ -18,6 +21,7 @@ abstract public class AbstractField extends DefaultAnnotations {
     private final Class valueClass;
     private final Object defaultValue;
     private final DataType dataType;
+    private Map<Class<?>, Object> registered = null;
     private final boolean keyField;
 
     protected AbstractField(String name, GlobType globType,
@@ -104,6 +108,17 @@ abstract public class AbstractField extends DefaultAnnotations {
 
     public void toString(StringBuilder buffer, Object value) {
         buffer.append(value);
+    }
+
+    public <T> void register(Class<T> klass, T t) {
+        if (registered == null) {
+            registered = new HashMap<>();
+        }
+        registered.put(klass, t);
+    }
+
+    public <T> T getRegistered(Class<T> klass) {
+        return registered == null ? null : (T) registered.get(klass);
     }
 
     public boolean equals(Object o) {

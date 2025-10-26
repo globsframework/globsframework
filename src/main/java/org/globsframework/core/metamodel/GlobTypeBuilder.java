@@ -228,6 +228,8 @@ public interface GlobTypeBuilder {
 
     <T> GlobTypeBuilder register(Class<T> klass, T t);
 
+    <T> GlobTypeBuilder register(Field field, Class<T> klass, T t);
+
     GlobType get();
 
     GlobType unCompleteType();
@@ -240,4 +242,5 @@ public interface GlobTypeBuilder {
     }
 
     boolean isKnown(String fieldName);
+
 }

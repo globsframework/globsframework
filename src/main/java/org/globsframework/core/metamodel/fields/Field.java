@@ -71,6 +71,8 @@ public sealed interface Field extends MutableAnnotations
 
     Object normalize(Object value);
 
+     <T> T getRegistered(Class<T> klass);
+
     default StringField asStringField() {
         if (!(this instanceof StringField)) {
             throw new RuntimeException(getFullName() + " is not a StringField but a " + getDataType());
