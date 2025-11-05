@@ -103,7 +103,7 @@ public class FieldConverter {
             value = stringValue.equalsIgnoreCase("true");
         }
 
-        public void visitBlob(BlobField field) throws Exception {
+        public void visitBytes(BytesField field) throws Exception {
             value = stringValue.getBytes();
         }
 
@@ -178,7 +178,7 @@ public class FieldConverter {
             }
         }
 
-        public void visitBlob(BlobField field) throws Exception {
+        public void visitBytes(BytesField field) throws Exception {
             stringValue = new String((byte[]) value);
         }
 

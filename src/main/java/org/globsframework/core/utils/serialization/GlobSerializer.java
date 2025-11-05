@@ -69,7 +69,7 @@ public class GlobSerializer {
             output.write(glob.get(field));
         }
 
-        public void visitBlob(BlobField field, Glob glob, SerializedOutput output) {
+        public void visitBytes(BytesField field, Glob glob, SerializedOutput output) {
             output.writeBytes(glob.get(field));
         }
 

@@ -22,7 +22,7 @@ public class GlobTypeBuilderTest {
                 .addIntegerField("int")
                 .addLongField("long")
                 .addDoubleField("double")
-                .addBlobField("blob")
+                .addBytesField("blob")
                 .addBooleanField("boolean")
                 .addBooleanArrayField("booleanArray")
                 .addBigDecimalField("bigDecimal")
@@ -49,7 +49,7 @@ public class GlobTypeBuilderTest {
         checkField(type, "longArray", LongArrayField.class, DataType.LongArray);
         checkField(type, "double", DoubleField.class, DataType.Double);
         checkField(type, "doubleArray", DoubleArrayField.class, DataType.DoubleArray);
-        checkField(type, "blob", BlobField.class, DataType.Bytes);
+        checkField(type, "blob", BytesField.class, DataType.Bytes);
         checkField(type, "boolean", BooleanField.class, DataType.Boolean);
         checkField(type, "booleanArray", BooleanArrayField.class, DataType.BooleanArray);
         checkField(type, "bigDecimal", BigDecimalField.class, DataType.BigDecimal);

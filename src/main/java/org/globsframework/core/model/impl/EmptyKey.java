@@ -111,7 +111,7 @@ public class EmptyKey implements Key {
         throw new RuntimeException("Empty key '" + field.getFullName() + " not available");
     }
 
-    public byte[] get(BlobField field) throws ItemNotFound {
+    public byte[] get(BytesField field) throws ItemNotFound {
         throw new RuntimeException("Empty key '" + field.getFullName() + " not available");
     }
 

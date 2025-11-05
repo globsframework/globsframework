@@ -119,9 +119,9 @@ public class FieldValueVisitorWithContextButKey<CTX> implements FieldValueVisito
     }
 
     @Override
-    public void visitBlob(BlobField field, byte[] value, CTX ctx) throws Exception {
+    public void visitBytes(BytesField field, byte[] value, CTX ctx) throws Exception {
         if (!field.isKeyField()) {
-            fieldValueVisitor.visitBlob(field, value, ctx);
+            fieldValueVisitor.visitBytes(field, value, ctx);
         }
     }
 

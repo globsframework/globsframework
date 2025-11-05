@@ -167,7 +167,7 @@ public abstract class AbstractKey implements
         return this;
     }
 
-    public MutableKey set(BlobField field, byte[] value) throws ItemNotFound {
+    public MutableKey set(BytesField field, byte[] value) throws ItemNotFound {
         setValue(field, value);
         return this;
     }

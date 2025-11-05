@@ -24,7 +24,7 @@ public class Sample {
                 .addIntegerField("anInt", FieldName.create("int"))
                 .addLongField("long")
                 .addDoubleField("double")
-                .addBlobField("blob")
+                .addBytesField("blob")
                 .addBooleanField("boolean")
                 .get();
 

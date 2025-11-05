@@ -36,7 +36,7 @@ public interface FieldValueVisitor {
 
     void visitDateTime(DateTimeField field, ZonedDateTime value) throws Exception;
 
-    void visitBlob(BlobField field, byte[] value) throws Exception;
+    void visitBytes(BytesField field, byte[] value) throws Exception;
 
     void visitGlob(GlobField field, Glob value) throws Exception;
 
@@ -92,7 +92,7 @@ public interface FieldValueVisitor {
             notManaged(field, value);
         }
 
-        public void visitBlob(BlobField field, byte[] value) throws Exception {
+        public void visitBytes(BytesField field, byte[] value) throws Exception {
             notManaged(field, value);
         }
 

@@ -140,7 +140,7 @@ public class GlobBuilder implements FieldSetter<GlobBuilder>, FieldValues {
         return this;
     }
 
-    public GlobBuilder set(BlobField field, byte[] value) {
+    public GlobBuilder set(BytesField field, byte[] value) {
         mutableGlob.set(field, value);
         return this;
     }
@@ -289,7 +289,7 @@ public class GlobBuilder implements FieldSetter<GlobBuilder>, FieldValues {
         return mutableGlob.get(field);
     }
 
-    public byte[] get(BlobField field) throws ItemNotFound {
+    public byte[] get(BytesField field) throws ItemNotFound {
         return mutableGlob.get(field);
     }
 

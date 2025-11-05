@@ -127,7 +127,7 @@ public class FieldValuesBuilder {
     }
 
 
-    public FieldValuesBuilder set(BlobField field, byte[] value) {
+    public FieldValuesBuilder set(BytesField field, byte[] value) {
         return setValue(field, value);
     }
 

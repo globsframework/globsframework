@@ -69,7 +69,7 @@ public abstract class AbstractFieldSetter<T extends FieldSetter> implements Fiel
         return setValue(field, value);
     }
 
-    public T set(BlobField field, byte[] value) throws ItemNotFound {
+    public T set(BytesField field, byte[] value) throws ItemNotFound {
         return setValue(field, value);
     }
 

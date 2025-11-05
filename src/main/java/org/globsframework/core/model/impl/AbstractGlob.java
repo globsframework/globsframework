@@ -248,7 +248,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
                             instantiate.set(field, get(field));
                         }
 
-                        public void visitBlob(BlobField field) throws Exception {
+                        public void visitBytes(BytesField field) throws Exception {
                             instantiate.set(field, get(field).clone());
                         }
 

@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -74,7 +73,7 @@ public interface FieldValuesAccessor {
 
     ZonedDateTime get(DateTimeField field) throws ItemNotFound;
 
-    byte[] get(BlobField field) throws ItemNotFound;
+    byte[] get(BytesField field) throws ItemNotFound;
 
     Glob get(GlobField field) throws ItemNotFound;
 
@@ -114,7 +113,7 @@ public interface FieldValuesAccessor {
         return bigDecimal != null ? bigDecimal : valueIfNull;
     }
 
-    default byte[] get(BlobField field, byte[] valueIfNull) throws ItemNotFound {
+    default byte[] get(BytesField field, byte[] valueIfNull) throws ItemNotFound {
         byte[] value = get(field);
         return value != null ? value : valueIfNull;
     }

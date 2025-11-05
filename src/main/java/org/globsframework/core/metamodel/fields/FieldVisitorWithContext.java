@@ -29,7 +29,7 @@ public interface FieldVisitorWithContext<C> {
 
     void visitDateTime(DateTimeField field, C context) throws Exception;
 
-    void visitBlob(BlobField field, C context) throws Exception;
+    void visitBytes(BytesField field, C context) throws Exception;
 
     void visitGlob(GlobField field, C context) throws Exception;
 
@@ -97,7 +97,7 @@ public interface FieldVisitorWithContext<C> {
             notManaged(field, context);
         }
 
-        public void visitBlob(BlobField field, C context) throws Exception {
+        public void visitBytes(BytesField field, C context) throws Exception {
             notManaged(field, context);
         }
 

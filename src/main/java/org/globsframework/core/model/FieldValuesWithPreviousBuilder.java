@@ -63,7 +63,7 @@ public class FieldValuesWithPreviousBuilder {
         setValue(field, newValue, previousValue);
     }
 
-    public void set(BlobField field, byte[] newValue, byte[] previousValue) {
+    public void set(BytesField field, byte[] newValue, byte[] previousValue) {
         setValue(field, newValue, previousValue);
     }
 

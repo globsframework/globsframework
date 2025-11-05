@@ -99,8 +99,8 @@ public class XmlGlobStreamReader {
                 accessor = new XmlBooleanAccessor(stream, field);
             }
 
-            public void visitBlob(BlobField field) throws Exception {
-                accessor = new XmlBlobAccessor(stream, field);
+            public void visitBytes(BytesField field) throws Exception {
+                accessor = new XmlBytesAccessor(stream, field);
             }
 
             public void visitString(StringField field) throws Exception {
@@ -140,11 +140,11 @@ public class XmlGlobStreamReader {
             }
 
 
-            private static class XmlBlobAccessor implements BlobAccessor {
+            private static class XmlBytesAccessor implements BytesAccessor {
                 private XmlGlobStream xmlMoStream;
-                private BlobField field;
+                private BytesField field;
 
-                public XmlBlobAccessor(XmlGlobStream xmlMoStream, BlobField field) {
+                public XmlBytesAccessor(XmlGlobStream xmlMoStream, BytesField field) {
                     this.xmlMoStream = xmlMoStream;
                     this.field = field;
                 }

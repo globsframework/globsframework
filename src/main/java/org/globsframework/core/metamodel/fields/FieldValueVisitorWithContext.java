@@ -1,6 +1,5 @@
 package org.globsframework.core.metamodel.fields;
 
-import org.globsframework.core.metamodel.fields.impl.FieldValueVisitorButKey;
 import org.globsframework.core.model.Glob;
 
 import java.math.BigDecimal;
@@ -36,7 +35,7 @@ public interface FieldValueVisitorWithContext<Context> {
 
     void visitDateTime(DateTimeField field, ZonedDateTime value, Context context) throws Exception;
 
-    void visitBlob(BlobField field, byte[] value, Context context) throws Exception;
+    void visitBytes(BytesField field, byte[] value, Context context) throws Exception;
 
     void visitGlob(GlobField field, Glob value, Context context) throws Exception;
 
@@ -92,7 +91,7 @@ public interface FieldValueVisitorWithContext<Context> {
             notManaged(field, value, context);
         }
 
-        public void visitBlob(BlobField field, byte[] value, Context context) throws Exception {
+        public void visitBytes(BytesField field, byte[] value, Context context) throws Exception {
             notManaged(field, value, context);
         }
 

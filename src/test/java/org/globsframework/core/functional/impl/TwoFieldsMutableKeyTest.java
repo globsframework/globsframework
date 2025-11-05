@@ -1,6 +1,7 @@
 package org.globsframework.core.functional.impl;
 
 import org.globsframework.core.metamodel.DummyObjectWithCompositeKey;
+import org.globsframework.core.metamodel.fields.BytesField;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.IntegerField;
@@ -59,7 +60,7 @@ public class TwoFieldsMutableKeyTest {
             public void visitLongArray(org.globsframework.core.metamodel.fields.LongArrayField field, long[] value) {}
             public void visitBigDecimal(org.globsframework.core.metamodel.fields.BigDecimalField field, java.math.BigDecimal value) {}
             public void visitBigDecimalArray(org.globsframework.core.metamodel.fields.BigDecimalArrayField field, java.math.BigDecimal[] value) {}
-            public void visitBlob(org.globsframework.core.metamodel.fields.BlobField field, byte[] value) {}
+            public void visitBytes(BytesField field, byte[] value) {}
             public void visitDoubleArray(org.globsframework.core.metamodel.fields.DoubleArrayField field, double[] value) {}
             public void visitIntegerArray(org.globsframework.core.metamodel.fields.IntegerArrayField field, int[] value) {}
             public void visitStringArray(org.globsframework.core.metamodel.fields.StringArrayField field, String[] value) {}

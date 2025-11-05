@@ -29,7 +29,7 @@ public interface FieldVisitor {
 
     void visitDateTime(DateTimeField field) throws Exception;
 
-    void visitBlob(BlobField field) throws Exception;
+    void visitBytes(BytesField field) throws Exception;
 
     void visitGlob(GlobField field) throws Exception;
 
@@ -97,7 +97,7 @@ public interface FieldVisitor {
             notManaged(field);
         }
 
-        public void visitBlob(BlobField field) throws Exception {
+        public void visitBytes(BytesField field) throws Exception {
             notManaged(field);
         }
 

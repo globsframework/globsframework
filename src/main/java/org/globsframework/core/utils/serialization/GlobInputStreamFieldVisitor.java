@@ -54,7 +54,7 @@ class GlobInputStreamFieldVisitor implements FieldVisitorWithContext<MutableGlob
         mutableGlob.set(field, serializedInput.readBooleanArray());
     }
 
-    public void visitBlob(BlobField field, MutableGlob mutableGlob) {
+    public void visitBytes(BytesField field, MutableGlob mutableGlob) {
         mutableGlob.set(field, serializedInput.readBytes());
     }
 

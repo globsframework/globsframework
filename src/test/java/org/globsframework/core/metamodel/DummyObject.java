@@ -20,7 +20,7 @@ public class DummyObject {
     public static IntegerField COUNT;
     public static BooleanField PRESENT;
     public static IntegerField DATE;
-    public static BlobField PASSWORD;
+    public static BytesField PASSWORD;
 
     @ContainmentLink_
     public static IntegerField LINK_ID;

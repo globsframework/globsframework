@@ -45,7 +45,7 @@ public interface FieldValuesWithPrevious extends FieldValues, FieldsValueWithPre
 
     BigDecimal[] getPrevious(BigDecimalArrayField field) throws ItemNotFound;
 
-    byte[] getPrevious(BlobField field) throws ItemNotFound;
+    byte[] getPrevious(BytesField field) throws ItemNotFound;
 
     Glob getPrevious(GlobField field) throws ItemNotFound;
 

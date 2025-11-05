@@ -12,7 +12,7 @@ public class DummyObjectWithInner {
     @KeyField_
     public static IntegerField ID;
 
-    public static BlobField byteArrayData;
+    public static BytesField byteArrayData;
 
     @Target(value = DummyObjectInner.class)
     public static GlobField VALUE;

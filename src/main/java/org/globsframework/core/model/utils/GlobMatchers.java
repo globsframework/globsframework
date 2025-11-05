@@ -79,7 +79,7 @@ public class GlobMatchers {
         return fieldEqualsObject(field, value);
     }
 
-    public static Predicate<Glob> fieldEquals(BlobField field, byte[] value) {
+    public static Predicate<Glob> fieldEquals(BytesField field, byte[] value) {
         return fieldEqualsObject(field, value);
     }
 

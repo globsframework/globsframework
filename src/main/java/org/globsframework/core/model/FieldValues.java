@@ -126,7 +126,7 @@ public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
             throw new ItemNotFound(field.getName());
         }
 
-        public byte[] get(BlobField field) throws ItemNotFound {
+        public byte[] get(BytesField field) throws ItemNotFound {
             throw new ItemNotFound(field.getName());
         }
 

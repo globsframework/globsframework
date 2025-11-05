@@ -30,7 +30,7 @@ public class FieldValue {
         return new FieldValue(field, value);
     }
 
-    public static FieldValue value(BlobField field, byte[] value) {
+    public static FieldValue value(BytesField field, byte[] value) {
         return new FieldValue(field, value);
     }
 

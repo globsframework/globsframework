@@ -332,7 +332,7 @@ public class DefaultGlobFactory implements GlobFactory {
             };
         }
 
-        public void visitBlob(BlobField field) {
+        public void visitBytes(BytesField field) {
             final int index = field.getIndex();
             getAccessor = new AbstractGlobGetBytesAccessor() {
                 @Override
@@ -552,7 +552,7 @@ public class DefaultGlobFactory implements GlobFactory {
             };
         }
 
-        public void visitBlob(BlobField field) {
+        public void visitBytes(BytesField field) {
             final int index = field.getIndex();
             setAccessor = new AbstractGlobSetBytesAccessor() {
                 public void set(MutableGlob glob, byte[] value) {

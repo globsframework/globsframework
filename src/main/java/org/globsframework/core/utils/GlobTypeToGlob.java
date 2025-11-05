@@ -140,7 +140,7 @@ public class GlobTypeToGlob {
             } else if (type == DateTimeFieldType.TYPE) {
                 globTypeBuilder.addDateTimeField(field.get(DateTimeFieldType.name), Arrays.asList(field.getOrEmpty(DateTimeFieldType.annotations)));
             } else if (type == BytesFieldType.TYPE) {
-                globTypeBuilder.addBlobField(field.get(BytesFieldType.name), Arrays.asList(field.getOrEmpty(BytesFieldType.annotations)));
+                globTypeBuilder.addBytesField(field.get(BytesFieldType.name), Arrays.asList(field.getOrEmpty(BytesFieldType.annotations)));
             } else if (type == GlobFieldType.TYPE) {
                 final String targetKey = field.get(GlobFieldType.targetType);
                 final GlobTypeBuilder targetTypeBuilder = onGoing.get(targetKey);

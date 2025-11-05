@@ -38,7 +38,7 @@ public interface FieldSetter<T extends FieldSetter> {
 
     T set(BigDecimalArrayField field, BigDecimal[] value) throws ItemNotFound;
 
-    T set(BlobField field, byte[] value) throws ItemNotFound;
+    T set(BytesField field, byte[] value) throws ItemNotFound;
 
     T set(DateField field, LocalDate value) throws ItemNotFound;
 

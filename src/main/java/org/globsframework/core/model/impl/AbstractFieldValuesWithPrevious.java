@@ -105,7 +105,7 @@ public abstract class AbstractFieldValuesWithPrevious implements FieldValuesWith
         return ret == null ? valueIfNull : ret;
     }
 
-    public byte[] get(BlobField field) throws ItemNotFound {
+    public byte[] get(BytesField field) throws ItemNotFound {
         return (byte[]) doGet(field);
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractFieldValuesWithPrevious implements FieldValuesWith
         return (Long) doGetPrevious(field);
     }
 
-    public byte[] getPrevious(BlobField field) throws ItemNotFound {
+    public byte[] getPrevious(BytesField field) throws ItemNotFound {
         return (byte[]) doGetPrevious(field);
     }
 

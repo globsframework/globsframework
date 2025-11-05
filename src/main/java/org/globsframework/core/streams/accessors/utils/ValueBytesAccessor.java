@@ -1,14 +1,14 @@
 package org.globsframework.core.streams.accessors.utils;
 
-import org.globsframework.core.streams.accessors.BlobAccessor;
+import org.globsframework.core.streams.accessors.BytesAccessor;
 
-public class ValueBlobAccessor implements BlobAccessor {
+public class ValueBytesAccessor implements BytesAccessor {
     private byte[] values;
 
-    public ValueBlobAccessor() {
+    public ValueBytesAccessor() {
     }
 
-    public ValueBlobAccessor(byte[] values) {
+    public ValueBytesAccessor(byte[] values) {
         this.values = values;
     }
 

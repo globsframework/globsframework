@@ -115,8 +115,8 @@ public class DefaultFieldFactory {
         return add(new DefaultDateField(name, type, index, isKeyField, keyIndex, null, annotations), isKeyField);
     }
 
-    public DefaultBlobField addBlob(String name, int index, HashContainer<Key, Glob> annotations) {
-        return add(new DefaultBlobField(name, type, index, annotations), false);
+    public DefaultBytesField addBytes(String name, int index, HashContainer<Key, Glob> annotations) {
+        return add(new DefaultBytesField(name, type, index, annotations), false);
     }
 
     public DefaultGlobField addGlob(String name, GlobType globType, boolean isKeyField,

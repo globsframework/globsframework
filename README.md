@@ -65,13 +65,16 @@ Today's Globs components :
 * to read/write csv or similar format : https://github.com/globsframework/csvExport (depend on apache csv)
 * a binary serializer (a kind of TLV (Type Length Value) like protocol
   buffer) : https://github.com/globsframework/globs-bin-serialisation
-* for http request using glob for params url, body, header (generate an openApi json) and a service using etcd but with
-  globs : https://github.com/globsframework/globs-http (depends on apache http components and jetcd)
+* for http request using glob for params url, body, header (generate an openApi json)  with
+  globs : https://github.com/globsframework/globs-http (depends on apache http components)
 * to produce a view based on breakdown and output using data inside a glob or any where in it's
   child : https://github.com/globsframework/globs-view
 * to implement a graphql api : https://github.com/globsframework/globs-graphql (no dependency except antlr graphql.g4, do not
   response to query on schema : I use graphql-java for that.)
 * Glob can also be generated directly in bytecode via ASM https://github.com/globsframework/globs-generate
+* a Protobuf serialization : 
+* an offHeap api to tree (read-only) and hash (read-write) container
+* a service using etcd but with globs : https://github.com/globsframework/globs-http (depends on jetcd)
 
 A GlobType interface:
 

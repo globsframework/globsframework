@@ -59,8 +59,8 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
         return doSet(field, l);
     }
 
-    public T set(BlobField blobField, byte[] bytes) throws ItemNotFound {
-        return doSet(blobField, bytes);
+    public T set(BytesField bytesField, byte[] bytes) throws ItemNotFound {
+        return doSet(bytesField, bytes);
     }
 
     public T set(DoubleArrayField field, double[] value) throws ItemNotFound {
@@ -156,8 +156,8 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
         return realValue != null ? realValue : valueIfNull;
     }
 
-    public byte[] get(BlobField blobField) throws ItemNotFound {
-        return (byte[]) doGet(blobField);
+    public byte[] get(BytesField bytesField) throws ItemNotFound {
+        return (byte[]) doGet(bytesField);
     }
 
     public double[] get(DoubleArrayField field) throws ItemNotFound {

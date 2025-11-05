@@ -71,7 +71,7 @@ public interface AbstractMutableGlob extends AbstractGlob, MutableGlob {
         return setObject(field, value);
     }
 
-    default MutableGlob set(BlobField field, byte[] value) {
+    default MutableGlob set(BytesField field, byte[] value) {
         return setObject(field, value);
     }
 

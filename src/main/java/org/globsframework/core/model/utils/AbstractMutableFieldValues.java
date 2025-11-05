@@ -43,7 +43,7 @@ public abstract class AbstractMutableFieldValues implements AbstractFieldValues,
         return this;
     }
 
-    public MutableFieldValues set(BlobField field, byte[] value) {
+    public MutableFieldValues set(BytesField field, byte[] value) {
         setValue(field, value);
         return this;
     }

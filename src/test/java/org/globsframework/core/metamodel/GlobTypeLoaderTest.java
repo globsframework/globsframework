@@ -45,7 +45,7 @@ public class GlobTypeLoaderTest {
         public static DoubleField DOUBLE;
         public static BooleanField BOOLEAN;
         public static LongField LONG;
-        public static BlobField BLOB;
+        public static BytesField BYTES;
         public static BigDecimalField A;
         public static BigDecimalArrayField B;
         public static DoubleArrayField C;
@@ -76,7 +76,7 @@ public class GlobTypeLoaderTest {
                         .set(DOUBLE, 1.1)
                         .set(BOOLEAN, false)
                         .set(LONG, 15L)
-                        .set(BLOB, TestUtils.SAMPLE_BYTE_ARRAY)
+                        .set(BYTES, TestUtils.SAMPLE_BYTE_ARRAY)
                         .set(A, BigDecimal.valueOf(3.3))
                         .set(B, new BigDecimal[]{BigDecimal.ONE, BigDecimal.ZERO})
                         .set(C, new double[]{2.2, 3.3})
@@ -102,7 +102,7 @@ public class GlobTypeLoaderTest {
         assertEquals(Boolean.FALSE, AnObject.glob.get(AnObject.BOOLEAN));
         assertFalse(AnObject.glob.isTrue(AnObject.BOOLEAN));
         assertEquals(Long.valueOf(15), AnObject.glob.get(AnObject.LONG));
-        assertEquals(TestUtils.SAMPLE_BYTE_ARRAY, AnObject.glob.get(AnObject.BLOB));
+        assertEquals(TestUtils.SAMPLE_BYTE_ARRAY, AnObject.glob.get(AnObject.BYTES));
 
         assertTrue(AnObject.A.valueEqual(AnObject.glob.get(AnObject.A), BigDecimal.valueOf(3.3)));
         assertTrue(AnObject.B.valueEqual(AnObject.glob.get(AnObject.B), new BigDecimal[]{BigDecimal.ONE, BigDecimal.ZERO}));
@@ -137,7 +137,7 @@ public class GlobTypeLoaderTest {
 
         assertEquals(0, AnObject.ID.getIndex());
         assertEquals(3, AnObject.BOOLEAN.getIndex());
-        assertEquals(5, AnObject.BLOB.getIndex());
+        assertEquals(5, AnObject.BYTES.getIndex());
 
         assertTrue(AnObject.ID.isKeyField());
         assertFalse(AnObject.STRING.isKeyField());

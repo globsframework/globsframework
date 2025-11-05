@@ -292,7 +292,7 @@ public class KeyBuilder implements FieldSetter<KeyBuilder> {
         return setObject(field, value);
     }
 
-    public KeyBuilder set(BlobField field, byte[] value) throws ItemNotFound {
+    public KeyBuilder set(BytesField field, byte[] value) throws ItemNotFound {
         return setObject(field, value);
     }
 

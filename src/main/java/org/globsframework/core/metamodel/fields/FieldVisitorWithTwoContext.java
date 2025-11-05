@@ -29,7 +29,7 @@ public interface FieldVisitorWithTwoContext<C, D> {
 
     void visitDateTime(DateTimeField field, C ctx1, D ctx2) throws Exception;
 
-    void visitBlob(BlobField field, C ctx1, D ctx2) throws Exception;
+    void visitBytes(BytesField field, C ctx1, D ctx2) throws Exception;
 
     void visitGlob(GlobField field, C ctx1, D ctx2) throws Exception;
 
@@ -97,7 +97,7 @@ public interface FieldVisitorWithTwoContext<C, D> {
             notManaged(field, ctx1, ctx2);
         }
 
-        public void visitBlob(BlobField field, C ctx1, D ctx2) throws Exception {
+        public void visitBytes(BytesField field, C ctx1, D ctx2) throws Exception {
             notManaged(field, ctx1, ctx2);
         }
 

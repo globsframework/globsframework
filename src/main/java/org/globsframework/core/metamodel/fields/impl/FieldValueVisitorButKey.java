@@ -110,9 +110,9 @@ public class FieldValueVisitorButKey implements FieldValueVisitor {
         }
     }
 
-    public void visitBlob(BlobField field, byte[] value) throws Exception {
+    public void visitBytes(BytesField field, byte[] value) throws Exception {
         if (!field.isKeyField()) {
-            fieldValueVisitor.visitBlob(field, value);
+            fieldValueVisitor.visitBytes(field, value);
         }
     }
 

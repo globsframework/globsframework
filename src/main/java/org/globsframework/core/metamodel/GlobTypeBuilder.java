@@ -42,7 +42,7 @@ public interface GlobTypeBuilder {
 
     GlobTypeBuilder addBooleanArrayField(String fieldName, Collection<Glob> globAnnotations);
 
-    GlobTypeBuilder addBlobField(String fieldName, Collection<Glob> globAnnotations);
+    GlobTypeBuilder addBytesField(String fieldName, Collection<Glob> globAnnotations);
 
     GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, GlobType type);
 
@@ -80,7 +80,7 @@ public interface GlobTypeBuilder {
 
     LongArrayField declareLongArrayField(String fieldName, Collection<Glob> annotations);
 
-    BlobField declareBlobField(String fieldName, Collection<Glob> annotations);
+    BytesField declareBytesField(String fieldName, Collection<Glob> annotations);
 
     GlobField declareGlobField(String fieldName, GlobType globType, Collection<Glob> annotations);
 
@@ -146,8 +146,8 @@ public interface GlobTypeBuilder {
         return addDoubleArrayField(fieldName, Arrays.asList(annotations));
     }
 
-    default GlobTypeBuilder addBlobField(String fieldName, Glob... annotations) {
-        return addBlobField(fieldName, Arrays.asList(annotations));
+    default GlobTypeBuilder addBytesField(String fieldName, Glob... annotations) {
+        return addBytesField(fieldName, Arrays.asList(annotations));
     }
 
     default StringField declareStringField(String fieldName, Glob... annotations) {
@@ -194,8 +194,8 @@ public interface GlobTypeBuilder {
         return declareBigDecimalArrayField(fieldName, Arrays.asList(annotations));
     }
 
-    default BlobField declareBlobField(String fieldName, Glob... annotations) {
-        return declareBlobField(fieldName, Arrays.asList(annotations));
+    default BytesField declareBytesField(String fieldName, Glob... annotations) {
+        return declareBytesField(fieldName, Arrays.asList(annotations));
     }
 
     default LongArrayField declareLongArrayField(String fieldName, Glob... annotations) {

@@ -183,7 +183,7 @@ public class FieldValuesButKey implements FieldValues {
         return fieldValues.get(field);
     }
 
-    public byte[] get(BlobField field) throws ItemNotFound {
+    public byte[] get(BytesField field) throws ItemNotFound {
         checkNotAKey(field);
         return fieldValues.get(field);
     }

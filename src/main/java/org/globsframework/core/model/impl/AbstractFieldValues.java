@@ -55,7 +55,7 @@ public interface AbstractFieldValues extends FieldValues {
         return doCheckedGet(field);
     }
 
-    default byte[] get(BlobField field) {
+    default byte[] get(BytesField field) {
         return (byte[]) doCheckedGet(field);
     }
 

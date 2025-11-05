@@ -285,8 +285,8 @@ public class GlobTypeLoaderImpl implements GlobTypeLoader {
             DefaultDouble_ defaultDouble = field.getAnnotation(DefaultDouble_.class);
             return fieldFactory.addDouble(name, isKeyField, keyIndex, index,
                     defaultDouble != null ? defaultDouble.value() : null, annotations);
-        } else if (BlobField.class.isAssignableFrom(fieldClass)) {
-            return fieldFactory.addBlob(name, index, annotations);
+        } else if (BytesField.class.isAssignableFrom(fieldClass)) {
+            return fieldFactory.addBytes(name, index, annotations);
         } else if (DoubleArrayField.class.isAssignableFrom(fieldClass)) {
             return fieldFactory.addDoubleArray(name, isKeyField, keyIndex, index, annotations);
         } else if (IntegerArrayField.class.isAssignableFrom(fieldClass)) {

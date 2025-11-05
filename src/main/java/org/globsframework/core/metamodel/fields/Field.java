@@ -7,7 +7,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 
 public sealed interface Field extends MutableAnnotations
-        permits BooleanField, IntegerField, LongField, StringField, DoubleField, BlobField, BigDecimalField, DateField, DateTimeField, GlobField, GlobUnionField,
+        permits BooleanField, IntegerField, LongField, StringField, DoubleField, BytesField, BigDecimalField, DateField, DateTimeField, GlobField, GlobUnionField,
         BooleanArrayField, IntegerArrayField, LongArrayField, StringArrayField, DoubleArrayField, BigDecimalArrayField, GlobArrayField, GlobArrayUnionField {
 
     String getName();

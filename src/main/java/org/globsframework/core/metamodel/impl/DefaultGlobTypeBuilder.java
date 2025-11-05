@@ -268,8 +268,8 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    public GlobTypeBuilder addBlobField(String fieldName, Collection<Glob> globAnnotations) {
-        createBlobField(fieldName, globAnnotations);
+    public GlobTypeBuilder addBytesField(String fieldName, Collection<Glob> globAnnotations) {
+        createBytesField(fieldName, globAnnotations);
         return this;
     }
 
@@ -294,9 +294,9 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return this;
     }
 
-    private DefaultBlobField createBlobField(String fieldName, Collection<Glob> globAnnotations) {
+    private DefaultBytesField createBytesField(String fieldName, Collection<Glob> globAnnotations) {
         HashContainer<Key, Glob> annotations = adaptAnnotation(globAnnotations);
-        DefaultBlobField field = factory.addBlob(fieldName, index, annotations);
+        DefaultBytesField field = factory.addBytes(fieldName, index, annotations);
         index++;
         return field;
     }
@@ -396,8 +396,8 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return createLongArrayField(fieldName, annotations);
     }
 
-    public BlobField declareBlobField(String fieldName, Collection<Glob> annotations) {
-        return createBlobField(fieldName, annotations);
+    public BytesField declareBytesField(String fieldName, Collection<Glob> annotations) {
+        return createBytesField(fieldName, annotations);
     }
 
     public GlobField declareGlobField(String fieldName, GlobType globType, Collection<Glob> annotations) {
@@ -450,7 +450,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             case DateTime:
                 return declareDateTimeField(fieldName, annotations);
             case Bytes:
-                return declareBlobField(fieldName, annotations);
+                return declareBytesField(fieldName, annotations);
         }
         throw new RuntimeException("creation of " + dataType + " not possible without additional parameter (globType)");
     }
@@ -493,7 +493,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             case BooleanArray -> factory.addBooleanArray(name, field.isKeyField(), keyIndex, index, hashContainer);
             case Date -> factory.addDate(name, field.isKeyField(), keyIndex, index, hashContainer);
             case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Bytes -> factory.addBlob(name, index, hashContainer);
+            case Bytes -> factory.addBytes(name, index, hashContainer);
             case Glob ->
                     factory.addGlob(name, ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
             case GlobArray ->
