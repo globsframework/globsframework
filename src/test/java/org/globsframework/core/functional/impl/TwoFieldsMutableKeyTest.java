@@ -1,5 +1,6 @@
 package org.globsframework.core.functional.impl;
 
+import org.globsframework.core.functional.FunctionalKey;
 import org.globsframework.core.metamodel.DummyObjectWithCompositeKey;
 import org.globsframework.core.metamodel.fields.BytesField;
 import org.globsframework.core.metamodel.fields.Field;
@@ -141,5 +142,10 @@ public class TwoFieldsMutableKeyTest {
         key.set(ID1, null).set(ID2, 3);
         assertTrue(key.isSet(ID1));
         assertTrue(key.isSet(ID2));
+
+        key.unset(ID1);
+        final FunctionalKey newKey = builder.create(key);
+        assertFalse(newKey.isSet(ID1));
+        assertTrue(newKey.isSet(ID2));
     }
 }

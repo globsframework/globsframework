@@ -7,6 +7,8 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.FieldValues;
 
+import static org.globsframework.core.functional.impl.AbstractFieldValue.NULL_VALUE;
+
 class TwoFunctionalKeyBuilder implements FunctionalKeyBuilder {
     final Field field1;
     final Field field2;
@@ -28,8 +30,8 @@ class TwoFunctionalKeyBuilder implements FunctionalKeyBuilder {
 
     public FunctionalKey create(FieldValues fieldValues) {
         return new TwoFieldsMutableKey(this,
-                fieldValues.getValue(field1),
-                fieldValues.getValue(field2));
+                fieldValues.isSet(field1) ? fieldValues.getValue(field1): NULL_VALUE,
+                fieldValues.isSet(field2) ? fieldValues.getValue(field2) : NULL_VALUE);
     }
 
     public FunctionalKey proxy(FieldValues fieldValues) {

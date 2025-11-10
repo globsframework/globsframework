@@ -7,6 +7,8 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.FieldValues;
 
+import static org.globsframework.core.functional.impl.AbstractFieldValue.NULL_VALUE;
+
 public class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
     final Field field;
     private Field fields[];
@@ -25,7 +27,8 @@ public class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
     }
 
     public FunctionalKey create(FieldValues fieldValues) {
-        return new OneFieldMutableKey(this, fieldValues.getValue(field));
+        return new OneFieldMutableKey(this,
+                fieldValues.isSet(field) ? fieldValues.getValue(field) : NULL_VALUE);
     }
 
     public FunctionalKey proxy(FieldValues fieldValues) {
