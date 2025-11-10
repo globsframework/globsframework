@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <artifactId>globs</artifactId>
     <name>Generic Lightweight ObjectS</name>
-    <version>4.14.1</version>
+    <version>4.15-SNAPSHOT</version>
 
     <developers>
         <developer>
