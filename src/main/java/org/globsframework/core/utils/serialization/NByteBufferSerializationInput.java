@@ -12,13 +12,24 @@ import java.util.Arrays;
 public class NByteBufferSerializationInput implements SerializedInput {
     private final NextBuffer nextBuffer;
     private ByteBuffer data;
-    private byte[] buffer = new byte[1024];
+    private byte[] buffer;
+    private final int defaultSize;
     private int readCount;
     private int readLimit = Integer.MAX_VALUE;
 
     public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer) {
+        this(data, nextBuffer, 1024);
+    }
+
+    public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer, int minSize) {
+        this(data, nextBuffer, null, minSize);
+    }
+
+    public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer, byte[] buffer, int minSize) {
         this.data = data;
         this.nextBuffer = nextBuffer;
+        this.buffer = buffer;
+        this.defaultSize = minSize;
     }
 
     public void limit(int limit) {
@@ -315,7 +326,14 @@ public class NByteBufferSerializationInput implements SerializedInput {
             return tmp;
         } else {
             blockingRead(length);
-            return Arrays.copyOfRange(buffer, 0, length);
+            if (buffer.length == length) {
+                byte[] tmp = buffer;
+                buffer = new byte[defaultSize];
+                return tmp;
+            }
+            else {
+                return Arrays.copyOfRange(buffer, 0, length);
+            }
         }
     }
 }
