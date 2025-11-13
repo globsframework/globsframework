@@ -483,4 +483,35 @@ public interface FieldValuesAccessor {
         return value;
     }
 
+    default int[] getNotNull(IntegerArrayField field) {
+        int[] value = get(field);
+        if (value == null) {
+            throw new NullPointerException(field.getFullName() + " should not be null.");
+        }
+        return value;
+    }
+
+    default long[] getNotNull(LongArrayField field) {
+        long[] value = get(field);
+        if (value == null) {
+            throw new NullPointerException(field.getFullName() + " should not be null.");
+        }
+        return value;
+    }
+
+    default boolean[] getNotNull(BooleanArrayField field) {
+        boolean[] value = get(field);
+        if (value == null) {
+            throw new NullPointerException(field.getFullName() + " should not be null.");
+        }
+        return value;
+    }
+
+    default BigDecimal[] getNotNull(BigDecimalArrayField field) {
+        BigDecimal[] value = get(field);
+        if (value == null) {
+            throw new NullPointerException(field.getFullName() + " should not be null.");
+        }
+        return value;
+    }
 }

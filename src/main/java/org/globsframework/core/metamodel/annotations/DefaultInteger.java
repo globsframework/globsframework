@@ -16,6 +16,10 @@ public class DefaultInteger {
     @InitUniqueKey
     public static final Key KEY;
 
+    public static Glob create(int value) {
+        return TYPE.instantiate().set(VALUE, value);
+    }
+
     public static Glob create(DefaultInteger_ defaultDouble) {
         return TYPE.instantiate().set(VALUE, defaultDouble.value());
     }

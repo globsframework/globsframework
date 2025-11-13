@@ -16,6 +16,10 @@ public class DefaultLong {
     @InitUniqueKey
     public static final Key KEY;
 
+    public static Glob create(long value) {
+        return TYPE.instantiate().set(VALUE, value);
+    }
+
     public static Glob create(DefaultLong_ defaultLong) {
         return TYPE.instantiate().set(VALUE, defaultLong.value());
     }

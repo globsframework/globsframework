@@ -16,8 +16,8 @@ public class DefaultDouble {
     @InitUniqueKey
     public static final Key KEY;
 
-    public static Glob create(double defaultDouble) {
-        return TYPE.instantiate().set(VALUE, defaultDouble);
+    public static Glob create(double value) {
+        return TYPE.instantiate().set(VALUE, value);
     }
 
     static {

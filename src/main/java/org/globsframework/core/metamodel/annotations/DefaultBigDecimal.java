@@ -19,6 +19,10 @@ public class DefaultBigDecimal {
     @InitUniqueKey
     public static final Key KEY;
 
+    public static Glob create(BigDecimal defaultBigDecimal) {
+        return TYPE.instantiate().set(VALUE, defaultBigDecimal);
+    }
+
     public static Glob create(String defaultBigDecimal) {
         return TYPE.instantiate().set(VALUE, new BigDecimal(defaultBigDecimal));
     }
