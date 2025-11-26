@@ -1,5 +1,7 @@
 package org.globsframework.core.utils.serialization;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
-public class NByteBufferSerializationInput implements SerializedInput {
+public class NByteBufferSerializationInput extends InputStream implements SerializedInput {
     private final NextBuffer nextBuffer;
     private ByteBuffer data;
     private byte[] buffer;
@@ -36,17 +38,18 @@ public class NByteBufferSerializationInput implements SerializedInput {
         readLimit = limit;
         readCount = 0;
     }
+
     public void resetLimit() {
         readLimit = Integer.MAX_VALUE;
         readCount = 0;
     }
 
-   public void readToLimit() {
+    public void readToLimit() {
         if (readLimit == Integer.MAX_VALUE) {
             return;
         }
         while (readCount < readLimit) {
-            read();
+            readOrThrow();
         }
     }
 
@@ -128,6 +131,43 @@ public class NByteBufferSerializationInput implements SerializedInput {
         return array;
     }
 
+    public int read(byte[] b, int off, int len) throws IOException {
+        if (len == 0) {
+            return 0;
+        }
+        if (readCount >= readLimit) {
+            return -1;
+        }
+        len = Math.min(len, readLimit - readCount);
+        int read = Math.min(len, data.remaining());
+        if (read > 0) {
+            data.get(b, off, read);
+            readCount += read;
+            return read;
+        }
+        nextBuffer();
+        if (data.remaining() == 0) {
+            return -1;
+        }
+        return read(b, off, len);
+    }
+
+    public int read() throws IOException {
+        if (readCount >= readLimit) {
+            return -1;
+        }
+        if (data.remaining() >= 1) {
+            readCount++;
+            return data.get() & 0xff;
+        }
+        nextBuffer();
+        if (data.remaining() == 0) {
+            return -1;
+        }
+        readCount++;
+        return data.get() & 0xff;
+    }
+
     public void close() {
     }
 
@@ -205,6 +245,9 @@ public class NByteBufferSerializationInput implements SerializedInput {
                 return;
             }
             nextBuffer();
+            if (data.remaining() == 0) {
+                throw new RuntimeException("Unexpected end of stream");
+            }
         }
     }
 
@@ -213,7 +256,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     private boolean isNull() {
-        return read() != 0;
+        return readOrThrow() != 0;
     }
 
     public Double readDouble() {
@@ -260,7 +303,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     public Boolean readBoolean() {
-        int i = read();
+        int i = readOrThrow();
         return i == 0 ? Boolean.FALSE : i == 1 ? Boolean.TRUE : null;
     }
 
@@ -291,7 +334,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
                 ((buffer[7] & 0xff)));
     }
 
-    private int read() {
+    private int readOrThrow() {
         checkLimit(1);
         if (data.remaining() >= 1) {
             return data.get() & 0xff;
@@ -308,7 +351,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
     }
 
     public byte readByte() {
-        return (byte) read();
+        return (byte) readOrThrow();
     }
 
     public byte[] readBytes() {
@@ -330,8 +373,7 @@ public class NByteBufferSerializationInput implements SerializedInput {
                 byte[] tmp = buffer;
                 buffer = new byte[defaultSize];
                 return tmp;
-            }
-            else {
+            } else {
                 return Arrays.copyOfRange(buffer, 0, length);
             }
         }
