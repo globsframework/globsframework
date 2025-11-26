@@ -1,10 +1,9 @@
 package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.metamodel.fields.FieldValueVisitor;
-import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
+import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.model.FieldValues;
+import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
@@ -136,4 +135,42 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
         return true;
     }
 
+    @Override
+    public MutableGlob getMutable(GlobField field) throws ItemNotFound {
+        return getMutableGlob(get(field), field);
+    }
+
+    @Override
+    public MutableGlob[] getMutable(GlobArrayField field) throws ItemNotFound {
+        return getMutableGlobs(get(field), field);
+    }
+
+    @Override
+    public MutableGlob getMutable(GlobUnionField field) throws ItemNotFound {
+        return getMutableGlob(get(field), field);
+    }
+
+    private MutableGlob getMutableGlob(Glob glob, Field field) {
+        if (glob == null || glob instanceof MutableGlob) {
+            return (MutableGlob) glob;
+        }
+        throw new ClassCastException(glob.getClass().getName() + " is not mutable on field " + field.getName());
+    }
+
+    @Override
+    public MutableGlob[] getMutable(GlobArrayUnionField field) throws ItemNotFound {
+        return getMutableGlobs(get(field), field);
+    }
+
+    private MutableGlob[] getMutableGlobs(Glob[] globs, Field field) {
+        Glob[] values = globs;
+        if (values != null) {
+            for (Glob value : values) {
+                if (value != null && !(value instanceof MutableGlob)) {
+                    throw new ClassCastException(value.getClass().getName() + " is not mutable on field " + field.getName());
+                }
+            }
+        }
+        return (MutableGlob[]) values;
+    }
 }

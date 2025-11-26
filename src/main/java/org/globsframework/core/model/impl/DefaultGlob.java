@@ -109,5 +109,4 @@ public class DefaultGlob extends AbstractDefaultGlob {
             throw new ReservationException("Data was not reserved by " + reserve + " != " + key);
         }
     }
-
 }
