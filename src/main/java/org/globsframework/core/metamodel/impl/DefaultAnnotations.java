@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 public class DefaultAnnotations implements MutableAnnotations {
-    volatile private HashContainer<Key, Glob> annotations;
+    private HashContainer<Key, Glob> annotations;
 
     public DefaultAnnotations() {
         annotations = HashEmptyGlobContainer.Helper.allocate(0);
@@ -60,25 +60,21 @@ public class DefaultAnnotations implements MutableAnnotations {
 
     public MutableAnnotations addAnnotation(Glob glob) {
         if (glob != null) {
-            synchronized (this) {
-                HashContainer<Key, Glob> tmp = HashEmptyGlobContainer.Helper.allocate(annotations.size() + 1);
-                annotations.forEach(tmp::put);
-                tmp.put(glob.getKey(), glob);
-                annotations = tmp;
-            }
+            HashContainer<Key, Glob> tmp = HashEmptyGlobContainer.Helper.allocate(annotations.size() + 1);
+            annotations.forEach(tmp::put);
+            tmp.put(glob.getKey(), glob);
+            annotations = tmp;
         }
         return this;
     }
 
     public MutableAnnotations addAnnotations(Collection<Glob> globs) {
-        synchronized (this) {
-            HashContainer<Key, Glob> tmp = HashEmptyGlobContainer.Helper.allocate(annotations.size() + globs.size());
-            annotations.forEach(tmp::put);
-            for (Glob glob : globs) {
-                tmp.put(glob.getKey(), glob);
-            }
-            annotations = tmp;
+        HashContainer<Key, Glob> tmp = HashEmptyGlobContainer.Helper.allocate(annotations.size() + globs.size());
+        annotations.forEach(tmp::put);
+        for (Glob glob : globs) {
+            tmp.put(glob.getKey(), glob);
         }
+        annotations = tmp;
         return this;
     }
 

@@ -5,14 +5,11 @@ import org.globsframework.core.metamodel.fields.FieldVisitor;
 import org.globsframework.core.metamodel.fields.FieldVisitorWithContext;
 import org.globsframework.core.metamodel.impl.DefaultValuesFieldVisitor;
 import org.globsframework.core.metamodel.index.Index;
-import org.globsframework.core.metamodel.utils.MutableAnnotations;
 import org.globsframework.core.model.GlobFactory;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
 import org.globsframework.core.model.globaccessor.get.GlobGetAccessor;
-import org.globsframework.core.model.globaccessor.get.GlobGetGlobAccessor;
 import org.globsframework.core.model.globaccessor.set.GlobSetAccessor;
-import org.globsframework.core.model.globaccessor.set.GlobSetGlobAccessor;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.Collection;
@@ -21,7 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public interface GlobType extends MutableAnnotations {
+public interface GlobType extends Annotations {
 
     String getName();
 
@@ -63,11 +60,11 @@ public interface GlobType extends MutableAnnotations {
 
     String describe();
 
-    default <T extends GlobGetAccessor> T getGetAccessor(Field field){
+    default <T extends GlobGetAccessor> T getGetAccessor(Field field) {
         return (T) getGlobFactory().getGetValueAccessor(field);
     }
 
-    default <T extends GlobSetAccessor> T getSetAccessor(Field field){ // write code in factory
+    default <T extends GlobSetAccessor> T getSetAccessor(Field field) { // write code in factory
         return (T) getGlobFactory().getSetValueAccessor(field);
     }
 

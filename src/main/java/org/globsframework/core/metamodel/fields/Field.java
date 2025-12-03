@@ -1,12 +1,12 @@
 package org.globsframework.core.metamodel.fields;
 
+import org.globsframework.core.metamodel.Annotations;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.type.DataType;
-import org.globsframework.core.metamodel.utils.MutableAnnotations;
 import org.globsframework.core.model.FieldValuesAccessor;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 
-public sealed interface Field extends MutableAnnotations
+public sealed interface Field extends Annotations
         permits BooleanField, IntegerField, LongField, StringField, DoubleField, BytesField, BigDecimalField, DateField, DateTimeField, GlobField, GlobUnionField,
         BooleanArrayField, IntegerArrayField, LongArrayField, StringArrayField, DoubleArrayField, BigDecimalArrayField, GlobArrayField, GlobArrayUnionField {
 
@@ -71,7 +71,7 @@ public sealed interface Field extends MutableAnnotations
 
     Object normalize(Object value);
 
-     <T> T getRegistered(Class<T> klass);
+    <T> T getRegistered(Class<T> klass);
 
     default StringField asStringField() {
         if (!(this instanceof StringField)) {

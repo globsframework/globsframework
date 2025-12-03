@@ -1,6 +1,8 @@
 package org.globsframework.core.metamodel.annotations;
 
 import org.globsframework.core.metamodel.GlobType;
+import org.globsframework.core.metamodel.GlobTypeBuilder;
+import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultFieldFactory;
@@ -29,14 +31,11 @@ public class FieldName {
     }
 
     static {
-        DefaultGlobType globType = new DefaultGlobType("FieldName");
-        DefaultFieldFactory factory = new DefaultFieldFactory(globType);
-        TYPE = globType;
-        NAME = factory.addString("name", false, 0, 0, null, HashEmptyGlobContainer.Helper.allocate(1));
-        globType.completeInit();
+        GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("FieldName");
+        TYPE = globTypeBuilder.unCompleteType();
+        NAME = globTypeBuilder.declareStringField("name");
+        globTypeBuilder.complete();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
-        NAME.addAnnotation(create("name"));
-        globType.register(GlobCreateFromAnnotation.class, annotation -> create((FieldName_) annotation));
     }
 
     public static String getName(Field field) {
