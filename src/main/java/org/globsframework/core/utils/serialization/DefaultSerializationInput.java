@@ -30,6 +30,9 @@ public class DefaultSerializationInput implements SerializedInput {
             }
             int totalRead;
             if ((totalRead = inputStream.read(buffer, 0, reserve)) != reserve) {
+                if (totalRead == -1) {
+                    throw new EOFIOFailure("Missing data in buffer expected " + reserve + " but was " + totalRead);
+                }
                 loopRead(reserve, totalRead);
             }
         } catch (IOException e) {
