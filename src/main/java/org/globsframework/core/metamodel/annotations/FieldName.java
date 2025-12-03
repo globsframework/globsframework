@@ -34,8 +34,10 @@ public class FieldName {
         GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("FieldName");
         TYPE = globTypeBuilder.unCompleteType();
         NAME = globTypeBuilder.declareStringField("name");
+        globTypeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((FieldName_) annotation));
         globTypeBuilder.complete();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
+
     }
 
     public static String getName(Field field) {
