@@ -21,7 +21,7 @@ public class CompositeKeyTest {
         builder.addStringField("field_2");
         IntegerField id2 = builder.declareIntegerField("id2", KeyField.UNINITIALIZED);
         IntegerField id3 = builder.declareIntegerField("id3", KeyField.UNINITIALIZED);
-        GlobType type = builder.get();
+        GlobType type = builder.build();
         Glob glob = type.instantiate().set(id1, 1).set(id2, 2).set(id3, 3);
         Key actual = KeyBuilder.init(type).set(id1, 1)
                 .set(id2, 2)

@@ -10,9 +10,10 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class DefaultBigDecimalArrayField extends AbstractField implements BigDecimalArrayField {
-    public DefaultBigDecimalArrayField(String name, GlobType globType, int index, boolean isKeyField, int keyIndex, BigDecimal defaultValue, HashContainer<Key, Glob> annotations) {
+    public DefaultBigDecimalArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, BigDecimal defaultValue, HashContainer<Key, Glob> annotations) {
         super(name, globType, BigDecimal[].class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimalArray, annotations);
     }
 

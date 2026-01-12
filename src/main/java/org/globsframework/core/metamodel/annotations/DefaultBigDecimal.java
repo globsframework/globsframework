@@ -29,10 +29,9 @@ public class DefaultBigDecimal {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultBigDecimal");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareBigDecimalField("VALUE");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultBigDecimal_) annotation).value()));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
 
 //        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DefaultBigDecimal.class, "DefaultBigDecimal");

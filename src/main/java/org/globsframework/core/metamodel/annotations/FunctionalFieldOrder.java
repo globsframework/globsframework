@@ -7,6 +7,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.KeyBuilder;
+import org.globsframework.core.model.MutableGlob;
 
 public class FunctionalFieldOrder {
     public static final GlobType TYPE;
@@ -21,19 +22,16 @@ public class FunctionalFieldOrder {
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("FunctionalFieldOrder");
 
-        TYPE = typeBuilder.unCompleteType();
         NAME = typeBuilder.declareStringField("name");
         ORDER = typeBuilder.declareIntegerField("order");
-        typeBuilder.complete();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((FunctionalFieldOrder_) annotation));
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> TYPE.instantiate()
-                .set(ORDER, ((FunctionalFieldOrder_) annotation).value())
-                .set(NAME, ((FunctionalFieldOrder_) annotation).name()));
+    }
 
-//        GlobTypeLoaderFactory.create(FunctionalFieldOrder.class, "FunctionalFieldOrder")
-//                .register(GlobCreateFromAnnotation.class, annotation -> TYPE.instantiate()
-//                        .set(ORDER, ((FunctionalFieldOrder_) annotation).value())
-//                        .set(NAME, ((FunctionalFieldOrder_) annotation).name()))
-//                .load();
+    private static MutableGlob create(FunctionalFieldOrder_ annotation) {
+        return TYPE.instantiate()
+                .set(ORDER, annotation.value())
+                .set(NAME, annotation.name());
     }
 }

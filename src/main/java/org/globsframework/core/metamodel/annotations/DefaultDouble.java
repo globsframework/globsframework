@@ -22,13 +22,9 @@ public class DefaultDouble {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultDouble");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareDoubleField("VALUE");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultDouble_) annotation).value()));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DefaultDouble.class, "DefaultDouble");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultDouble_) annotation).value()))
-//                .load();
     }
 }

@@ -14,9 +14,7 @@ public class GlobTypesType {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("GlobTypes");
-        TYPE = typeBuilder.unCompleteType();
-        types = typeBuilder.declareGlobArrayField("types", GlobTypeType.TYPE);
-        typeBuilder.complete();
-//        GlobTypeLoaderFactory.create(GlobTypesType.class).load();
+        types = typeBuilder.declareGlobArrayField("types", () -> GlobTypeType.TYPE);
+        TYPE = typeBuilder.build();
     }
 }

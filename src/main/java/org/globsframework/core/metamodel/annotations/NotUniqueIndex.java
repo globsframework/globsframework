@@ -12,11 +12,7 @@ public class NotUniqueIndex {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("NotUniqueIndex");
-        TYPE = typeBuilder.unCompleteType();
         NAME = typeBuilder.declareStringField("NAME");
-        typeBuilder.complete();
-
-//        GlobTypeLoaderFactory.create(NotUniqueIndex.class, "NotUniqueIndex")
-//                .load();
+        TYPE = typeBuilder.build();
     }
 }

@@ -14,15 +14,20 @@ import org.globsframework.core.metamodel.index.impl.DefaultUniqueIndex;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.container.hash.HashContainer;
+import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class DefaultFieldFactory {
-    private final DefaultGlobType type;
+    private final Supplier<GlobType> type;
+    private final Map<String, Field> fields;
 
-    public DefaultFieldFactory(DefaultGlobType type) {
+    public DefaultFieldFactory(Supplier<GlobType> type, Map<String, Field> fields) {
         this.type = type;
+        this.fields = fields;
     }
 
     public DefaultIntegerField addInteger(String name,
@@ -119,47 +124,30 @@ public class DefaultFieldFactory {
         return add(new DefaultBytesField(name, type, index, annotations), false);
     }
 
-    public DefaultGlobField addGlob(String name, GlobType globType, boolean isKeyField,
+    public DefaultGlobField addGlob(String name, Supplier<GlobType> globType, boolean isKeyField,
                                     int keyIndex, int index, HashContainer<Key, Glob> annotations) {
         return add(new DefaultGlobField(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
     }
 
-    public DefaultGlobArrayField addGlobArray(String name, GlobType globType, boolean isKeyField,
+    public DefaultGlobArrayField addGlobArray(String name, Supplier<GlobType> globType, boolean isKeyField,
                                               int keyIndex, int index, HashContainer<Key, Glob> annotations) {
         return add(new DefaultGlobArrayField(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
     }
 
-    public DefaultGlobUnionField addGlobUnion(String fieldName, Collection<GlobType> types, int index, HashContainer<Key, Glob> annotations) {
+    public DefaultGlobUnionField addGlobUnion(String fieldName, Supplier<GlobType>[] types,
+                                              int index, HashContainer<Key, Glob> annotations) {
         return add(new DefaultGlobUnionField(fieldName, type, types, index, false, 0, annotations), false);
     }
 
-    public DefaultGlobUnionArrayField addGlobArrayUnion(String fieldName, Collection<GlobType> types, int index, HashContainer<Key, Glob> annotations) {
+    public DefaultGlobUnionArrayField addGlobArrayUnion(String fieldName, Supplier<GlobType>[] types, int index, HashContainer<Key, Glob> annotations) {
         return add(new DefaultGlobUnionArrayField(fieldName, type, types, index, false, 0, annotations), false);
     }
 
-
     private <T extends Field> T add(T field, boolean isKeyField) {
-        type.addField(field);
-        if (isKeyField) {
-            type.addKey(field);
+        if (fields.put(field.getName(), field) != null) {
+            throw new ItemAlreadyExists("Duplicate field '" + field.getName() + "' in type '" + type.get().getName() + "'");
         }
         return field;
-    }
-
-    public UniqueIndex addUniqueIndex(String name) {
-        return new DefaultUniqueIndex(name);
-    }
-
-    public NotUniqueIndex addNotUniqueIndex(String name) {
-        return new DefaultNotUniqueIndex(name);
-    }
-
-    public MultiFieldNotUniqueIndex addMultiFieldNotUniqueIndex(String name) {
-        return new DefaultMultiFieldNotUniqueIndex(name);
-    }
-
-    public MultiFieldUniqueIndex addMultiFieldUniqueIndex(String name) {
-        return new DefaultMultiFieldUniqueIndex(name);
     }
 
     //    private static class DefaultLinkField extends AbstractField implements LinkField {

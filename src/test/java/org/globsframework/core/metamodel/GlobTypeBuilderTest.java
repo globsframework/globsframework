@@ -32,7 +32,7 @@ public class GlobTypeBuilderTest {
                 .addLongArrayField("longArray")
                 .addDateField("date")
                 .addDateTimeField("time")
-                .get();
+                .build();
 
         assertEquals("aType", type.getName());
 
@@ -73,7 +73,7 @@ public class GlobTypeBuilderTest {
                     .addIntegerField("field");
             fail();
         } catch (ItemAlreadyExists e) {
-            assertEquals("Field field declared twice for type aType", e.getMessage());
+            assertEquals("Duplicate field 'field' in type 'aType'", e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class GlobTypeBuilderTest {
     @Test
     public void testAtLeastOneKeyMustBeDefined() throws Exception {
         try {
-            GlobTypeBuilderFactory.create("type").get();
+            GlobTypeBuilderFactory.create("type").build();
             fail();
         } catch (InvalidParameter e) {
             assertEquals("GlobType type has no key field", e.getMessage());
@@ -93,7 +93,7 @@ public class GlobTypeBuilderTest {
         GlobType type = GlobTypeBuilderFactory.create("aType")
                 .addIntegerKey("id")
                 .addStringField("name", NamingField.UNIQUE_GLOB)
-                .get();
+                .build();
 
         StringField field = GlobTypeUtils.findNamingField(type);
         assertNotNull(field);

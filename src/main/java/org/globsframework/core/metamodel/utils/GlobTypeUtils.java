@@ -73,8 +73,7 @@ public class GlobTypeUtils {
     }
 
     private static boolean isSame(Glob annotation, Glob glob) {
-        Field[] fields = annotation.getType().getFields();
-        for (Field field : fields) {
+        for (Field field : annotation.getType().getFields()) {
             if (!field.valueEqual(annotation.getValue(field), glob.getValue(field))) {
                 return false;
             }

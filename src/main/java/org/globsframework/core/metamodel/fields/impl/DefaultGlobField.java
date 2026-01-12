@@ -11,18 +11,19 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 public class DefaultGlobField extends AbstractField implements GlobField {
-    private final GlobType targetType;
+    private final Supplier<GlobType> targetType;
 
-    public DefaultGlobField(String name, GlobType globType, GlobType targetType,
+    public DefaultGlobField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
                             int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
         super(name, globType, Glob.class, index, keyIndex, isKeyField, null, DataType.Glob, annotations);
-        this.targetType = targetType;
+        this.targetType = targetType; //StableValue.supplier(targetType);
     }
 
     public GlobType getTargetType() {
-        return targetType;
+        return targetType.get();
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {
@@ -125,8 +126,7 @@ public class DefaultGlobField extends AbstractField implements GlobField {
     }
 
     public static boolean isSameGlob(GlobType type, Glob g1, Glob g2) {
-        Field[] fields = type.getFields();
-        for (Field field : fields) {
+        for (Field field : type.getFields()) {
             if (!field.valueEqual(g1.getValue(field), g2.getValue(field))) {
                 return false;
             }

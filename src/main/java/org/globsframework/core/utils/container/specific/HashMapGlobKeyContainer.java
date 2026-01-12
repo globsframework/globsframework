@@ -13,8 +13,8 @@ public class HashMapGlobKeyContainer implements HashContainer<Key, Glob> {
     public static final double LOAD_FACTOR = 0.75;
     private static final int INITAL_SIZE = 8;
     static Values REPLACE = new Values(0);
-    Values values;
-    int size;
+    private Values values;
+    private int size;
 
     public HashMapGlobKeyContainer(Hash4GlobKeyContainer hash4GlobKeyContainer) {
         this.values = new Values(INITAL_SIZE);

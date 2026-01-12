@@ -17,15 +17,15 @@ public class Required {
     public static final Glob UNIQUE_GLOB;
 
     static {
-//        GlobTypeLoaderFactory.create(Required.class, "Required")
-//                .register(GlobCreateFromAnnotation.class, annotation -> UNIQUE_GLOB)
-//                .load();
         GlobTypeBuilder globTypeBuilder = new DefaultGlobTypeBuilder("Required");
-        TYPE = globTypeBuilder.unCompleteType();
-        globTypeBuilder.complete();
+        globTypeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getUniqueGlob());
+        TYPE = globTypeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
         UNIQUE_GLOB = TYPE.instantiate();
-        globTypeBuilder.register(GlobCreateFromAnnotation.class, annotation -> UNIQUE_GLOB);
+    }
+
+    private static Glob getUniqueGlob() {
+        return UNIQUE_GLOB;
     }
 
 }

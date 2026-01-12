@@ -3,6 +3,8 @@ package org.globsframework.core.model.indexing;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.index.*;
+import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldNotUniqueIndex;
+import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldUniqueIndex;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.GlobRepository;
 import org.globsframework.core.model.indexing.builders.MultiFieldIndexBuilder;
@@ -20,6 +22,7 @@ public class IndexManager {
     private Map<SingleFieldIndex, IndexedTable> indexAssociationTableMap = new HashMap<SingleFieldIndex, IndexedTable>();
     private Map<MultiFieldIndex, GlobRepository.MultiFieldIndexed> multiFieldIndexTableMap = new HashMap<MultiFieldIndex, GlobRepository.MultiFieldIndexed>();
     private IndexSource indexSource;
+    private final Map<String, Index> indices = new HashMap<>();
 
     public IndexManager(IndexSource indexSource) {
         this.indexSource = indexSource;

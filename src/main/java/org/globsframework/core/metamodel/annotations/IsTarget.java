@@ -18,12 +18,13 @@ public class IsTarget {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("IsTarget");
-        TYPE = typeBuilder.get();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getInstance());
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         INSTANCE = TYPE.instantiate();
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> INSTANCE);
-//        GlobTypeLoaderFactory.create(IsTarget.class, "IsTarget")
-//                .register(GlobCreateFromAnnotation.class, annotation -> INSTANCE)
-//                .load();
+    }
+
+    private static Glob getInstance() {
+        return INSTANCE;
     }
 }

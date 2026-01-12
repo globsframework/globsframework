@@ -10,7 +10,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 public class GlobArrayFieldType {
     public static final GlobType TYPE;
@@ -25,13 +25,10 @@ public class GlobArrayFieldType {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("GlobArray");
-        TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField(ConstantsName.NAME);
         targetType = typeBuilder.declareStringField(ConstantsName.TARGET_TYPE, IsTarget.INSTANCE);
-        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, List.of());
-        typeBuilder.complete();
-
-//        GlobTypeLoaderFactory.create(GlobArrayFieldType.class).load();
+        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, new Supplier[0]);
+        TYPE = typeBuilder.build();
     }
 
     public static MutableGlob create(String name) {

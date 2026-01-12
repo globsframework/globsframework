@@ -2,12 +2,16 @@ package org.globsframework.core.metamodel;
 
 import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.fields.*;
+import org.globsframework.core.metamodel.index.MultiFieldNotUniqueIndex;
+import org.globsframework.core.metamodel.index.MultiFieldUniqueIndex;
+import org.globsframework.core.metamodel.index.NotUniqueIndex;
+import org.globsframework.core.metamodel.index.UniqueIndex;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.function.Supplier;
 
 public interface GlobTypeBuilder {
     GlobTypeBuilder addAnnotation(Glob annotation);
@@ -44,13 +48,13 @@ public interface GlobTypeBuilder {
 
     GlobTypeBuilder addBytesField(String fieldName, Collection<Glob> globAnnotations);
 
-    GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, GlobType type);
+    GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type);
 
-    GlobTypeBuilder addGlobArrayField(String fieldName, Collection<Glob> globAnnotations, GlobType type);
+    GlobTypeBuilder addGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type);
 
-    GlobTypeBuilder addUnionGlobField(String fieldName, Collection<Glob> globAnnotations, List<GlobType> types);
+    GlobTypeBuilder addUnionGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types);
 
-    GlobTypeBuilder addUnionGlobArrayField(String fieldName, Collection<Glob> globAnnotations, List<GlobType> types);
+    GlobTypeBuilder addUnionGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types);
 
     StringField declareStringField(String fieldName, Collection<Glob> annotations);
 
@@ -82,13 +86,13 @@ public interface GlobTypeBuilder {
 
     BytesField declareBytesField(String fieldName, Collection<Glob> annotations);
 
-    GlobField declareGlobField(String fieldName, GlobType globType, Collection<Glob> annotations);
+    GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
 
-    GlobArrayField declareGlobArrayField(String fieldName, GlobType globType, Collection<Glob> annotations);
+    GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
 
-    GlobUnionField declareGlobUnionField(String fieldName, Collection<GlobType> types, Collection<Glob> annotations);
+    GlobUnionField declareGlobUnionField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations);
 
-    GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Collection<GlobType> types, Collection<Glob> annotations);
+    GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations);
 
     Field declare(String fieldName, DataType dataType, Collection<Glob> annotations);
 
@@ -210,19 +214,19 @@ public interface GlobTypeBuilder {
         return declareDateTimeField(fieldName, Arrays.asList(annotations));
     }
 
-    default GlobField declareGlobField(String fieldName, GlobType globType, Glob... annotations) {
+    default GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
         return declareGlobField(fieldName, globType, Arrays.asList(annotations));
     }
 
-    default GlobArrayField declareGlobArrayField(String fieldName, GlobType globType, Glob... annotations) {
+    default GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
         return declareGlobArrayField(fieldName, globType, Arrays.asList(annotations));
     }
 
-    default GlobUnionField declareGlobUnionField(String fieldName, List<GlobType> types, Glob... annotations) {
+    default GlobUnionField declareGlobUnionField(String fieldName, Supplier<GlobType>[] types, Glob... annotations) {
         return declareGlobUnionField(fieldName, types, Arrays.asList(annotations));
     }
 
-    default GlobArrayUnionField declareGlobUnionArrayField(String fieldName, List<GlobType> types, Glob... annotations) {
+    default GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Glob... annotations) {
         return declareGlobUnionArrayField(fieldName, types, Arrays.asList(annotations));
     }
 
@@ -230,11 +234,7 @@ public interface GlobTypeBuilder {
 
     <T> GlobTypeBuilder register(Field field, Class<T> klass, T t);
 
-    GlobType get();
-
-    GlobType unCompleteType();
-
-    void complete(); // call
+    GlobType build();
 
     default GlobTypeBuilder addIntegerKey(String fieldName) {
         addIntegerField(fieldName, KeyField.UNINITIALIZED);
@@ -243,4 +243,11 @@ public interface GlobTypeBuilder {
 
     boolean isKnown(String fieldName);
 
+    UniqueIndex addUniqueIndex(String name, Field field);
+
+    NotUniqueIndex addNotUniqueIndex(String name, Field field);
+
+    MultiFieldNotUniqueIndex addMultiFieldNotUniqueIndex(String name, Field... fields);
+
+    MultiFieldUniqueIndex addMultiFieldUniqueIndex(String name, Field... fields);
 }

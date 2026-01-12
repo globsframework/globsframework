@@ -9,9 +9,10 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
+import java.util.function.Supplier;
 
 public class DefaultBigDecimalField extends AbstractField implements BigDecimalField {
-    public DefaultBigDecimalField(String name, GlobType globType, int index, boolean isKeyField, int keyIndex,
+    public DefaultBigDecimalField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex,
                                   BigDecimal defaultValue, HashContainer<Key, Glob> annotations) {
         super(name, globType, BigDecimal.class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimal, annotations);
     }

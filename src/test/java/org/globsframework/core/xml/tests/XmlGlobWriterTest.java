@@ -50,27 +50,6 @@ public class XmlGlobWriterTest {
     }
 
 
-    @Disabled // TODO containment not defined correctly
-    @Test
-    public void testLinkField() throws Exception {
-        globRepository =
-                GlobRepositoryBuilder
-                        .init()
-                        .add(GlobBuilder.init(DummyObject.TYPE)
-                                .set(DummyObject.ID, 1)
-                                .set(DummyObject.LINK_ID, 2)
-                                .get())
-                        .add(GlobBuilder.init(DummyObject.TYPE)
-                                .set(DummyObject.ID, 2)
-                                .set(DummyObject.NAME, "name2")
-                                .get())
-                        .get();
-
-        GlobTestUtils.assertEquals(globRepository,
-                "<dummyObject id='1' linkId='2' linkName='name2'/>'" +
-                        "<dummyObject id='2' name='name2'/>");
-    }
-
     @Test
     public void testLinkWithCompositeTarget() throws Exception {
         globRepository =
@@ -133,25 +112,4 @@ public class XmlGlobWriterTest {
                         "</dummyObject>");
 
     }
-
-    @Test
-    public void testLinkWithNoTarget() throws Exception {
-        globRepository =
-                GlobRepositoryBuilder
-                        .init()
-                        .add(GlobBuilder.init(DummyObject.TYPE)
-                                .set(DummyObject.ID, 1)
-                                .set(DummyObject.LINK_ID, 2)
-                                .get())
-                        .add(GlobBuilder.init(DummyObject.TYPE)
-                                .set(DummyObject.ID, 2)
-                                .set(DummyObject.NAME, "name2")
-                                .get())
-                        .get();
-
-        GlobTestUtils.assertEquals(globRepository,
-                "<dummyObject id='1' linkId='2'/>'" +
-                        "<dummyObject id='2' name='name2'/>");
-    }
-
 }

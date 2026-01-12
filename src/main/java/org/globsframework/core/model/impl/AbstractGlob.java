@@ -16,8 +16,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
         buffer.append("{ \"_kind\":\"").append(escapeQuote(getType().getName())).append("\"");
 
         GlobType type = getType();
-        Field[] fields = type.getFields();
-        for (Field field : fields) {
+        for (Field field : type.getFields()) {
             if (isSet(field)) {
                 buffer.append(", ");
                 buffer.append("\"").append(escapeQuote(field.getName())).append("\":");

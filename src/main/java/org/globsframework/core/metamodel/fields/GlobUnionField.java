@@ -5,6 +5,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 import org.globsframework.core.model.Glob;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public non-sealed interface GlobUnionField extends Field, Function<FieldValuesAccessor, Glob> {
@@ -16,9 +17,4 @@ public non-sealed interface GlobUnionField extends Field, Function<FieldValuesAc
         return glob.get(this);
     }
 
-    /*
-        Dangerous
-        Use with caution
-         */
-    void __add__(GlobType type);
 }

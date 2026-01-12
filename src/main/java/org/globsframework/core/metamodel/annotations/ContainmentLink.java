@@ -18,13 +18,13 @@ public class ContainmentLink {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("ContainmentLink");
-        TYPE = typeBuilder.unCompleteType();
-        typeBuilder.complete();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getUniqueGlob());
+        TYPE = typeBuilder.build();
         UNIQUE_GLOB = TYPE.instantiate();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> UNIQUE_GLOB);
+    }
 
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(ContainmentLink.class, "ContainmentLink");
-//                .load();
+    private static Glob getUniqueGlob() {
+        return UNIQUE_GLOB;
     }
 }

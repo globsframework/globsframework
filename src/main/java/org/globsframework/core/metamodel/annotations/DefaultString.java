@@ -26,13 +26,9 @@ public class DefaultString {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultString");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareStringField("value");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultString_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DefaultString.class, "DefaultString");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultString_) annotation));
-//        loader.load();
     }
 }

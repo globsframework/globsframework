@@ -25,13 +25,22 @@ public class DummyObjectWithDefaultValues {
     @DefaultBoolean_(true)
     public static BooleanField BOOLEAN;
 
-    @Target(DummyObject.class)
     public static IntegerField LINK;
 
     @DefaultString_("Hello")
     public static StringField STRING;
 
     static {
-        GlobTypeLoaderFactory.create(DummyObjectWithDefaultValues.class, true).load();
+        final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("dummyObjectWithDefaultValues");
+        ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+        INTEGER = globTypeBuilder.declareIntegerField("integer", DefaultInteger.create(7));
+        BIG_DECIMAL = globTypeBuilder.declareBigDecimalField("BigDecimal",
+                DefaultBigDecimal.create("1.61803398875"));
+        LONG = globTypeBuilder.declareLongField("long", DefaultLong.create(5L));
+        DOUBLE = globTypeBuilder.declareDoubleField("double", DefaultDouble.create(3.14159265));
+        BOOLEAN = globTypeBuilder.declareBooleanField("boolean", DefaultBoolean.create(true));
+        LINK = globTypeBuilder.declareIntegerField("link");
+        STRING = globTypeBuilder.declareStringField("string", DefaultString.create("Hello"));
+        TYPE = globTypeBuilder.build();
     }
 }

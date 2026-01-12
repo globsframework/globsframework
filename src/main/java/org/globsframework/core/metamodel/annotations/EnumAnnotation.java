@@ -22,15 +22,9 @@ public class EnumAnnotation {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("EnumAnnotation");
-        TYPE = typeBuilder.unCompleteType();
         NAME = typeBuilder.declareStringArrayField("values");
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoaderFactory.create(EnumAnnotation.class, "EnumAnnotation")
-//                .register(GlobCreateFromAnnotation.class, annotation -> TYPE.instantiate()
-//                        .set(NAME, ((EnumAnnotation_) annotation).value()))
-//                .load();
     }
 
     public static Glob create(EnumAnnotation_ nameAnnotation) {

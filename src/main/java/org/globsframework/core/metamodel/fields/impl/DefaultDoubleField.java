@@ -8,9 +8,11 @@ import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
+import java.util.function.Supplier;
+
 public class DefaultDoubleField extends AbstractField implements DoubleField {
 
-    public DefaultDoubleField(String name, GlobType globType,
+    public DefaultDoubleField(String name, Supplier<GlobType> globType,
                               int index, boolean isKeyField, final int keyIndex, Double defaultValue, HashContainer<Key, Glob> annotations) {
         super(name, globType, Double.class, index, keyIndex, isKeyField, defaultValue, DataType.Double, annotations);
     }

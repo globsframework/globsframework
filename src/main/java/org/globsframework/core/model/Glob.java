@@ -43,8 +43,7 @@ public interface Glob extends FieldValues {
         if (glob == null) {
             return false;
         }
-        final Field[] fields = getType().getFields();
-        for (Field field : fields) {
+        for (Field field : getType().getFields()) {
             if (!field.valueEqual(getValue(field), glob.getValue(field))) {
                 return false;
             }

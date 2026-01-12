@@ -1,10 +1,7 @@
 package org.globsframework.core.metamodel.impl;
 
-import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.index.Index;
-import org.globsframework.core.metamodel.index.MultiFieldIndex;
-import org.globsframework.core.metamodel.index.SingleFieldIndex;
 import org.globsframework.core.metamodel.utils.MutableAnnotations;
 import org.globsframework.core.metamodel.utils.MutableGlobType;
 import org.globsframework.core.model.Glob;
@@ -12,43 +9,68 @@ import org.globsframework.core.model.GlobFactory;
 import org.globsframework.core.model.GlobFactoryService;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.format.GlobPrinter;
-import org.globsframework.core.model.utils.FieldCheck;
-import org.globsframework.core.utils.container.hash.HashContainer;
-import org.globsframework.core.utils.exceptions.InvalidState;
-import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.utils.exceptions.TooManyItems;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class DefaultGlobType extends DefaultAnnotations
         implements MutableGlobType, MutableAnnotations {
     public static final String[] EMPTY_SCOPE = new String[0];
-    private Field[] fields;
-    private Field[] keyFields = new Field[0];
-    private GlobFactory globFactory;
-    private Comparator<Key> keyComparator;
+    public static final Object[] EMPTY_PROP = new Object[0];
+    private static final Field[] EMPTY_FIELDS = new Field[0];
+    private final Field[] fields;
+    private final Field[] keyFields;
+    private final GlobFactory globFactory;
+    private final Supplier<Comparator<Key>> keyComparator;
     private final String name;
-    private final Map<String, Field> fieldsByName = new HashMap<>();
-    private final Map<String, Index> indices = new HashMap<>(2, 1);
-    private final Map<Class<?>, Object> registered = new HashMap<>();
-    private Object[] properties = new Object[2];
+    private final Map<String, Field> fieldsByName;
+    private final Map<String, Index> indices;
+    private final Map<Class<?>, Object> registered;
+    private Object[] properties = EMPTY_PROP;
 
-    public DefaultGlobType(String name) {
-        this(name, null);
-    }
-
-    public DefaultGlobType(String name, HashContainer<Key, Glob> annotations) {
+    public DefaultGlobType(String name, Map<String, Field> fieldsByName, Map<Class<?>, Object> registered,
+                           List<Glob> annotations, Map<String, Index> indices, int keyIndex) {
         super(annotations);
         this.name = name;
+        fields = new Field[fieldsByName.size()];
+        this.registered = registered != null ? registered : Map.of();
+        this.indices = indices != null ? indices : Map.of();
+        if (keyIndex > 0) {
+            keyFields = new Field[keyIndex];
+        } else {
+            keyFields = EMPTY_FIELDS;
+        }
+        int i = 0;
+        int k = 0;
+        for (Map.Entry<String, Field> stringFieldEntry : fieldsByName.entrySet()) {
+            fields[i] = stringFieldEntry.getValue();
+            if (fields[i].isKeyField()) {
+                keyFields[k++] = fields[i];
+            }
+            i++;
+        }
+        this.fieldsByName = fieldsByName; //StableValue.map(fieldsByName.keySet(), fieldsByName::get);
+        globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
+        keyComparator = new UnsaveSupplier<>(() ->
+        {
+            Comparator<Key> cmp = null;
+            for (Field keyField : keyFields) {
+                if (cmp == null) {
+                    cmp = Comparator.comparing(key -> (Comparable) key.getValue(keyField));
+                } else {
+                    cmp = cmp.thenComparing(key -> (Comparable) key.getValue(keyField));
+                }
+            }
+            return cmp;
+        });
     }
 
     public int getFieldCount() {
-        return fieldsByName.size();
+        return fields.length;
     }
 
     public Field getField(String name) throws ItemNotFound {
@@ -87,25 +109,6 @@ public class DefaultGlobType extends DefaultAnnotations
         return name;
     }
 
-
-    public void addField(Field field) {
-        if (hasField(field.getName())) {
-            throw new ItemAlreadyExists("Field " + field.getName() +
-                    " declared twice for type " + getName());
-        }
-        if (field.getIndex() != fieldsByName.size()) {
-            throw new InvalidState(field + " should be at index " + field.getIndex() + " but is at" + fieldsByName.size());
-        }
-        fieldsByName.put(field.getName(), field);
-    }
-
-    public void addKey(Field field) {
-        Field[] tmp = new Field[Math.max(field.getKeyIndex() + 1, keyFields.length)];
-        System.arraycopy(keyFields, 0, tmp, 0, keyFields.length);
-        keyFields = tmp;
-        keyFields[field.getKeyIndex()] = field;
-    }
-
     public Field[] getKeyFields() {
         return keyFields;
     }
@@ -141,72 +144,17 @@ public class DefaultGlobType extends DefaultAnnotations
         return annotations;
     }
 
-    public String toString() {
-        return name;
-    }
-
-    public void completeInit() {
-        if (fields != null) {
-            if (fields.length != fieldsByName.size()) {
-                throw new InvalidState("Update after complete : field count should be " + fieldsByName.size() + " but is " + fields.length + " for " + this);
-            }
-            return;
-        }
-        fields = new Field[fieldsByName.size()];
-        for (Field field : fieldsByName.values()) {
-            fields[field.getIndex()] = field;
-        }
-        if (FieldCheck.CheckGlob.shouldCheck) {
-            int keyFieldCount = 0;
-            Set<Integer> keySet = new HashSet<>();
-            for (Field field : fields) {
-                Glob annotation = field.findAnnotation(KeyField.UNIQUE_KEY);
-                if (annotation != null) {
-                    int index = annotation.get(KeyField.INDEX, -1);
-                    if (index == -1) {
-                        throw new RuntimeException("key annotation is not initialized");
-                    } else {
-                        keySet.add(index);
-                    }
-                    keyFieldCount++;
-                }
-            }
-            if (!IntStream.range(0, keyFieldCount).allMatch(keySet::contains)) {
-                throw new RuntimeException("Bug un-consistency between key count " + keyFieldCount + " and key id " + keySet + " (must start at 0)");
-            }
-        }
-
-        globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
-
-        Comparator<Key> cmp = null;
-        for (Field keyField : keyFields) {
-            if (cmp == null) {
-                cmp = Comparator.comparing(key -> (Comparable) key.getValue(keyField));
-            } else {
-                cmp = cmp.thenComparing(key -> (Comparable) key.getValue(keyField));
-            }
-        }
-        this.keyComparator = cmp;
-    }
-
-    void addIndex(SingleFieldIndex index) {
-        indices.put(index.getName(), index);
-    }
-
-    void addIndex(MultiFieldIndex index) {
-        indices.put(index.getName(), index);
-    }
-
+    @Override
     public Collection<Index> getIndices() {
         return indices.values();
     }
 
-    public GlobFactory getGlobFactory() {
-        return globFactory;
+    public String toString() {
+        return name;
     }
 
-    public Index getIndex(String name) {
-        return indices.get(name);
+    public GlobFactory getGlobFactory() {
+        return globFactory;
     }
 
     public <T> void register(Class<T> klass, T t) {
@@ -243,7 +191,7 @@ public class DefaultGlobType extends DefaultAnnotations
     }
 
     public Comparator<Key> sameKeyComparator() {
-        return keyComparator;
+        return keyComparator.get();
     }
 
     private void printAnnotations(StringBuilder stringBuilder, Field field) {
@@ -272,7 +220,7 @@ public class DefaultGlobType extends DefaultAnnotations
         }
         final Object p = properties[index];
         if (p == null) {
-            return (T) (properties[index] = property.build( this ));
+            return (T) (properties[index] = property.build(this));
         }
         return (T) p;
     }

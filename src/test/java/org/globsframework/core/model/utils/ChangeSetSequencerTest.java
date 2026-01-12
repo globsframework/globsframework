@@ -1,6 +1,7 @@
 package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.*;
+import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.IntegerField;
@@ -30,7 +31,11 @@ public class ChangeSetSequencerTest {
         public static StringField NAME;
 
         static {
-            GlobTypeLoaderFactory.createAndLoad(ObjectWithCompositeKey.class, true);
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("objectWithCompositeKey");
+            ID1 = globTypeBuilder.declareIntegerField("id1", KeyField.ZERO);
+            ID2 = globTypeBuilder.declareIntegerField("id2", KeyField.ONE);
+            NAME = globTypeBuilder.declareStringField("name");
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -47,14 +52,18 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LinkedToObjectWithCompositeKey.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel -> {
-                LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("linkedToObjectWithCompositeKey");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK1 = globTypeBuilder.declareIntegerField("link1");
+            LINK2 = globTypeBuilder.declareIntegerField("link2");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel -> {
+                LINK = mutableGlobLinkModel.getDirectLinkBuilder(null, "link")
                         .add(LinkedToObjectWithCompositeKey.LINK1, ObjectWithCompositeKey.ID1)
                         .add(LinkedToObjectWithCompositeKey.LINK2, ObjectWithCompositeKey.ID2)
                         .publish();
             });
-            loader.load();
+            TYPE = globTypeBuilder.build();
+
         }
     }
 
@@ -94,12 +103,14 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(ObjectWithSelfReference.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class,
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("objectWithSelfReference");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class,
                     mutableGlobLinkModel -> LINK =
-                            mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+                            mutableGlobLinkModel.getDirectLinkBuilder("linkId", null)
                                     .add(LINK_ID, ID).publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -149,12 +160,16 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LinkCycle1.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                    LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("linkCycle1");
+            ID1 = globTypeBuilder.declareIntegerField("id1", KeyField.ZERO);
+            ID2 = globTypeBuilder.declareIntegerField("id2", KeyField.ONE);
+            LINK1 = globTypeBuilder.declareIntegerField("link1");
+            LINK2 = globTypeBuilder.declareIntegerField("link2");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
+                    LINK = mutableGlobLinkModel.getLinkBuilder(null, "link")
                             .add(LINK1, LinkCycle2.ID1)
                             .add(LINK2, LinkCycle2.ID2).publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -176,12 +191,16 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LinkCycle2.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                    LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("linkCycle2");
+            ID1 = globTypeBuilder.declareIntegerField("id1", KeyField.ZERO);
+            ID2 = globTypeBuilder.declareIntegerField("id2", KeyField.ONE);
+            LINK1 = globTypeBuilder.declareIntegerField("link1");
+            LINK2 = globTypeBuilder.declareIntegerField("link2");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
+                    LINK = mutableGlobLinkModel.getLinkBuilder("default", "link")
                             .add(LINK1, LinkCycle1.ID1)
                             .add(LINK2, LinkCycle1.ID2).publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -236,12 +255,14 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LargeLinkCycle1.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                    LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycle1");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
+                    LINK = mutableGlobLinkModel.getDirectLinkBuilder("default", "link")
                             .add(LargeLinkCycle1.LINK_ID, LargeLinkCycle2.ID)
                             .publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -257,12 +278,14 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LargeLinkCycle2.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                    LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycle2");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
+                    LINK = mutableGlobLinkModel.getDirectLinkBuilder("default", "link")
                             .add(LargeLinkCycle2.LINK_ID, LargeLinkCycle3.ID)
                             .publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -278,11 +301,14 @@ public class ChangeSetSequencerTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoader loader = GlobTypeLoaderFactory.create(LargeLinkCycle3.class, true);
-            loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                    LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycle3");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
+                    LINK = mutableGlobLinkModel.getDirectLinkBuilder("default", "link")
                             .add(LINK_ID, LargeLinkCycle1.ID).publish());
-            loader.load();
+            TYPE = globTypeBuilder.build();
+
         }
     }
 

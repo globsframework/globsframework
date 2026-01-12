@@ -6,14 +6,17 @@ import org.globsframework.core.model.MutableGlob;
 
 public class DummyObjectInner {
 
-    public static GlobType TYPE;
+    public static final GlobType TYPE;
 
-    public static IntegerField DATE;
+    public static final IntegerField DATE;
 
-    public static DoubleField VALUE;
+    public static final DoubleField VALUE;
 
     static {
-        GlobTypeLoaderFactory.create(DummyObjectInner.class).load();
+        final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("DummyObjectInner");
+        DATE = globTypeBuilder.declareIntegerField("date");
+        VALUE = globTypeBuilder.declareDoubleField("value");
+        TYPE = globTypeBuilder.build();
     }
 
     public static MutableGlob create(double value) {

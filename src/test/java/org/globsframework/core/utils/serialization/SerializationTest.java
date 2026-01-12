@@ -178,7 +178,6 @@ public class SerializationTest {
         return FieldValuesBuilder.init()
                 .set(DummyObject.ID, 1)
                 .set(DummyObject.NAME, "obj1")
-                .set(DummyObject.LINK_ID, 7)
                 .set(DummyObject.PRESENT, false)
                 .set(DummyObject.VALUE, 6.2)
                 .get();

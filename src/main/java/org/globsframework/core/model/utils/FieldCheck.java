@@ -2,6 +2,7 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
+import org.globsframework.core.metamodel.fields.impl.AbstractField;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 
 public class FieldCheck {

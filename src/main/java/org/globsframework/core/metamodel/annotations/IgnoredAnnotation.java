@@ -18,12 +18,13 @@ public class IgnoredAnnotation {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("IgnoredAnnotation");
-        TYPE = typeBuilder.get();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getInstance());
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         INSTANCE = TYPE.instantiate();
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> INSTANCE);
-//        GlobTypeLoaderFactory.create(IgnoredAnnotation.class, "IgnoredAnnotation")
-//                .register(GlobCreateFromAnnotation.class, annotation -> INSTANCE)
-//                .load();
+    }
+
+    private static Glob getInstance() {
+        return INSTANCE;
     }
 }

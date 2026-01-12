@@ -9,10 +9,11 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class DefaultBytesField extends AbstractField implements BytesField {
 
-    public DefaultBytesField(String name, GlobType globType, int index, HashContainer<Key, Glob> annotations) {
+    public DefaultBytesField(String name, Supplier<GlobType> globType, int index, HashContainer<Key, Glob> annotations) {
         super(name, globType, byte[].class, index, -1, false, null, DataType.Bytes, annotations);
     }
 

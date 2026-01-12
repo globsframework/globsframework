@@ -9,9 +9,10 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.time.LocalDate;
+import java.util.function.Supplier;
 
 public class DefaultDateField extends AbstractField implements DateField {
-    public DefaultDateField(String name, GlobType globType, int index, boolean isKeyField, int keyIndex, LocalDate defaultValue, HashContainer<Key, Glob> annotations) {
+    public DefaultDateField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, LocalDate defaultValue, HashContainer<Key, Glob> annotations) {
         super(name, globType, LocalDate.class, index, keyIndex, isKeyField, defaultValue, DataType.Date, annotations);
     }
 

@@ -19,12 +19,9 @@ public class ReName {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("ReName");
-        TYPE = typeBuilder.unCompleteType();
         NAMESPACE = typeBuilder.declareStringField("namespace");
         NAME = typeBuilder.declareStringField("name");
-        typeBuilder.complete();
-
-//        GlobTypeLoaderFactory.create(NameType.class, "Name").load();
+        TYPE = typeBuilder.build();
     }
 
     public static Glob create(ReName_ reName) {

@@ -21,7 +21,6 @@ public class DummyObject {
     public static BooleanField PRESENT;
     public static IntegerField DATE;
     public static BytesField PASSWORD;
-
     @ContainmentLink_
     public static IntegerField LINK_ID;
 
@@ -34,20 +33,28 @@ public class DummyObject {
 
     //  public static UniqueIndex NAME_INDEX;
     public static NotUniqueIndex DATE_INDEX;
-
     static {
-        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DummyObject.class, true)
-                .register(MutableGlobLinkModel.LinkRegister.class,
-                        mutableGlobLinkModel -> {
-                            LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
-                                    .add(LINK_ID, DummyObject.ID)
-                                    .publish();
-                            LINK2 = mutableGlobLinkModel.getDirectLinkBuilder(LINK2)
-                                    .add(LINK2_ID, DummyObject2.ID)
-                                    .publish();
-                        })
-                .load();
-//    loader.defineUniqueIndex(NAME_INDEX, NAME);
-        loader.defineNonUniqueIndex(DATE_INDEX, DATE);
+        final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("dummyObject");
+        ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO, AutoIncrement.INSTANCE);
+        NAME = globTypeBuilder.declareStringField("name", NamingField.UNIQUE_GLOB);
+        VALUE = globTypeBuilder.declareDoubleField("value");
+        COUNT = globTypeBuilder.declareIntegerField("count");
+        PRESENT = globTypeBuilder.declareBooleanField("present");
+        DATE = globTypeBuilder.declareIntegerField("date");
+        PASSWORD = globTypeBuilder.declareBytesField("password");
+        LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+        LINK2_ID = globTypeBuilder.declareIntegerField("link2Id");
+        DATE_INDEX = globTypeBuilder.addNotUniqueIndex("dateIndex", DATE);
+
+        globTypeBuilder.register(MutableGlobLinkModel.LinkRegister.class,
+                mutableGlobLinkModel -> {
+                    LINK = LINK != null ? LINK : mutableGlobLinkModel.getDirectLinkBuilder(null, "link")
+                            .add(LINK_ID, DummyObject.ID)
+                            .publish();
+                    LINK2 = LINK2 != null ? LINK2 : mutableGlobLinkModel.getDirectLinkBuilder(null, "link2")
+                            .add(LINK2_ID, DummyObject2.ID)
+                            .publish();
+                });
+        TYPE = globTypeBuilder.build();
     }
 }

@@ -7,7 +7,6 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.format.GlobPrinter;
-import org.globsframework.core.model.impl.DefaultGlob;
 import org.globsframework.core.utils.collections.ConcurrentMapOfMaps;
 import org.globsframework.core.utils.collections.MapOfMaps;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
 
 public class DefaultUniqueFunctionalKeyRepository implements MutableFunctionalKeyRepository {
     static private final Logger LOGGER = LoggerFactory.getLogger(DefaultUniqueFunctionalKeyRepository.class);
-    private static final Glob NULL = DefaultGlobTypeBuilder.init("NULL GLOB").get().instantiate();
+    private static final Glob NULL = DefaultGlobTypeBuilder.init("NULL GLOB").build().instantiate();
     private final DataAccess dataAccess;
     private final Map<FunctionalKey, Glob> index = new ConcurrentHashMap<>();
     private final MapOfMaps<GlobType, FunctionalKeyBuilder, Boolean> indexed = new ConcurrentMapOfMaps<>();

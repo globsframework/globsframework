@@ -30,10 +30,9 @@ public class DefaultBoolean {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultBoolean");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareBooleanField("VALUE");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultBoolean_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         OK = TYPE.instantiate().set(VALUE, true);
         KO = TYPE.instantiate().set(VALUE, false);

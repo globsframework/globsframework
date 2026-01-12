@@ -53,20 +53,6 @@ public class DefaultMutableGlobLinkModel implements MutableGlobLinkModel {
         return getDirectLinkBuilder(modelName, name, globAnnotations);
     }
 
-    public LinkBuilder getLinkBuilder(Annotations annotations) {
-        if (annotations instanceof Link && !(annotations instanceof UnInitializedLink)) {
-            return new AlreadyInitializedBuilder((Link) annotations, (link) -> {
-                appendInSource(link);
-                appendInTarget(link);
-            });
-        }
-        Glob linkModel = annotations.findAnnotation(LinkModelName.UNIQUE_KEY);
-        Glob annotation = annotations.findAnnotation(FieldName.UNIQUE_KEY);
-        DirectLinkBuilder builder = getDirectLinkBuilder(linkModel != null ? linkModel.get(LinkModelName.NAME) : null,
-                annotation != null ? annotation.get(FieldName.NAME) : null);
-        annotations.streamAnnotations().forEach(builder::addAnnotation);
-        return builder;
-    }
 
     interface OnPublish {
         void publish(Link link);
@@ -78,24 +64,6 @@ public class DefaultMutableGlobLinkModel implements MutableGlobLinkModel {
                     appendInSource(link);
                     appendInTarget(link);
                 }, new DefaultAnnotations(globAnnotations));
-    }
-
-    public DirectLinkBuilder getDirectLinkBuilder(Annotations annotations) {
-        OnPublish publish = (createdLink) -> {
-            appendInSource(createdLink);
-            appendInTarget(createdLink);
-        };
-        if (annotations instanceof Link && !(annotations instanceof UnInitializedLink)) {
-            return new AlreadyInitializedBuilder((Link) annotations, publish);
-        }
-        Glob fieldName = annotations.getAnnotation(FieldName.UNIQUE_KEY);
-        Glob modelNameAnnotation = annotations.findAnnotation(LinkModelName.UNIQUE_KEY);
-        String modelName = null;
-        if (modelNameAnnotation != null) {
-            modelName = modelNameAnnotation.get(LinkModelName.NAME);
-        }
-        return new DefaultDirectLinkBuilder(modelName, fieldName.get(FieldName.NAME),
-                publish, annotations);
     }
 
     private void appendInSource(Link link) {

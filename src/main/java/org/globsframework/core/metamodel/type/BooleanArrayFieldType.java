@@ -8,7 +8,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 public class BooleanArrayFieldType {
     public static final GlobType TYPE;
@@ -20,11 +20,9 @@ public class BooleanArrayFieldType {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("BooleanArray");
-        TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField("name");
-        annotations = typeBuilder.declareGlobUnionArrayField("annotations", List.of());
-        typeBuilder.complete();
-//        GlobTypeLoaderFactory.create(BooleanArrayFieldType.class).load();
+        annotations = typeBuilder.declareGlobUnionArrayField("annotations", new Supplier[0]);
+        TYPE = typeBuilder.build();
     }
 
     public static MutableGlob create(String name) {

@@ -21,14 +21,10 @@ public class AutoIncrement {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("AutoIncrement");
-        TYPE = typeBuilder.unCompleteType();
         typeBuilder.register(GlobCreateFromAnnotation.class, AutoIncrement::create);
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         INSTANCE = TYPE.instantiate();
-//        GlobTypeLoaderFactory.create(AutoIncrement.class, "AutoIncrement")
-//                .register(GlobCreateFromAnnotation.class, annotation -> INSTANCE)
-//                .load();
     }
 
     private static Glob create(Annotation annotation) {

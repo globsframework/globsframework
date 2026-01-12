@@ -20,18 +20,17 @@ public class LinkModelName {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("LinkModelName");
-        TYPE = typeBuilder.unCompleteType();
         NAME = typeBuilder.declareStringField("NAME");
         typeBuilder.register(GlobCreateFromAnnotation.class, LinkModelName::create);
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
+    }
 
-//        GlobTypeLoaderFactory.create(LinkModelName.class, "LinkModelName")
-//                .register(GlobCreateFromAnnotation.class, LinkModelName::create)
-//                .load();
+    public static Glob create(String name) {
+        return TYPE.instantiate().set(NAME, name);
     }
 
     private static Glob create(Annotation annotation) {
-        return TYPE.instantiate().set(NAME, ((LinkModelName_) annotation).value());
+        return create(((LinkModelName_) annotation).value());
     }
 }

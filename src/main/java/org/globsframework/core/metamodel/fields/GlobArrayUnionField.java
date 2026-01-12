@@ -5,6 +5,7 @@ import org.globsframework.core.model.FieldValuesAccessor;
 import org.globsframework.core.model.Glob;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -22,8 +23,8 @@ public non-sealed interface GlobArrayUnionField extends Field, Function<FieldVal
     }
 
     /*
-        Dangerous
-        Use with caution
+        Only possible is the field was initializez without any types.
+        Use in GlobTypeToGlob.
          */
     void __add__(GlobType type);
 }

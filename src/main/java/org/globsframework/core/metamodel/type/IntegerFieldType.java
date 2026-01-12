@@ -8,7 +8,7 @@ import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.MutableGlob;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 public class IntegerFieldType {
     public static final GlobType TYPE;
@@ -20,11 +20,9 @@ public class IntegerFieldType {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("Integer");
-        TYPE = typeBuilder.unCompleteType();
         name = typeBuilder.declareStringField(ConstantsName.NAME);
-        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, List.of());
-        typeBuilder.complete();
-//        GlobTypeLoaderFactory.create(IntegerFieldType.class).load();
+        annotations = typeBuilder.declareGlobUnionArrayField(ConstantsName.ANNOTATIONS, new Supplier[0]);
+        TYPE = typeBuilder.build();
     }
 
     public static MutableGlob create(String name) {

@@ -17,34 +17,39 @@ import org.globsframework.core.model.impl.DefaultGlob64;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 public class DefaultGlobFactory implements GlobFactory {
     private final GlobType type;
-    private GlobGetAccessor[] getAccessor;
-    private GlobSetAccessor[] setAccessor;
+    private final Supplier<GlobGetAccessor[]> getAccessor;
+    private final Supplier<GlobSetAccessor[]> setAccessor;
+//    private final StableValue<GlobGetAccessor[]> getAccessor;
+//    private final StableValue<GlobSetAccessor[]> setAccessor;
 
     public DefaultGlobFactory(GlobType type) {
         this.type = type;
+        getAccessor = new UnsaveSupplier<>(this::getGetAccessor);
+        setAccessor = new UnsaveSupplier<>(this::getSetAccessor);
+//        getAccessor = StableValue.of();
+//        setAccessor = StableValue.of();
     }
 
-    private void initAccessor(GlobType type) {
-        GlobGetAccessor[] getAccessor1 = new GlobGetAccessor[type.getFieldCount()];
-        GetAccessorValueVisitor getAccessorValueVisitor = new GetAccessorValueVisitor();
+    private GlobSetAccessor[] getSetAccessor(){
+        GlobSetAccessor[] globSetAccessors = new GlobSetAccessor[type.getFieldCount()];
         SetAccessorValueVisitor setAccessorValueVisitor = new SetAccessorValueVisitor();
-        GlobSetAccessor[] setAccessor1 = new GlobSetAccessor[type.getFieldCount()];
         for (Field field : type.getFields()) {
-            getAccessor1[field.getIndex()] = field.safeAccept(getAccessorValueVisitor).getAccessor;
-            setAccessor1[field.getIndex()] = field.safeAccept(setAccessorValueVisitor).setAccessor;
+            globSetAccessors[field.getIndex()] = field.safeAccept(setAccessorValueVisitor).setAccessor;
         }
+        return globSetAccessors;
+    }
 
-        synchronized (this) {  //I don't know if this enough nether necessary
-            if (getAccessor == null) {
-                getAccessor = getAccessor1;
-            }
-            if (setAccessor == null) {
-                setAccessor = setAccessor1;
-            }
+    private GlobGetAccessor[] getGetAccessor() {
+        GlobGetAccessor[] globGetAccessors = new GlobGetAccessor[type.getFieldCount()];
+        GetAccessorValueVisitor getAccessorValueVisitor = new GetAccessorValueVisitor();
+        for (Field field : type.getFields()) {
+            globGetAccessors[field.getIndex()] = field.safeAccept(getAccessorValueVisitor).getAccessor;
         }
+        return globGetAccessors;
     }
 
     public GlobType getGlobType() {
@@ -62,17 +67,11 @@ public class DefaultGlobFactory implements GlobFactory {
     }
 
     public GlobSetAccessor getSetValueAccessor(Field field) {
-        if (setAccessor == null) {
-            initAccessor(type);
-        }
-        return setAccessor[field.getIndex()];
+        return setAccessor.get()[field.getIndex()];
     }
 
     public GlobGetAccessor getGetValueAccessor(Field field) {
-        if (getAccessor == null) {
-            initAccessor(type);
-        }
-        return getAccessor[field.getIndex()];
+        return getAccessor.get()[field.getIndex()];
     }
 
     private static class GetAccessorValueVisitor implements FieldVisitor {

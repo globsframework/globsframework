@@ -10,11 +10,7 @@ public interface MutableGlobLinkModel extends GlobLinkModel {
 
     LinkBuilder getLinkBuilder(String modelName, String name, Glob... globAnnotations);
 
-    LinkBuilder getLinkBuilder(Annotations annotations);
-
     DirectLinkBuilder getDirectLinkBuilder(String modelName, String name, Glob... globAnnotations);
-
-    DirectLinkBuilder getDirectLinkBuilder(Annotations annotations);
 
     // DirectLinkBuilder getDirectLinkBuilder(Annotations annotations, LinkType linkType);
 

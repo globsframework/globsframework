@@ -26,14 +26,9 @@ public class DoublePrecision {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DoublePrecision");
-        TYPE = typeBuilder.unCompleteType();
         PRECISION = typeBuilder.declareIntegerField("precision");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DoublePrecision_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DoublePrecision.class, "DoublePrecision");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((DoublePrecision_) annotation));
-//        loader.load();
     }
 }

@@ -1,9 +1,6 @@
 package org.globsframework.core.metamodel.utils;
 
-import org.globsframework.core.metamodel.GlobModel;
-import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.GlobTypeLoader;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
+import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.FieldName_;
 import org.globsframework.core.metamodel.annotations.FieldName;
 import org.globsframework.core.metamodel.annotations.KeyField_;
@@ -49,8 +46,9 @@ public class DefaultGlobTypeTest {
 
     private void initGlobType() {
         Type.TYPE = null;
-        GlobTypeLoader loader = GlobTypeLoaderFactory.create(Type.class, true).load();
-        globType = loader.getType();
+        final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("type");
+        globTypeBuilder.declareIntegerField("field1");
+        globType = globTypeBuilder.build();
         field = globType.getField("field1");
         globModel = new DefaultGlobModel(globType);
     }
@@ -66,8 +64,10 @@ public class DefaultGlobTypeTest {
         public static IntegerField F2;
 
         static {
-            GlobTypeLoaderFactory.create(TypeWithAnnotation.class, true)
-                    .load();
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("typeWithAnnotation");
+            F1 = globTypeBuilder.declareIntegerField("F1", FieldName.create("qty"));
+            F2 = globTypeBuilder.declareIntegerField("F2", FieldName.create("ean"));
+            TYPE = globTypeBuilder.build();
         }
     }
 

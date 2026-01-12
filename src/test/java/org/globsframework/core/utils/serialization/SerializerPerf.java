@@ -88,12 +88,11 @@ public class SerializerPerf {
 
         static {
             final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("NnTypicalBean");
-            TYPE = globTypeBuilder.unCompleteType();
             fistName = globTypeBuilder.declareStringField("fistName");
             lastName = globTypeBuilder.declareStringField("lastName");
             age = globTypeBuilder.declareIntegerField("age");
             height = globTypeBuilder.declareDoubleField("height");
-            globTypeBuilder.complete();
+            TYPE = globTypeBuilder.build();
         }
     }
 

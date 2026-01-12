@@ -11,14 +11,15 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 public class DefaultGlobArrayField extends AbstractField implements GlobArrayField {
-    private final GlobType targetType;
+    private final Supplier<GlobType> targetType;
 
-    public DefaultGlobArrayField(String name, GlobType globType, GlobType targetType,
+    public DefaultGlobArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
                                  int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
         super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobArray, annotations);
-        this.targetType = targetType;
+        this.targetType = targetType; //StableValue.supplier(targetType);
     }
 
     public static boolean isSameGlob(GlobType type, Glob[] g1, Glob[] g2) {
@@ -46,7 +47,7 @@ public class DefaultGlobArrayField extends AbstractField implements GlobArrayFie
     }
 
     public GlobType getTargetType() {
-        return targetType;
+        return targetType.get();
     }
 
     public Collection<GlobType> getTypes() {

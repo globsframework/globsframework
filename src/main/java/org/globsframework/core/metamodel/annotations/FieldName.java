@@ -5,15 +5,10 @@ import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.StringField;
-import org.globsframework.core.metamodel.impl.DefaultFieldFactory;
-import org.globsframework.core.metamodel.impl.DefaultGlobType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.KeyBuilder;
 import org.globsframework.core.model.MutableGlob;
-import org.globsframework.core.utils.container.specific.HashEmptyGlobContainer;
-
-import java.util.LinkedHashMap;
 
 public class FieldName {
     public static final GlobType TYPE;
@@ -32,12 +27,10 @@ public class FieldName {
 
     static {
         GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("FieldName");
-        TYPE = globTypeBuilder.unCompleteType();
         NAME = globTypeBuilder.declareStringField("name");
         globTypeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((FieldName_) annotation));
-        globTypeBuilder.complete();
+        TYPE = globTypeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
-
     }
 
     public static String getName(Field field) {

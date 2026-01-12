@@ -12,11 +12,13 @@ import org.globsframework.core.utils.exceptions.InvalidParameter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 abstract public class AbstractField extends DefaultAnnotations {
     private final int index;
     private final int keyIndex;
-    private final GlobType globType;
+    private final Supplier<GlobType> globTypeSupplier;
+    private GlobType globType;
     private final String name;
     private final Class valueClass;
     private final Object defaultValue;
@@ -24,7 +26,7 @@ abstract public class AbstractField extends DefaultAnnotations {
     private Map<Class<?>, Object> registered = null;
     private final boolean keyField;
 
-    protected AbstractField(String name, GlobType globType,
+    protected AbstractField(String name, Supplier<GlobType> globTypeSupplier,
                             Class valueClass, int index, int keyIndex, boolean isKeyField,
                             Object defaultValue, DataType dataType, HashContainer<Key, Glob> annotations) {
         super(annotations);
@@ -33,9 +35,13 @@ abstract public class AbstractField extends DefaultAnnotations {
         this.name = name;
         this.keyField = isKeyField;
         this.index = index;
-        this.globType = globType;
+        this.globTypeSupplier = globTypeSupplier; //StableValue.supplier(globType);
         this.valueClass = valueClass;
         this.dataType = dataType;
+    }
+
+    public void typeComplete() {
+        globType = globTypeSupplier.get();
     }
 
     public Object normalize(Object value) {
@@ -130,6 +136,6 @@ abstract public class AbstractField extends DefaultAnnotations {
         }
 
         AbstractField other = (AbstractField) o;
-        return globType.equals(other.globType) && name.equals(other.name);
+        return name.equals(other.name) && globType.equals(other.globType);
     }
 }

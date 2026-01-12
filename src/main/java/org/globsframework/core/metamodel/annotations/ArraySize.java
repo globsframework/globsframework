@@ -5,9 +5,6 @@ import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 import org.globsframework.core.model.*;
-import org.globsframework.core.utils.Strings;
-
-import java.nio.charset.Charset;
 
 public class ArraySize {
     static public final GlobType TYPE;
@@ -19,15 +16,10 @@ public class ArraySize {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("ArraySize");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareIntegerField("value");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((ArraySize_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(MaxSize.class, "MaxSize");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((MaxSize_) annotation))
-//                .load();
     }
 
 

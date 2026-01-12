@@ -7,7 +7,7 @@ import org.globsframework.core.metamodel.fields.GlobArrayUnionField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.impl.DefaultGlobTypeBuilder;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 public class GlobTypeType {
     public static final GlobType TYPE;
@@ -33,23 +33,21 @@ public class GlobTypeType {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("GlobType");
-        TYPE = typeBuilder.unCompleteType();
         kind = typeBuilder.declareStringField("kind");
         fields = typeBuilder.declareGlobUnionArrayField("fields",
-                List.of(
-                        BooleanFieldType.TYPE, BooleanArrayFieldType.TYPE,
-                        StringFieldType.TYPE, StringArrayFieldType.TYPE,
-                        DoubleFieldType.TYPE, DoubleArrayFieldType.TYPE,
-                        IntegerFieldType.TYPE, IntegerArrayFieldType.TYPE,
-                        LongFieldType.TYPE, LongArrayFieldType.TYPE,
-                        DateFieldType.TYPE, DateTimeFieldType.TYPE,
-                        BytesFieldType.TYPE,
-                        BigDecimalFieldType.TYPE, BigDecimalArrayFieldType.TYPE,
-                        GlobFieldType.TYPE, GlobArrayFieldType.TYPE,
-                        GlobUnionFieldType.TYPE, GlobUnionArrayFieldType.TYPE
-                ));
-        annotations = typeBuilder.declareGlobUnionArrayField("annotations", List.of());
-        typeBuilder.complete();
-//        GlobTypeLoaderFactory.create(GlobTypeType.class).load();
+                new Supplier[]{
+                        () -> BooleanFieldType.TYPE, () -> BooleanArrayFieldType.TYPE,
+                        () -> StringFieldType.TYPE, () -> StringArrayFieldType.TYPE,
+                        () -> DoubleFieldType.TYPE, () -> DoubleArrayFieldType.TYPE,
+                        () -> IntegerFieldType.TYPE, () -> IntegerArrayFieldType.TYPE,
+                        () -> LongFieldType.TYPE, () -> LongArrayFieldType.TYPE,
+                        () -> DateFieldType.TYPE, () -> DateTimeFieldType.TYPE,
+                        () -> BytesFieldType.TYPE,
+                        () -> BigDecimalFieldType.TYPE, () ->  BigDecimalArrayFieldType.TYPE,
+                        () -> GlobFieldType.TYPE, () -> GlobArrayFieldType.TYPE,
+                        () -> GlobUnionFieldType.TYPE,() ->  GlobUnionArrayFieldType.TYPE
+                });
+        annotations = typeBuilder.declareGlobUnionArrayField("annotations", new Supplier[0]);
+        TYPE = typeBuilder.build();
     }
 }

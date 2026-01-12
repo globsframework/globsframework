@@ -5,6 +5,12 @@ import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.annotations.*;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.fields.impl.*;
+import org.globsframework.core.metamodel.index.*;
+import org.globsframework.core.metamodel.index.NotUniqueIndex;
+import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldNotUniqueIndex;
+import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldUniqueIndex;
+import org.globsframework.core.metamodel.index.impl.DefaultNotUniqueIndex;
+import org.globsframework.core.metamodel.index.impl.DefaultUniqueIndex;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
@@ -12,18 +18,49 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.container.specific.HashEmptyGlobContainer;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
 public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
-    private DefaultGlobType type;
+    private Supplier<GlobType> type;
     private DefaultFieldFactory factory;
     private int index;
     private int keyIndex;
+    private Map<String, Field> fields;
+    private String name;
+    private List<Glob> annotations;
+    private Map<Class<?>, Object> registered;
+    private Map<String, Index> indices;
 
     public DefaultGlobTypeBuilder(String name, Collection<Glob> annotations) {
-        type = new DefaultGlobType(name, adaptAnnotation(annotations));
-        factory = new DefaultFieldFactory(type);
+        this.name = name;
+        type = new CreateSupplier(this); //StableValue.supplier(this::createGlobType);
+        this.annotations = new ArrayList<>(annotations);
+        fields = new LinkedHashMap<>();
+        factory = new DefaultFieldFactory(type, fields);
+    }
+
+    static class CreateSupplier implements Supplier<GlobType>{
+        public GlobType globType;
+        public DefaultGlobTypeBuilder typeBuilder;
+
+        public CreateSupplier(DefaultGlobTypeBuilder typeBuilder) {
+            this.typeBuilder = typeBuilder;
+        }
+
+        // not synchronized => call by build() before any use possible of the GlobType
+        @Override
+        public GlobType get() {
+            if (globType == null) {
+                globType = typeBuilder.createGlobType();
+                typeBuilder = null;
+            }
+            return globType;
+        }
+    }
+
+    private GlobType createGlobType() {
+        return new DefaultGlobType(name, fields, registered, annotations, indices, keyIndex);
     }
 
     public static GlobTypeBuilder init(String typeName) {
@@ -31,8 +68,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     public DefaultGlobTypeBuilder(String typeName) {
-        type = new DefaultGlobType(typeName);
-        factory = new DefaultFieldFactory(type);
+        this(typeName, Collections.emptyList());
     }
 
     public static GlobTypeBuilder init(String name, Collection<Glob> annotations) {
@@ -50,12 +86,12 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     public GlobTypeBuilder addAnnotation(Glob annotation) {
-        type.addAnnotation(annotation);
+        annotations.add(annotation);
         return this;
     }
 
     public GlobTypeBuilder addAnnotations(Collection<Glob> annotations) {
-        type.addAnnotations(annotations);
+        annotations.addAll(annotations);
         return this;
     }
 
@@ -110,6 +146,8 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
                 keyPos = keyIndex++;
                 Glob glob = KeyField.create(keyPos);
                 annotations.put(glob.getKey(), glob); // replace, the HashContainer is the same.
+            } else {
+                keyIndex = Math.max(keyIndex, keyPos + 1);
             }
         }
         return keyPos;
@@ -273,23 +311,23 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return this;
     }
 
-    public GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, GlobType type) {
+    public GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type) {
         createGlobField(fieldName, type, globAnnotations);
         return this;
     }
 
 
-    public GlobTypeBuilder addGlobArrayField(String fieldName, Collection<Glob> globAnnotations, GlobType type) {
+    public GlobTypeBuilder addGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type) {
         createGlobArrayField(fieldName, type, globAnnotations);
         return this;
     }
 
-    public GlobTypeBuilder addUnionGlobField(String fieldName, Collection<Glob> globAnnotations, List<GlobType> types) {
+    public GlobTypeBuilder addUnionGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types) {
         createGlobUnionField(fieldName, types, globAnnotations);
         return this;
     }
 
-    public GlobTypeBuilder addUnionGlobArrayField(String fieldName, Collection<Glob> globAnnotations, List<GlobType> types) {
+    public GlobTypeBuilder addUnionGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types) {
         createGlobUnionArrayField(fieldName, types, globAnnotations);
         return this;
     }
@@ -301,7 +339,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    private GlobField createGlobField(String fieldName, GlobType globType, Collection<Glob> globAnnotations) {
+    private GlobField createGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
         HashContainer<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultGlobField field = factory.addGlob(fieldName, globType, keyPos != -1, keyPos, index, annotations);
@@ -309,7 +347,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    private GlobArrayField createGlobArrayField(String fieldName, GlobType globType, Collection<Glob> globAnnotations) {
+    private GlobArrayField createGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
         HashContainer<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultGlobArrayField field = factory.addGlobArray(fieldName, globType, keyPos != -1,
@@ -318,7 +356,9 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    private GlobUnionField createGlobUnionField(String fieldName, Collection<GlobType> types, Collection<Glob> globAnnotations) {
+    private GlobUnionField createGlobUnionField(String fieldName,
+                                                Supplier<GlobType>[] types,
+                                                Collection<Glob> globAnnotations) {
         HashContainer<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob key = annotations.get(KeyField.UNIQUE_KEY);
         if (key != null) {
@@ -329,7 +369,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    private GlobArrayUnionField createGlobUnionArrayField(String fieldName, Collection<GlobType> types, Collection<Glob> globAnnotations) {
+    private GlobArrayUnionField createGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> globAnnotations) {
         HashContainer<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob key = annotations.get(KeyField.UNIQUE_KEY);
         if (key != null) {
@@ -400,19 +440,19 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return createBytesField(fieldName, annotations);
     }
 
-    public GlobField declareGlobField(String fieldName, GlobType globType, Collection<Glob> annotations) {
+    public GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
         return createGlobField(fieldName, globType, annotations);
     }
 
-    public GlobArrayField declareGlobArrayField(String fieldName, GlobType globType, Collection<Glob> annotations) {
+    public GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
         return createGlobArrayField(fieldName, globType, annotations);
     }
 
-    public GlobUnionField declareGlobUnionField(String fieldName, Collection<GlobType> types, Collection<Glob> annotations) {
+    public GlobUnionField declareGlobUnionField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations) {
         return createGlobUnionField(fieldName, types, annotations);
     }
 
-    public GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Collection<GlobType> types, Collection<Glob> annotations) {
+    public GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations) {
         return createGlobUnionArrayField(fieldName, types, annotations);
     }
 
@@ -495,13 +535,13 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
             case Bytes -> factory.addBytes(name, index, hashContainer);
             case Glob ->
-                    factory.addGlob(name, ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlob(name, () -> ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
             case GlobArray ->
-                    factory.addGlobArray(name, ((GlobArrayField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlobArray(name, () ->((GlobArrayField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
             case GlobUnion ->
-                    factory.addGlobUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
+                    factory.addGlobUnion(name, getSupplier(((GlobUnionField) field).getTargetTypes()), index, hashContainer);
             case GlobUnionArray ->
-                    factory.addGlobArrayUnion(name, ((GlobUnionField) field).getTargetTypes(), index, hashContainer);
+                    factory.addGlobArrayUnion(name, getSupplier(((GlobArrayUnionField) field).getTargetTypes()), index, hashContainer);
         };
         index++;
         if (isKeyField) {
@@ -510,8 +550,20 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return newField;
     }
 
+    Supplier<GlobType>[] getSupplier(Collection<GlobType> types) {
+        final Supplier[] suppliers = new Supplier[types.size()];
+        int i =0;
+        for (GlobType globType : types) {
+            suppliers[i] = () -> globType;
+        }
+        return suppliers;
+    }
+
     public <T> GlobTypeBuilder register(Class<T> klass, T t) {
-        type.register(klass, t);
+        if (registered == null) {
+            registered = new HashMap<>();
+        }
+        registered.put(klass, t);
         return this;
     }
 
@@ -520,20 +572,52 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return this;
     }
 
-    public GlobType get() {
-        type.completeInit();
-        return type;
-    }
-
-    public void complete() {
-        type.completeInit();
-    }
-
-    public GlobType unCompleteType() {
-        return type;
+    public GlobType build() {
+        final GlobType globType = type.get();
+        for (Field field : globType.getFields()) {
+            ((AbstractField) field).typeComplete();
+        }
+        return globType;
     }
 
     public boolean isKnown(String fieldName) {
-        return type.hasField(fieldName);
+        return fields.containsKey(fieldName);
     }
+
+    @Override
+    public UniqueIndex addUniqueIndex(String name, Field field) {
+        final DefaultUniqueIndex defaultUniqueIndex = new DefaultUniqueIndex(name, field);
+        addIndex(name, defaultUniqueIndex);
+        return defaultUniqueIndex;
+    }
+
+    private void addIndex(String name, Index defaultUniqueIndex) {
+        if (indices == null){
+            indices = new HashMap<>();
+        }
+        indices.put(name, defaultUniqueIndex);
+    }
+
+    @Override
+    public NotUniqueIndex addNotUniqueIndex(String name, Field field) {
+        final DefaultNotUniqueIndex defaultNotUniqueIndex = new DefaultNotUniqueIndex(name, field);
+        addIndex(name, defaultNotUniqueIndex);
+        return defaultNotUniqueIndex;
+    }
+
+    @Override
+    public MultiFieldNotUniqueIndex addMultiFieldNotUniqueIndex(String name, Field... fields) {
+        final DefaultMultiFieldNotUniqueIndex defaultMultiFieldNotUniqueIndex = new DefaultMultiFieldNotUniqueIndex(name, fields);
+        addIndex(name, defaultMultiFieldNotUniqueIndex);
+        return defaultMultiFieldNotUniqueIndex;
+    }
+
+    @Override
+    public MultiFieldUniqueIndex addMultiFieldUniqueIndex(String name, Field... fields) {
+        final DefaultMultiFieldUniqueIndex defaultMultiFieldUniqueIndex = new DefaultMultiFieldUniqueIndex(name, fields);
+        addIndex(name, defaultMultiFieldUniqueIndex);
+        return defaultMultiFieldUniqueIndex;
+    }
+
+
 }

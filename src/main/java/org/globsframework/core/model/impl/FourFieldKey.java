@@ -56,7 +56,7 @@ public class FourFieldKey extends AbstractKey {
     }
 
     public <T extends Functor> T apply(T functor) throws Exception {
-        Field[] fields = type.getFields();
+        Field[] fields = type.getKeyFields();
         functor.process(fields[0], value1);
         functor.process(fields[1], value2);
         functor.process(fields[2], value3);
@@ -66,7 +66,7 @@ public class FourFieldKey extends AbstractKey {
 
     public <T extends Functor> T safeApply(T functor) {
         try {
-            Field[] fields = type.getFields();
+            Field[] fields = type.getKeyFields();
             functor.process(fields[0], value1);
             functor.process(fields[1], value2);
             functor.process(fields[2], value3);
@@ -82,17 +82,13 @@ public class FourFieldKey extends AbstractKey {
     }
 
     protected Object doGetValue(Field field) {
-        switch (field.getKeyIndex()) {
-            case 0:
-                return value1;
-            case 1:
-                return value2;
-            case 2:
-                return value3;
-            case 3:
-                return value4;
-        }
-        throw new InvalidParameter(field + " is not a key field");
+        return switch (field.getKeyIndex()) {
+            case 0 -> value1;
+            case 1 -> value2;
+            case 2 -> value3;
+            case 3 -> value4;
+            default -> throw new InvalidParameter(field + " is not a key field");
+        };
     }
 
     // optimized - do not use generated code
@@ -142,7 +138,7 @@ public class FourFieldKey extends AbstractKey {
     }
 
     public FieldValue[] toArray() {
-        Field[] fields = type.getFields();
+        Field[] fields = type.getKeyFields();
         return new FieldValue[]{
                 new FieldValue(fields[0], value1),
                 new FieldValue(fields[1], value2),
@@ -152,7 +148,7 @@ public class FourFieldKey extends AbstractKey {
     }
 
     public String toString() {
-        Field[] fields = type.getFields();
+        Field[] fields = type.getKeyFields();
         return getGlobType().getName() + "[" +
                 fields[0].getName() + "=" + value1 + ", " +
                 fields[1].getName() + "=" + value2 + ", " +

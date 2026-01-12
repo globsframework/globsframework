@@ -1,10 +1,11 @@
 package org.globsframework.core.metamodel.annotations;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.globsframework.core.metamodel.GlobTypeBuilder;
+import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AnnotationsHelperTest {
 
@@ -12,7 +13,8 @@ public class AnnotationsHelperTest {
         public static GlobType TYPE;
 
         static {
-            GlobTypeLoaderFactory.createAndLoad(Type1.class);
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("Type1");
+            TYPE = globTypeBuilder.build();
         }
     }
 

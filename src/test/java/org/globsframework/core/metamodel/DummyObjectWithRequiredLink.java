@@ -1,6 +1,8 @@
 package org.globsframework.core.metamodel;
 
+import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
+import org.globsframework.core.metamodel.annotations.Required;
 import org.globsframework.core.metamodel.annotations.Required_;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.fields.StringField;
@@ -20,13 +22,16 @@ public class DummyObjectWithRequiredLink {
     public static Link LINK;
 
     static {
-        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DummyObjectWithRequiredLink.class, true);
-        loader.register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel -> {
-            LINK = mutableGlobLinkModel.getDirectLinkBuilder(LINK)
+        GlobTypeBuilder builder = GlobTypeBuilderFactory.create("dummyObjectWithRequiredLink");
+        ID = builder.declareIntegerField("id", KeyField.ZERO);
+        TARGET_ID = builder.declareIntegerField("target_id");
+        NAME = builder.declareStringField("name");
+
+        builder.register(MutableGlobLinkModel.LinkRegister.class, (linkModel) -> {
+            LINK = LINK != null ? LINK : linkModel.getDirectLinkBuilder("DummyObjectWithRequiredLink", "LINK", Required.UNIQUE_GLOB)
                     .add(TARGET_ID, DummyObject.ID)
                     .publish();
         });
-        loader.load();
-
+        TYPE = builder.build();
     }
 }

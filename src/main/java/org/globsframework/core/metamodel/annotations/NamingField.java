@@ -18,18 +18,13 @@ public class NamingField {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("NamingField");
-        TYPE = typeBuilder.unCompleteType();
-        typeBuilder.complete();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getUniqueGlob());
+        TYPE = typeBuilder.build();
         UNIQUE_GLOB = TYPE.instantiate();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> UNIQUE_GLOB);
+    }
 
-//        GlobTypeLoaderFactory.create(NamingField.class, "NamingField")
-//                .register(GlobCreateFromAnnotation.class, new GlobCreateFromAnnotation() {
-//                    public Glob create(Annotation annotation) {
-//                        return UNIQUE_GLOB;
-//                    }
-//                })
-//                .load();
+    private static Glob getUniqueGlob() {
+        return UNIQUE_GLOB;
     }
 }

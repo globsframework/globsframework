@@ -9,34 +9,56 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Supplier;
 
 public class DefaultGlobUnionArrayField extends AbstractField implements GlobArrayUnionField {
-    private volatile Map<String, GlobType> targetTypes;
+    private Supplier<GlobType>[] targetTypes;
+    private volatile Map<String, GlobType> targetTypesByName = null;
 
-    public DefaultGlobUnionArrayField(String name, GlobType globType, Collection<GlobType> targetTypes,
+    public DefaultGlobUnionArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType>[] targetTypes,
                                       int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
         super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobUnionArray, annotations);
-        this.targetTypes = new HashMap<>();
-        targetTypes.forEach(type -> this.targetTypes.put(type.getName(), type));
+        this.targetTypes = targetTypes;
     }
 
     public Collection<GlobType> getTargetTypes() {
-        return targetTypes.values();
+        if (targetTypesByName == null) {
+            fill();
+        }
+        return targetTypesByName.values();
     }
 
-    synchronized public void __add__(GlobType t) {
-        Map<String, GlobType> tmp = new HashMap<>(targetTypes);
+    public synchronized void __add__(GlobType t) {
+        if (targetTypesByName == null) {
+            fill();
+        }
+        if (targetTypesByName != null && targetTypesByName.containsKey(t.getName())) {
+            return;
+        }
+        Map<String, GlobType> tmp = new HashMap<>(targetTypesByName);
         tmp.put(t.getName(), t);
-        targetTypes = tmp;
+        targetTypesByName = tmp;
+    }
+
+    private synchronized void  fill() {
+        if (targetTypesByName == null) {
+            Map<String, GlobType> tmp = new HashMap<>((int) (targetTypes.length / 0.75));
+            for (Supplier<GlobType> targetType : targetTypes) {
+                tmp.put(targetType.get().getName(), targetType.get());
+            }
+            targetTypes = null;
+            targetTypesByName = tmp;
+        }
     }
 
     public GlobType getTargetType(String name) {
-        GlobType globType = targetTypes.get(name);
+        if (targetTypesByName == null) {
+            fill();
+        }
+        GlobType globType = targetTypesByName.get(name);
         if (globType == null) {
-            throw new RuntimeException("Type " + name + " not possible in " + getFullName() + " available " + targetTypes);
+            throw new RuntimeException("Type " + name + " not possible in " + getFullName() + " available " + targetTypesByName.keySet());
         }
         return globType;
     }
@@ -124,14 +146,14 @@ public class DefaultGlobUnionArrayField extends AbstractField implements GlobArr
 
     public boolean valueEqual(Object o1, Object o2) {
         return (o1 == null) && (o2 == null) ||
-                !((o1 == null) || (o2 == null)) &&
-                        isSameGlob(((Glob[]) o1), ((Glob[]) o2));
+               !((o1 == null) || (o2 == null)) &&
+               isSameGlob(((Glob[]) o1), ((Glob[]) o2));
     }
 
     public boolean valueOrKeyEqual(Object o1, Object o2) {
         return (o1 == null) && (o2 == null) ||
-                !((o1 == null) || (o2 == null)) &&
-                        isSameKeyOrGlob(((Glob[]) o1), ((Glob[]) o2));
+               !((o1 == null) || (o2 == null)) &&
+               isSameKeyOrGlob(((Glob[]) o1), ((Glob[]) o2));
     }
 
     public static boolean isSameGlob(Glob[] g1, Glob[] g2) {
@@ -171,8 +193,8 @@ public class DefaultGlobUnionArrayField extends AbstractField implements GlobArr
     public void checkValue(Object object) throws InvalidParameter {
         if ((object != null) && ((!(object instanceof Glob[])) || !checkType((Glob[]) object))) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
-                    + ") is not authorized for field: " + getName() +
-                    " (expected Glob)");
+                                       + ") is not authorized for field: " + getName() +
+                                       " (expected Glob)");
         }
     }
 

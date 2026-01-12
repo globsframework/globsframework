@@ -9,9 +9,10 @@ import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class DefaultLongArrayField extends AbstractField implements LongArrayField {
-    public DefaultLongArrayField(String name, GlobType globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashContainer<Key, Glob> annotations) {
+    public DefaultLongArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashContainer<Key, Glob> annotations) {
         super(name, globType, long[].class, index, keyIndex, isKeyField, defaultValue, DataType.LongArray, annotations);
     }
 

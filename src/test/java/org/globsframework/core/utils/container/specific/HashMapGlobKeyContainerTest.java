@@ -1,8 +1,10 @@
 package org.globsframework.core.utils.container.specific;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
+import org.globsframework.core.metamodel.GlobTypeBuilder;
+import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.globsframework.core.metamodel.annotations.AutoIncrement_;
+import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.model.Glob;
@@ -12,10 +14,9 @@ import org.globsframework.core.utils.NanoChrono;
 import org.globsframework.core.utils.container.hash.HashContainer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HashMapGlobKeyContainerTest {
 
@@ -36,7 +37,11 @@ public class HashMapGlobKeyContainerTest {
         public static IntegerField ID3;
 
         static {
-            GlobTypeLoaderFactory.createAndLoad(DummyObject.class);
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("DummyObject");
+            ID1 = globTypeBuilder.declareIntegerField("id1", KeyField.ZERO);
+            ID2 = globTypeBuilder.declareIntegerField("id2", KeyField.ONE);
+            ID3 = globTypeBuilder.declareIntegerField("id3", KeyField.TWO);
+            TYPE = globTypeBuilder.build();
         }
     }
 

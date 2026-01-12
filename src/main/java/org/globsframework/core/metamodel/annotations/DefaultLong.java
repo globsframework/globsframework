@@ -26,13 +26,9 @@ public class DefaultLong {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultLong");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareLongField("value");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultLong_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DefaultLong.class, "DefaultLong");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultLong_) annotation))
-//                .load();
     }
 }

@@ -75,14 +75,12 @@ public class MaxSizeTest {
         public static GlobField UNDER;
 
         static {
-//            GlobTypeLoaderFactory.create(Dummy_Level1.class).load();
             GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("Dummy_Level1");
-            TYPE = typeBuilder.unCompleteType();
             VALUE_1 = typeBuilder.declareStringField("VALUE_1", MaxSize.create(3));
             VALUE_2 = typeBuilder.declareStringField("VALUE_2", MaxSize.create(3, true));
             VALUE_3 = typeBuilder.declareStringField("VALUE_3", MaxSize.create(50, true));
-            UNDER = typeBuilder.declareGlobField("UNDER", Dummy_Level1.TYPE);
-            typeBuilder.get();
+            UNDER = typeBuilder.declareGlobField("UNDER", () -> Dummy_Level1.TYPE);
+            TYPE = typeBuilder.build();
         }
     }
 }

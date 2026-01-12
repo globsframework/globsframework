@@ -1,7 +1,9 @@
 package org.globsframework.core.model.delta;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
+import org.globsframework.core.metamodel.GlobTypeBuilder;
+import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
+import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.GlobArrayField;
@@ -10,11 +12,12 @@ import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InDepthChangeSetTest {
 
@@ -95,7 +98,12 @@ public class InDepthChangeSetTest {
         public static GlobArrayField COUNTS;
 
         static {
-            GlobTypeLoaderFactory.create(DummyType.class).load();
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("Dummy");
+            UUID = globTypeBuilder.declareStringField("uuid", KeyField.ZERO);
+            NAME = globTypeBuilder.declareStringField("name");
+            SUB_ELEMENT = globTypeBuilder.declareGlobField("subElement", () -> SubType.TYPE);
+            COUNTS = globTypeBuilder.declareGlobArrayField("counts", () -> SubTypeWWithoutKey.TYPE);
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -108,7 +116,10 @@ public class InDepthChangeSetTest {
         public static StringField SUB_NAME;
 
         static {
-            GlobTypeLoaderFactory.create(SubType.class).load();
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("SubType");
+            UUID = globTypeBuilder.declareStringField("uuid", KeyField.ZERO);
+            SUB_NAME = globTypeBuilder.declareStringField("subName");
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -122,7 +133,10 @@ public class InDepthChangeSetTest {
         public static IntegerField COUNT;
 
         static {
-            GlobTypeLoaderFactory.create(SubTypeWWithoutKey.class).load();
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("SubTypeWWithoutKey");
+            UUID = globTypeBuilder.declareStringField("uuid");
+            COUNT = globTypeBuilder.declareIntegerField("count");
+            TYPE = globTypeBuilder.build();
         }
     }
 

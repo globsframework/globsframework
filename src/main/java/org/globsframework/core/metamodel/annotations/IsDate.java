@@ -20,12 +20,13 @@ public class IsDate {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("IsDate");
-        TYPE = typeBuilder.get();
+        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getUnique());
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         UNIQUE = TYPE.instantiate();
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> UNIQUE);
-//        GlobTypeLoaderFactory.create(IsDate.class, "IsDate")
-//                .register(GlobCreateFromAnnotation.class, annotation -> UNIQUE)
-//                .load();
+    }
+
+    private static Glob getUnique() {
+        return UNIQUE;
     }
 }

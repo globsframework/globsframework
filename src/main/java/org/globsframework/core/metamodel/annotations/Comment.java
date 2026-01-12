@@ -22,14 +22,9 @@ public class Comment {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("Comment");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareStringField("VALUE");
-        typeBuilder.complete();
-        UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((Comment_) annotation));
-
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(Comment.class, "Comment");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((Comment_) annotation));
-//        loader.load();
+        TYPE = typeBuilder.build();
+        UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
     }
 }

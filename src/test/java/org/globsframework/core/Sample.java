@@ -1,8 +1,6 @@
 package org.globsframework.core;
 
-import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
-import org.globsframework.core.metamodel.GlobTypeLoaderFactory;
+import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.*;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.IntegerField;
@@ -26,7 +24,7 @@ public class Sample {
                 .addDoubleField("double")
                 .addBytesField("blob")
                 .addBooleanField("boolean")
-                .get();
+                .build();
 
         MutableGlob data = type.instantiate();
 
@@ -53,7 +51,11 @@ public class Sample {
         public static IntegerField anInt;
 
         static {
-            GlobTypeLoaderFactory.create(AType.class).load();
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("AType");
+            ID = globTypeBuilder.declareIntegerField("id");
+            string = globTypeBuilder.declareStringField("string", NamingField.UNIQUE_GLOB);
+            anInt = globTypeBuilder.declareIntegerField("int");
+            TYPE = globTypeBuilder.build();
         }
     }
 

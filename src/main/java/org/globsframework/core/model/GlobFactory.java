@@ -19,24 +19,21 @@ public interface GlobFactory {
     GlobGetAccessor getGetValueAccessor(Field field);
 
     default  <T extends FieldVisitor> T accept(T visitor) throws Exception {
-        Field[] fields = getGlobType().getFields();
-        for (Field field : fields) {
+        for (Field field : getGlobType().getFields()) {
             field.accept(visitor);
         }
         return visitor;
     }
 
     default  <T extends FieldVisitorWithContext<C>, C> T accept(T visitor, C context) throws Exception {
-        Field[] fields = getGlobType().getFields();
-        for (Field field : fields) {
+        for (Field field : getGlobType().getFields()) {
             field.accept(visitor, context);
         }
         return visitor;
     }
 
     default  <T extends FieldVisitorWithTwoContext<C, D>, C, D> T accept(T visitor, C ctx1, D ctx2) throws Exception {
-        Field[] fields = getGlobType().getFields();
-        for (Field field : fields) {
+        for (Field field : getGlobType().getFields()) {
             field.accept(visitor, ctx1, ctx2);
         }
         return visitor;

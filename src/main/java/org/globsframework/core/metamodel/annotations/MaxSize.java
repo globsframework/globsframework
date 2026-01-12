@@ -23,17 +23,12 @@ public class MaxSize {
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("MaxSize");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareIntegerField("value");
         ALLOW_TRUNCATE = typeBuilder.declareBooleanField("allow_truncate");
         CHARSET = typeBuilder.declareStringField("charSet");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((MaxSize_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(MaxSize.class, "MaxSize");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create((MaxSize_) annotation))
-//                .load();
     }
 
     static public String cut(Field field, FieldValuesAccessor value) {

@@ -26,7 +26,7 @@ public class CheckSetUnsetTest {
             fields[i] = globTypeBuilder.declareStringField("f_" + i);
         }
 
-        final GlobType globType = globTypeBuilder.get();
+        final GlobType globType = globTypeBuilder.build();
 
         final MutableGlob instantiate = globType.instantiate();
         for (StringField field : fields) {

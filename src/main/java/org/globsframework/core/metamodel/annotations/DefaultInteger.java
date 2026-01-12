@@ -26,15 +26,10 @@ public class DefaultInteger {
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultInteger");
-        TYPE = typeBuilder.unCompleteType();
         VALUE = typeBuilder.declareIntegerField("VALUE");
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultInteger_) annotation));
-        typeBuilder.complete();
+        TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoaderFactory.create(DefaultInteger.class, "DefaultInteger")
-//                .register(GlobCreateFromAnnotation.class, annotation -> create((DefaultInteger_) annotation))
-//                .load();
     }
 
 }

@@ -1,13 +1,10 @@
 package org.globsframework.core.metamodel.utils;
 
 import org.globsframework.core.metamodel.*;
-import org.globsframework.core.metamodel.annotations.KeyField_;
-import org.globsframework.core.metamodel.annotations.Required_;
-import org.globsframework.core.metamodel.annotations.Target;
+import org.globsframework.core.metamodel.annotations.*;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.impl.DefaultGlobModel;
 import org.globsframework.core.metamodel.links.Link;
-import org.globsframework.core.model.Glob;
 import org.globsframework.core.utils.Strings;
 import org.globsframework.core.utils.TestUtils;
 import org.globsframework.core.utils.exceptions.InvalidData;
@@ -41,12 +38,15 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycle1.class)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("LargeLinkCycle1");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = mutableGlobLinkModel.getLinkBuilder("default", "link")
                                     .add(LINK_ID, LargeLinkCycle2.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -62,12 +62,16 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycle2.class)
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("LargeLinkCycle2");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = mutableGlobLinkModel.getLinkBuilder(null, "link")
                                     .add(LINK_ID, LargeLinkCycle3.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
+
         }
     }
 
@@ -83,12 +87,16 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycle3.class)
+            GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("LargeLinkCycle3");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId");
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = mutableGlobLinkModel.getLinkBuilder("default", "link")
                                     .add(LINK_ID, LargeLinkCycle1.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
+
         }
     }
 
@@ -140,12 +148,15 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycleWithRequiredFieldError1.class, true)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycleWithRequiredFieldError1");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId", Required.UNIQUE_GLOB);
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = LINK != null ? LINK : mutableGlobLinkModel.getLinkBuilder("default", "link")
                                     .add(LINK_ID, LargeLinkCycleWithRequiredFieldError2.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
         }
     }
 
@@ -162,12 +173,16 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycleWithRequiredFieldError2.class, true)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycleWithRequiredFieldError2");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId", Required.UNIQUE_GLOB);
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = LINK != null ? LINK : mutableGlobLinkModel.getLinkBuilder("default", "link")
                                     .add(LINK_ID, LargeLinkCycleWithRequiredFieldError3.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
+
         }
     }
 
@@ -184,12 +199,16 @@ public class DefaultGlobModelTest {
         public static Link LINK;
 
         static {
-            GlobTypeLoaderFactory.create(LargeLinkCycleWithRequiredFieldError3.class, true)
+            final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("largeLinkCycleWithRequiredFieldError3");
+            ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
+            LINK_ID = globTypeBuilder.declareIntegerField("linkId", Required.UNIQUE_GLOB);
+            globTypeBuilder
                     .register(MutableGlobLinkModel.LinkRegister.class, mutableGlobLinkModel ->
-                            LINK = mutableGlobLinkModel.getLinkBuilder(LINK)
+                            LINK = LINK != null ? LINK : mutableGlobLinkModel.getLinkBuilder("default", "link")
                                     .add(LINK_ID, LargeLinkCycleWithRequiredFieldError1.ID)
-                                    .publish())
-                    .load();
+                                    .publish());
+            TYPE = globTypeBuilder.build();
+
         }
     }
 

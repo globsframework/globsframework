@@ -46,10 +46,9 @@ public class KeyField {
 
     static {
         DefaultGlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("KeyField");
-        TYPE = typeBuilder.unCompleteType();
         INDEX = typeBuilder.declareIntegerField("index");
-        typeBuilder.complete();
         typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((KeyField_) annotation).value()));
+        TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
         UNINITIALIZED = TYPE.instantiate().set(INDEX, -1);
         ZERO = TYPE.instantiate().set(INDEX, 0);

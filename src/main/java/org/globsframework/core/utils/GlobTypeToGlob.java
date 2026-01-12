@@ -10,6 +10,7 @@ import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.MutableGlob;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class GlobTypeToGlob {
 
@@ -101,7 +102,7 @@ public class GlobTypeToGlob {
         }
         return main.stream().map(glob -> {
             final String k = glob.getNotNull(GlobTypeType.kind);
-            return onGoing.get(k).get();
+            return onGoing.get(k).build();
         }).toList();
     }
 
@@ -145,33 +146,33 @@ public class GlobTypeToGlob {
                 final String targetKey = field.get(GlobFieldType.targetType);
                 final GlobTypeBuilder targetTypeBuilder = onGoing.get(targetKey);
                 globTypeBuilder.addGlobField(field.get(GlobFieldType.name), Arrays.asList(field.getOrEmpty(GlobFieldType.annotations)),
-                        targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(targetKey));
+                        targetTypeBuilder != null ? () -> targetTypeBuilder.build() : () -> globTypeResolver.getType(targetKey));
             } else if (type == GlobUnionFieldType.TYPE) {
                 final String[] targetTypes = field.getOrEmpty(GlobUnionFieldType.targetTypes);
-                List<GlobType> globTypes = Arrays.stream(targetTypes).map(s -> {
+                Supplier<GlobType>[] globTypes = Arrays.stream(targetTypes).map(s -> {
                     final GlobTypeBuilder targetTypeBuilder = onGoing.get(s);
-                    return targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(s);
-                }).toList();
+                    return targetTypeBuilder != null ? (Supplier) () -> targetTypeBuilder.build() : (Supplier) () -> globTypeResolver.getType(s);
+                }).toArray(Supplier[]::new);
                 globTypeBuilder.addUnionGlobField(field.get(GlobUnionFieldType.name),
                         Arrays.asList(field.getOrEmpty(GlobUnionFieldType.annotations)), globTypes);
             } else if (type == GlobArrayFieldType.TYPE) {
                 final String targetKey = field.get(GlobArrayFieldType.targetType);
                 final GlobTypeBuilder targetTypeBuilder = onGoing.get(targetKey);
                 globTypeBuilder.addGlobArrayField(field.get(GlobArrayFieldType.name), Arrays.asList(field.getOrEmpty(GlobArrayFieldType.annotations)),
-                        targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(targetKey));
+                        targetTypeBuilder != null ? () -> targetTypeBuilder.build() : () -> globTypeResolver.getType(targetKey));
             } else if (type == GlobUnionArrayFieldType.TYPE) {
                 final String[] targetTypes = field.getOrEmpty(GlobUnionArrayFieldType.targetTypes);
-                List<GlobType> globTypes = Arrays.stream(targetTypes).map(s -> {
+                Supplier<GlobType>[] globTypes = Arrays.stream(targetTypes).map(s -> {
                     final GlobTypeBuilder targetTypeBuilder = onGoing.get(s);
-                    return targetTypeBuilder != null ? targetTypeBuilder.unCompleteType() : globTypeResolver.getType(s);
-                }).toList();
+                    return targetTypeBuilder != null ? (Supplier) () -> targetTypeBuilder.build() : (Supplier) () -> globTypeResolver.getType(s);
+                }).toArray(Supplier[]::new);
                 globTypeBuilder.addUnionGlobField(field.get(GlobUnionArrayFieldType.name),
                         Arrays.asList(field.getOrEmpty(GlobUnionArrayFieldType.annotations)), globTypes);
             } else {
                 throw new RuntimeException("Unknown type " + type.getName());
             }
         }
-        return globTypeBuilder.get();
+        return globTypeBuilder.build();
     }
 
 }
