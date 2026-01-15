@@ -12,7 +12,7 @@ public class AllCoreAnnotations {
                     DefaultString.TYPE, DoublePrecision.TYPE,
                     FieldName.TYPE, KeyField.TYPE,
                     EnumAnnotation.TYPE,
-                    LinkModelName.TYPE, MaxSize.TYPE, MultiLineText.TYPE,
+                    MaxSize.TYPE, MultiLineText.TYPE,
                     IgnoredAnnotation.TYPE,
                     Comment.TYPE,
                     NamingField.TYPE, Required.TYPE,

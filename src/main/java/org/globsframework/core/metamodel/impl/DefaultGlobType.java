@@ -9,6 +9,8 @@ import org.globsframework.core.model.GlobFactory;
 import org.globsframework.core.model.GlobFactoryService;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.format.GlobPrinter;
+import org.globsframework.core.utils.container.hash.HashContainer;
+import org.globsframework.core.utils.container.specific.HashEmptyGlobContainer;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.utils.exceptions.TooManyItems;
 
@@ -17,8 +19,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultGlobType extends DefaultAnnotations
-        implements MutableGlobType, MutableAnnotations {
+public class DefaultGlobType
+        implements AbstractDefaultAnnotations, MutableGlobType, MutableAnnotations {
     public static final String[] EMPTY_SCOPE = new String[0];
     public static final Object[] EMPTY_PROP = new Object[0];
     private static final Field[] EMPTY_FIELDS = new Field[0];
@@ -30,11 +32,11 @@ public class DefaultGlobType extends DefaultAnnotations
     private final Map<String, Field> fieldsByName;
     private final Map<String, Index> indices;
     private final Map<Class<?>, Object> registered;
+    private final HashContainer<Key, Glob> annotations;
     private Object[] properties = EMPTY_PROP;
 
     public DefaultGlobType(String name, Map<String, Field> fieldsByName, Map<Class<?>, Object> registered,
                            List<Glob> annotations, Map<String, Index> indices, int keyIndex) {
-        super(annotations);
         this.name = name;
         fields = new Field[fieldsByName.size()];
         this.registered = registered != null ? registered : Map.of();
@@ -67,6 +69,15 @@ public class DefaultGlobType extends DefaultAnnotations
             }
             return cmp;
         });
+        if (annotations == null || annotations.isEmpty()) {
+            this.annotations = HashEmptyGlobContainer.Helper.allocate(0);
+        } else {
+            this.annotations = HashEmptyGlobContainer.Helper.allocate(annotations.size());
+            for (Glob annotation : annotations) {
+                this.annotations.put(annotation.getKey(), annotation);
+            }
+        }
+
     }
 
     public int getFieldCount() {
@@ -223,5 +234,10 @@ public class DefaultGlobType extends DefaultAnnotations
             return (T) (properties[index] = property.build(this));
         }
         return (T) p;
+    }
+
+    @Override
+    public HashContainer<Key, Glob> getAnnotations() {
+        return annotations;
     }
 }

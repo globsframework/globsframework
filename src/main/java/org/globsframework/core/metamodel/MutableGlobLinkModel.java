@@ -8,9 +8,13 @@ import org.globsframework.core.model.Glob;
 
 public interface MutableGlobLinkModel extends GlobLinkModel {
 
-    LinkBuilder getLinkBuilder(String modelName, String name, Glob... globAnnotations);
+    LinkBuilder getLinkBuilder(String modelName, String name);
 
-    DirectLinkBuilder getDirectLinkBuilder(String modelName, String name, Glob... globAnnotations);
+    DirectLinkBuilder getDirectLinkBuilder(String modelName, String name, boolean isRequered);
+
+    default DirectLinkBuilder getDirectLinkBuilder(String modelName, String name){
+        return getDirectLinkBuilder(modelName, name, false);
+    }
 
     // DirectLinkBuilder getDirectLinkBuilder(Annotations annotations, LinkType linkType);
 
@@ -41,7 +45,7 @@ public interface MutableGlobLinkModel extends GlobLinkModel {
         DirectLink publish();
     }
 
-    interface LinkBuilder<T extends LinkBuilder> extends MutableAnnotations {
+    interface LinkBuilder<T extends LinkBuilder>{
 
         T add(Field sourceField, Field targetField);
 

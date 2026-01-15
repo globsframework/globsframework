@@ -22,8 +22,8 @@ public class DefaultDirectLink extends AbstractLink implements DirectLink {
     private final GlobType sourceType;
     private final GlobType targetType;
 
-    public DefaultDirectLink(List<Pair<Field, Field>> mappings, String modelName, String name, Annotations annotations) {
-        super(modelName, name, annotations);
+    public DefaultDirectLink(List<Pair<Field, Field>> mappings, String modelName, String name, boolean required) {
+        super(modelName, name, required);
         this.mappings = mappings;
         Pair<Field, Field> mapping = mappings.get(0);
         sourceType = mapping.getFirst().getGlobType();
@@ -38,9 +38,6 @@ public class DefaultDirectLink extends AbstractLink implements DirectLink {
         return targetType;
     }
 
-    public boolean isRequired() {
-        return hasAnnotation(Required.UNIQUE_KEY);
-    }
 
     public <T extends FieldMappingFunction> T apply(T functor) {
         mappings.forEach(pair -> functor.process(pair.getFirst(), pair.getSecond()));
@@ -57,8 +54,7 @@ public class DefaultDirectLink extends AbstractLink implements DirectLink {
         return keyBuilder.get();
     }
 
-    public static DirectLink create(List<Pair<Field, Field>> mappings, String modelName, String name,
-                                    Annotations annotations) {
+    public static DirectLink create(List<Pair<Field, Field>> mappings, String modelName, String name, boolean required) {
         Field first = null;
         Field second = null;
         for (Pair<Field, Field> mapping : mappings) {
@@ -78,9 +74,9 @@ public class DefaultDirectLink extends AbstractLink implements DirectLink {
             throw new InvalidParameter("All key field of target must be references. Missing : " + missing);
         }
         if (mappings.size() == 1) {
-            return new DefaultDirectSingleLink(first, second, modelName, name, annotations);
+            return new DefaultDirectSingleLink(first, second, modelName, name, required);
         } else {
-            return new DefaultDirectLink(mappings, modelName, name, annotations);
+            return new DefaultDirectLink(mappings, modelName, name, required);
         }
     }
 }

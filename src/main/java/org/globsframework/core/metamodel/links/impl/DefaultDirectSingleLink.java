@@ -1,8 +1,6 @@
 package org.globsframework.core.metamodel.links.impl;
 
-import org.globsframework.core.metamodel.Annotations;
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.annotations.Required;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.links.DirectSingleLink;
 import org.globsframework.core.metamodel.links.FieldMappingFunction;
@@ -14,11 +12,10 @@ public class DefaultDirectSingleLink extends AbstractLink implements DirectSingl
     private final Field sourceField;
     private final Field targetField;
 
-    public DefaultDirectSingleLink(Field sourceField, Field targetField, String modelName, String name, Annotations annotations) {
-        super(modelName, name, annotations);
+    public DefaultDirectSingleLink(Field sourceField, Field targetField, String modelName, String name, boolean required) {
+        super(modelName, name, required);
         this.sourceField = sourceField;
         this.targetField = targetField;
-
     }
 
     public GlobType getSourceType() {
@@ -29,9 +26,6 @@ public class DefaultDirectSingleLink extends AbstractLink implements DirectSingl
         return targetField.getGlobType();
     }
 
-    public boolean isRequired() {
-        return hasAnnotation(Required.UNIQUE_KEY);
-    }
 
     public <T extends FieldMappingFunction> T apply(T functor) {
         functor.process(sourceField, targetField);

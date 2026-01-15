@@ -10,7 +10,6 @@ public class DummyObjectWithLinkFieldId {
     @KeyField_
     public static IntegerField LINK_ID;
 
-    @LinkModelName_("ANY")
     @Target(DummyObject.class)
     public static Link LINK;
 
@@ -20,7 +19,8 @@ public class DummyObjectWithLinkFieldId {
 
         builder.register(MutableGlobLinkModel.LinkRegister.class,
                         (linkModel) ->
-                                LINK = LINK != null ? LINK : linkModel.getDirectLinkBuilder("DummyObjectWithLinkFieldId", "linkName", LinkModelName.create("ANY"))
+                                LINK = LINK != null ? LINK :
+                                        linkModel.getDirectLinkBuilder("ANY", "linkName")
                                         .add(LINK_ID, DummyObject.ID).publish());
         TYPE = builder.build();
     }

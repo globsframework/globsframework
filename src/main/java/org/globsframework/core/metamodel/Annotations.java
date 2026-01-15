@@ -1,7 +1,6 @@
 package org.globsframework.core.metamodel;
 
 import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.metamodel.impl.DefaultAnnotations;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.Ref;
@@ -11,8 +10,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface Annotations {
-    Annotations EMPTY = new DefaultAnnotations();
-
     Stream<Glob> streamAnnotations();
 
     default Stream<Glob> streamAnnotations(GlobType type) {

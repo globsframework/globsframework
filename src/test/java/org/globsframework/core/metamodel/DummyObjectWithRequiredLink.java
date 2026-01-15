@@ -28,7 +28,7 @@ public class DummyObjectWithRequiredLink {
         NAME = builder.declareStringField("name");
 
         builder.register(MutableGlobLinkModel.LinkRegister.class, (linkModel) -> {
-            LINK = LINK != null ? LINK : linkModel.getDirectLinkBuilder("DummyObjectWithRequiredLink", "LINK", Required.UNIQUE_GLOB)
+            LINK = LINK != null ? LINK : linkModel.getDirectLinkBuilder("DummyObjectWithRequiredLink", "LINK", true)
                     .add(TARGET_ID, DummyObject.ID)
                     .publish();
         });

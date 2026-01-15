@@ -1,6 +1,5 @@
 package org.globsframework.core.metamodel;
 
-import org.globsframework.core.metamodel.annotations.ContainmentLink;
 import org.globsframework.core.metamodel.annotations.ContainmentLink_;
 import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.KeyField_;
@@ -42,7 +41,7 @@ public class DummyObjectWithLinks {
                             .add(TARGET_ID_2, DummyObjectWithCompositeKey.ID2)
                             .publish();
 
-                    PARENT_LINK = PARENT_LINK != null ? PARENT_LINK : linkModel.getLinkBuilder("DummyObjectWithLinks", "PARENT_LINK", ContainmentLink.UNIQUE_GLOB)
+                    PARENT_LINK = PARENT_LINK != null ? PARENT_LINK : linkModel.getLinkBuilder("DummyObjectWithLinks", "PARENT_LINK")
                             .add(PARENT_ID, DummyObject.ID)
                             .publish();
 

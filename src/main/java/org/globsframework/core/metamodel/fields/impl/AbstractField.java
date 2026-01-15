@@ -2,7 +2,7 @@ package org.globsframework.core.metamodel.fields.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.annotations.Required;
-import org.globsframework.core.metamodel.impl.DefaultAnnotations;
+import org.globsframework.core.metamodel.impl.AbstractDefaultAnnotations;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-abstract public class AbstractField extends DefaultAnnotations {
+abstract public class AbstractField implements AbstractDefaultAnnotations {
     private final int index;
     private final int keyIndex;
     private final Supplier<GlobType> globTypeSupplier;
@@ -25,11 +25,12 @@ abstract public class AbstractField extends DefaultAnnotations {
     private final DataType dataType;
     private Map<Class<?>, Object> registered = null;
     private final boolean keyField;
+    private final HashContainer<Key, Glob> annotations;
 
     protected AbstractField(String name, Supplier<GlobType> globTypeSupplier,
                             Class valueClass, int index, int keyIndex, boolean isKeyField,
                             Object defaultValue, DataType dataType, HashContainer<Key, Glob> annotations) {
-        super(annotations);
+        this.annotations = annotations;
         this.keyIndex = keyIndex;
         this.defaultValue = defaultValue;
         this.name = name;
@@ -83,8 +84,8 @@ abstract public class AbstractField extends DefaultAnnotations {
     public void checkValue(Object object) throws InvalidParameter {
         if ((object != null) && (!valueClass.equals(object.getClass()))) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
-                    + ") is not authorized for field: " + getName() +
-                    " (expected " + valueClass.getName() + ")");
+                                       + ") is not authorized for field: " + getName() +
+                                       " (expected " + valueClass.getName() + ")");
         }
     }
 
@@ -137,5 +138,10 @@ abstract public class AbstractField extends DefaultAnnotations {
 
         AbstractField other = (AbstractField) o;
         return name.equals(other.name) && globType.equals(other.globType);
+    }
+
+    @Override
+    public HashContainer<Key, Glob> getAnnotations() {
+        return annotations;
     }
 }

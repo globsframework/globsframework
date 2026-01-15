@@ -502,7 +502,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 
     public Field declareFrom(String name, Field field) {
         boolean isKeyField = field.isKeyField();
-        final HashContainer<Key, Glob> hashContainer = ((DefaultAnnotations) field).getInternal();
+        final HashContainer<Key, Glob> hashContainer = ((AbstractField) field).getAnnotations();
 //        HashContainer<Key, Glob> duplicate = hashContainer.duplicate();
 //        MutableGlob glob = FieldName.create(name);
 //        duplicate.put(glob.getKey(), glob);
