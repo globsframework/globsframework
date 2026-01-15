@@ -77,7 +77,6 @@ public class DefaultGlobType
                 this.annotations.put(annotation.getKey(), annotation);
             }
         }
-
     }
 
     public int getFieldCount() {

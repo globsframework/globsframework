@@ -17,32 +17,33 @@ import java.util.function.Supplier;
 abstract public class AbstractField implements AbstractDefaultAnnotations {
     private final int index;
     private final int keyIndex;
-    private final Supplier<GlobType> globTypeSupplier;
+//    private Supplier<GlobType> globTypeSupplier;
     private GlobType globType;
     private final String name;
     private final Class valueClass;
     private final Object defaultValue;
     private final DataType dataType;
     private Map<Class<?>, Object> registered = null;
-    private final boolean keyField;
     private final HashContainer<Key, Glob> annotations;
 
     protected AbstractField(String name, Supplier<GlobType> globTypeSupplier,
                             Class valueClass, int index, int keyIndex, boolean isKeyField,
                             Object defaultValue, DataType dataType, HashContainer<Key, Glob> annotations) {
         this.annotations = annotations;
-        this.keyIndex = keyIndex;
+        this.keyIndex = isKeyField ? keyIndex : -1;
         this.defaultValue = defaultValue;
         this.name = name;
-        this.keyField = isKeyField;
         this.index = index;
-        this.globTypeSupplier = globTypeSupplier; //StableValue.supplier(globType);
+//        this.globTypeSupplier = globTypeSupplier; //StableValue.supplier(globType);
+//        this.globType = StableValue.supplier(globTypeSupplier);
         this.valueClass = valueClass;
         this.dataType = dataType;
     }
 
-    public void typeComplete() {
-        globType = globTypeSupplier.get();
+    public void typeComplete(GlobType globType) {
+//        globType = globTypeSupplier.get();
+        this.globType  = globType;
+//        globType.get();
     }
 
     public Object normalize(Object value) {
@@ -70,7 +71,7 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
     }
 
     public boolean isKeyField() {
-        return keyField;
+        return keyIndex != -1;
     }
 
     public boolean isRequired() {

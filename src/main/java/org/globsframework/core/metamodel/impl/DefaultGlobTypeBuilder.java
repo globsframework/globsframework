@@ -575,7 +575,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     public GlobType build() {
         final GlobType globType = type.get();
         for (Field field : globType.getFields()) {
-            ((AbstractField) field).typeComplete();
+            ((AbstractField) field).typeComplete(globType);
         }
         return globType;
     }
