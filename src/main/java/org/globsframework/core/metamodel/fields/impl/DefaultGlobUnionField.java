@@ -11,6 +11,7 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -36,14 +37,14 @@ public class DefaultGlobUnionField extends AbstractField implements GlobUnionFie
         if (targetTypesByName == null) {
             fill();
         }
-        Map<String, GlobType> tmp = new HashMap<>(targetTypesByName);
+        Map<String, GlobType> tmp = new LinkedHashMap<>(targetTypesByName);
         tmp.put(t.getName(), t);
         targetTypesByName = tmp;
     }
 
     private synchronized void fill() {
         if (targetTypesByName == null) {
-            Map<String, GlobType> tmp = new HashMap<>((int) (targetTypes.length / 0.75));
+            Map<String, GlobType> tmp = new LinkedHashMap<>((int) (targetTypes.length / 0.75));
             for (Supplier<GlobType> targetType : targetTypes) {
                 tmp.put(targetType.get().getName(), targetType.get());
             }

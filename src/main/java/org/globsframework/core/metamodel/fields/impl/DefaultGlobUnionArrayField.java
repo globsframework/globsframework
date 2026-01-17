@@ -36,14 +36,14 @@ public class DefaultGlobUnionArrayField extends AbstractField implements GlobArr
         if (targetTypesByName != null && targetTypesByName.containsKey(t.getName())) {
             return;
         }
-        Map<String, GlobType> tmp = new HashMap<>(targetTypesByName);
+        Map<String, GlobType> tmp = new LinkedHashMap<>(targetTypesByName);
         tmp.put(t.getName(), t);
         targetTypesByName = tmp;
     }
 
     private synchronized void  fill() {
         if (targetTypesByName == null) {
-            Map<String, GlobType> tmp = new HashMap<>((int) (targetTypes.length / 0.75));
+            Map<String, GlobType> tmp = new LinkedHashMap<>((int) (targetTypes.length / 0.75));
             for (Supplier<GlobType> targetType : targetTypes) {
                 tmp.put(targetType.get().getName(), targetType.get());
             }

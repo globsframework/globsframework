@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 abstract public class AbstractField implements AbstractDefaultAnnotations {
     private final int index;
     private final int keyIndex;
-//    private Supplier<GlobType> globTypeSupplier;
+//    private final Supplier<GlobType> globTypeSupplier;
     private GlobType globType;
     private final String name;
     private final Class valueClass;
@@ -34,14 +34,16 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         this.defaultValue = defaultValue;
         this.name = name;
         this.index = index;
-//        this.globTypeSupplier = globTypeSupplier; //StableValue.supplier(globType);
+//        this.globTypeSupplier = StableValue.supplier(globTypeSupplier);
 //        this.globType = StableValue.supplier(globTypeSupplier);
         this.valueClass = valueClass;
         this.dataType = dataType;
     }
 
     public void typeComplete(GlobType globType) {
-//        globType = globTypeSupplier.get();
+//        if ( globType != globTypeSupplier.get()) {
+//            throw new IllegalStateException("GlobType changed for field " + this);
+//        }
         this.globType  = globType;
 //        globType.get();
     }
@@ -55,10 +57,12 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
     }
 
     public String getFullName() {
+//        return globTypeSupplier.get().getName() + "." + name;
         return globType.getName() + "." + name;
     }
 
     public GlobType getGlobType() {
+//        return globTypeSupplier.get();
         return globType;
     }
 
@@ -99,6 +103,7 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
     }
 
     public String toString() {
+//        return globTypeSupplier.get().getName() + "." + name;
         return globType.getName() + "." + name;
     }
 
@@ -133,12 +138,13 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+//        if (o == null || getClass() != o.getClass()) {
             return false;
-        }
+//        }
 
-        AbstractField other = (AbstractField) o;
-        return name.equals(other.name) && globType.equals(other.globType);
+//        AbstractField other = (AbstractField) o;
+//        return name.equals(other.name) && globType == other.globType;
+//        return name.equals(other.name) && globTypeSupplier.get() == other.globTypeSupplier.get();
     }
 
     @Override

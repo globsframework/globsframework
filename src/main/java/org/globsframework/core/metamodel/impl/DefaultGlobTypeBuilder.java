@@ -54,6 +54,9 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             if (globType == null) {
                 globType = typeBuilder.createGlobType();
                 typeBuilder = null;
+                for (Field field : globType.getFields()) {
+                    ((AbstractField) field).typeComplete(globType);
+                }
             }
             return globType;
         }
@@ -574,9 +577,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 
     public GlobType build() {
         final GlobType globType = type.get();
-        for (Field field : globType.getFields()) {
-            ((AbstractField) field).typeComplete(globType);
-        }
+        // fix => multi init is multi call
         return globType;
     }
 
