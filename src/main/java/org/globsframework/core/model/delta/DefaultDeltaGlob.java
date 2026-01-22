@@ -74,7 +74,8 @@ class DefaultDeltaGlob extends AbstractFieldValuesWithPrevious implements DeltaG
 
     public void setValueForUpdate(Field updatedField, Object value) {
         checkFieldType(updatedField);
-        if (Utils.equal(value, previousValues[updatedField.getIndex()])) {
+        final Object previousValue = previousValues[updatedField.getIndex()];
+        if (previousValue != Unset.VALUE && updatedField.valueEqual(value, previousValue)) {
             previousValues[updatedField.getIndex()] = Unset.VALUE;
             values[updatedField.getIndex()] = Unset.VALUE;
             for (Field field : key.getGlobType().getFields()) {
@@ -94,7 +95,10 @@ class DefaultDeltaGlob extends AbstractFieldValuesWithPrevious implements DeltaG
             if (field.isKeyField()) {
                 continue;
             }
-            if (Utils.equal(values[field.getIndex()], previousValues[field.getIndex()])) {
+            final Object value = values[field.getIndex()];
+            final Object previousValue = previousValues[field.getIndex()];
+            if (value == previousValue || value != Unset.VALUE && previousValue != Unset.VALUE &&
+                                          field.valueEqual(value, previousValue)) {
                 previousValues[field.getIndex()] = Unset.VALUE;
                 values[field.getIndex()] = Unset.VALUE;
             } else {

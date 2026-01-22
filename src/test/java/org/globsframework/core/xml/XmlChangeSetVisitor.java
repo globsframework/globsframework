@@ -66,9 +66,11 @@ public class XmlChangeSetVisitor implements ChangeSetVisitor {
     private void dumpFieldValues(final XmlTag tag, FieldsValueScanner values, final boolean previousValues, boolean withoutKeyfield) throws IOException {
         FieldValues.Functor functor = new FieldValues.Functor() {
             public void process(Field field, Object value) throws Exception {
-                if (value != null) {
-                    final String name = previousValues ? "_" + field.getName() : field.getName();
-                    tag.addAttribute(name, converter.toString(field, value));
+                if (field.getDataType().isPrimive()) {
+                    if (value != null) {
+                        final String name = previousValues ? "_" + field.getName() : field.getName();
+                        tag.addAttribute(name, converter.toString(field, value));
+                    }
                 }
             }
         };
@@ -76,13 +78,73 @@ public class XmlChangeSetVisitor implements ChangeSetVisitor {
             functor = functor.withoutKeyField();
         }
         values.safeApply(functor);
+        FieldValues.Functor subFunctor = new FieldValues.Functor() {
+            public void process(Field field, Object value) throws Exception {
+                if (!field.getDataType().isPrimive()) {
+                    if (value != null) {
+                        final String name = previousValues ? "_" + field.getName() : field.getName();
+                        if (field.getDataType().isArray()) {
+                            for (Glob o : ((Glob[]) value)) {
+                                final XmlTag childTag = tag.createChildTag(name);
+                                dumpFieldValues(childTag, o, previousValues, withoutKeyfield);
+                                childTag.end();
+                            }
+                        }
+                        else {
+                            final XmlTag childTag = tag.createChildTag(name);
+                            dumpFieldValues(childTag, ((Glob) value), previousValues, withoutKeyfield);
+                            childTag.end();
+                        }
+                    }
+                }
+            }
+        };
+        if (withoutKeyfield) {
+            subFunctor = subFunctor.withoutKeyField();
+        }
+        values.safeApply(subFunctor);
     }
 
     private void dumpFieldValues(final XmlTag tag, FieldsValueWithPreviousScanner values) throws IOException {
         values.safeApplyWithPrevious((field, value, previousValue) -> {
-            if ((value != null) || (previousValue != null)) {
-                tag.addAttribute(field.getName(), converter.toString(field, value));
-                tag.addAttribute("_" + field.getName(), converter.toString(field, previousValue));
+            if (field.getDataType().isPrimive()) {
+                if ((value != null) || (previousValue != null)) {
+                    tag.addAttribute(field.getName(), converter.toString(field, value));
+                    tag.addAttribute("_" + field.getName(), converter.toString(field, previousValue));
+                }
+            }
+        });
+        values.safeApplyWithPrevious((field, value, previousValue) -> {
+            if (field.getDataType().isPrimive()) {
+                return;
+            }
+            if (field.getDataType().isArray()) {
+                if (value != null) {
+                    for (Glob g : ((Glob[]) value)) {
+                        final XmlTag childTag = tag.createChildTag(field.getName());
+                        dumpFieldValues(childTag, g, false, false);
+                        childTag.end();
+                    }
+                }
+                if (previousValue != null) {
+                    for (Glob g : ((Glob[]) previousValue)) {
+                        final XmlTag childTag = tag.createChildTag("_" + field.getName());
+                        dumpFieldValues(childTag, g, false, false);
+                        childTag.end();
+                    }
+                }
+            }
+            else {
+                if (value != null) {
+                        final XmlTag childTag = tag.createChildTag(field.getName());
+                        dumpFieldValues(childTag, (Glob) value, false, false);
+                        childTag.end();
+                }
+                if (previousValue != null) {
+                        final XmlTag childTag = tag.createChildTag("_" + field.getName());
+                        dumpFieldValues(childTag, ((Glob) previousValue), false, false);
+                        childTag.end();
+                }
             }
         });
     }

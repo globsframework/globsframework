@@ -424,7 +424,7 @@ public class DefaultGlobRepository implements GlobRepository, IndexSource {
                     globType.getName() + "'");
         }
         Object previousValue = mutableGlob.getValue(field);
-        if (Utils.equal(previousValue, newValue)) {
+        if (field.valueEqual(previousValue, newValue)) {
             return false;
         }
         if (field.isKeyField()) {

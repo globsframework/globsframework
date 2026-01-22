@@ -1,9 +1,6 @@
 package org.globsframework.core.model.delta;
 
-import org.globsframework.core.metamodel.DummyModel;
-import org.globsframework.core.metamodel.DummyObject;
-import org.globsframework.core.metamodel.DummyObject2;
-import org.globsframework.core.metamodel.DummyObjectWithLinks;
+import org.globsframework.core.metamodel.*;
 import org.globsframework.core.model.*;
 import org.globsframework.core.model.utils.DefaultChangeSetVisitor;
 import org.globsframework.core.utils.TestUtils;
@@ -395,4 +392,53 @@ public class DefaultChangeSetTest {
                         "create : id='1' name='name1' value='' count='' present='' date='' password='' linkId='' link2Id=''\n",
                 changeSet.toString());
     }
+
+    @Test
+    void checkDeltaOnSubObjectAreManaged() {
+        final MutableGlob sub = DummyObjectInner.create(1.2);
+        creationValues =
+                FieldValuesBuilder
+                        .init(DummyObjectWithInner.ID, 1)
+                        .set(DummyObjectWithInner.VALUE, sub)
+                        .get();
+
+        changeSet.processCreation(DummyObjectWithInner.TYPE, creationValues);
+        checker.assertChangesEqual(changeSet,
+                "  <create ID=\"1\" type=\"DummyObjectWithInner\">" +
+                "    <VALUE VALUE=\"1.2\"/>" +
+                "  </create>");
+        changeSet.processUpdate(KeyBuilder.create(DummyObjectWithInner.TYPE, 1), DummyObjectWithInner.VALUE, sub.duplicate()
+                .set(DummyObjectInner.VALUE, 3.3), sub);
+        checker.assertChangesEqual(changeSet,
+                "<create ID=\"1\" type=\"DummyObjectWithInner\">" +
+                "    <VALUE VALUE=\"3.3\"/>" +
+                "  </create>");
+
+    }
+
+    @Test
+    void checkDeltaOnSubObjectArrayAreManaged() {
+        final MutableGlob sub = DummyObjectInner.create(1.2);
+        final Glob[] values = {sub, DummyObjectInner.create(2.2)};
+        creationValues =
+                FieldValuesBuilder
+                        .init(DummyObjectWithInner.ID, 1)
+                        .set(DummyObjectWithInner.VALUES, values)
+                        .get();
+
+        changeSet.processCreation(DummyObjectWithInner.TYPE, creationValues);
+        checker.assertChangesEqual(changeSet,
+                "  <create ID=\"1\" type=\"DummyObjectWithInner\">" +
+                "    <VALUES VALUE=\"1.2\"/>" +
+                "    <VALUES VALUE=\"2.2\"/>" +
+                "  </create>");
+        changeSet.processUpdate(KeyBuilder.create(DummyObjectWithInner.TYPE, 1), DummyObjectWithInner.VALUES,
+                new Glob[]{sub.duplicate().set(DummyObjectInner.VALUE, 3.3)}, values);
+        checker.assertChangesEqual(changeSet,
+                "<create ID=\"1\" type=\"DummyObjectWithInner\">" +
+                "    <VALUES VALUE=\"3.3\"/>" +
+                "  </create>");
+
+    }
+
 }

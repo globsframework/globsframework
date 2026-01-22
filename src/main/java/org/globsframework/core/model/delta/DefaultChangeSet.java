@@ -5,13 +5,11 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.*;
 import org.globsframework.core.model.utils.BreakException;
 import org.globsframework.core.model.utils.ChangeVisitor;
-import org.globsframework.core.utils.Strings;
 import org.globsframework.core.utils.collections.LinksMapOfMaps;
 import org.globsframework.core.utils.collections.MapOfMaps;
 import org.globsframework.core.utils.exceptions.InvalidState;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.*;
 
 public class DefaultChangeSet implements MutableChangeSet {
@@ -370,7 +368,7 @@ public class DefaultChangeSet implements MutableChangeSet {
 
     public String toString() {
         try {
-            StringWriter writer = new StringWriter();
+            StringBuilder writer = new StringBuilder();
             accept(new PrintChangeVisitor(writer));
             return writer.toString();
         } catch (Exception e) {
@@ -394,10 +392,10 @@ public class DefaultChangeSet implements MutableChangeSet {
     }
 
     private static class PrintChangeVisitor implements ChangeVisitor, FieldValues.Functor {
-        private final StringWriter writer;
+        private final StringBuilder writer;
         private String prefix = "";
 
-        public PrintChangeVisitor(StringWriter writer) {
+        public PrintChangeVisitor(StringBuilder writer) {
             this.writer = writer;
         }
 
@@ -405,42 +403,49 @@ public class DefaultChangeSet implements MutableChangeSet {
         }
 
         public void visitCreation(Key key, FieldsValueScanner values) throws Exception {
-            writer.write("create :");
+            writer.append("create :");
             key.safeApplyOnKeyField(this);
             values.safeApply(this.withoutKeyField());
-            writer.write("\n");
+            writer.append("\n");
         }
 
         public void visitUpdate(Key key, FieldsValueWithPreviousScanner values) throws Exception {
-            int startOffSet = writer.getBuffer().length();
-            writer.write("update :");
+            int startOffSet = writer.length();
+            writer.append("update :");
             key.safeApplyOnKeyField(this);
-            int endOffset = writer.getBuffer().length();
+            int endOffset = writer.length();
             values.safeApply(this.withoutKeyField());
             writer.append("\n");
             for (int i = 0; i < endOffset - startOffSet; i++) {
-                writer.write(" ");
+                writer.append(" ");
             }
             prefix = "_";
             values.applyOnPrevious(this.withoutKeyField());
-            writer.write("\n");
+            writer.append("\n");
             prefix = "";
         }
 
         public void visitDeletion(Key key, FieldsValueScanner previousValues) throws Exception {
-            writer.write("delete :");
+            writer.append("delete :");
             key.safeApplyOnKeyField(this);
             previousValues.safeApply(this.withoutKeyField());
-            writer.write("\n");
+            writer.append("\n");
         }
 
         public void process(Field field, Object value) throws Exception {
-            writer.write(" ");
-            writer.write(prefix);
-            writer.write(field.getName());
-            writer.write("='");
-            writer.write(Strings.toString(value));
-            writer.write("'");
+            writer.append(" ");
+            writer.append(prefix);
+            writer.append(field.getName());
+            writer.append("='");
+            if (value != null) {
+                if (value instanceof String) {
+                    writer.append(value);
+                }
+                else {
+                    field.toString(writer, value);
+                }
+            }
+            writer.append("'");
         }
     }
 }
