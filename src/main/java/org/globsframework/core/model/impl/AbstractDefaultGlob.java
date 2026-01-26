@@ -6,7 +6,10 @@ import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.model.MutableGlob;
+import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
+
+import java.util.Arrays;
 
 public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
     protected final GlobType type;
@@ -118,15 +121,15 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
         }
 
         Key otherKey = (Key) o;
+        if (!Glob.class.isAssignableFrom(o.getClass())) {
+            return otherKey.equals(this);
+        }
+
         if (getType() != otherKey.getGlobType()) {
             return false;
         }
 
         Field[] keyFields = getType().getKeyFields();
-        if (keyFields.length == 0) {
-            return true; //o instanceof Glob && reallyEquals((Glob) o);
-        }
-
         for (Field field : keyFields) {
             if (!field.valueEqual(getValue(field), otherKey.getValue(field))) {
                 return false;
@@ -163,14 +166,24 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
     }
 
     private MutableGlob[] getMutableGlobs(Glob[] globs, Field field) {
-        Glob[] values = globs;
-        if (values != null) {
-            for (Glob value : values) {
-                if (value != null && !(value instanceof MutableGlob)) {
-                    throw new ClassCastException(value.getClass().getName() + " is not mutable on field " + field.getName());
-                }
+        if (globs != null) {
+            if (globs instanceof MutableGlob[]) {
+                return (MutableGlob[]) globs;
             }
+            else {
+                if (FieldCheck.CheckGlob.shouldCheck) {
+                    for (Glob value : globs) {
+                        if (value != null && !(value instanceof MutableGlob)) {
+                            throw new ClassCastException(value.getClass().getName() + " is not mutable on field " + field.getName());
+                        }
+                    }
+                }
+                final MutableGlob[] value = Arrays.copyOfRange(globs, 0, globs.length, MutableGlob[].class);
+                setObject(field, value);
+                return value;
+            }
+        } else {
+            return null;
         }
-        return (MutableGlob[]) values;
     }
 }

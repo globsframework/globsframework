@@ -2,30 +2,23 @@ package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.model.*;
-import org.globsframework.core.model.utils.FieldCheck;
+import org.globsframework.core.metamodel.fields.LongField;
+import org.globsframework.core.model.AbstractKey;
+import org.globsframework.core.model.FieldValue;
+import org.globsframework.core.model.FieldValues;
+import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
-public class LongKeyField extends AbstractKey {
-    private boolean isNull = true;
-    private final Field keyField;
-    private long value;
+public class LongKeyField implements AbstractKey {
+    private final LongField keyField;
+    private final long value;
+    private final int hashCode;
 
-    public LongKeyField(Field keyField) {
+    public LongKeyField(LongField keyField, long value) {
         this.keyField = keyField;
-    }
-
-    public LongKeyField(Field keyField, boolean isNull, long value) {
-        this.keyField = keyField;
-        this.isNull = isNull;
         this.value = value;
-    }
-
-    public LongKeyField(Field field, Long value) {
-        this.keyField = field;
-        this.isNull = value == null;
-        this.value = value == null ? 0 : value;
+        hashCode = computeHash();
     }
 
     public GlobType getGlobType() {
@@ -34,7 +27,7 @@ public class LongKeyField extends AbstractKey {
 
     public <T extends FieldValues.Functor>
     T apply(T functor) throws Exception {
-        functor.process(keyField, isNull ? null : value);
+        functor.process(keyField, value);
         return functor;
     }
 
@@ -51,26 +44,24 @@ public class LongKeyField extends AbstractKey {
             return false;
         }
         if (o instanceof LongKeyField otherSingleFieldKey) {
-            return otherSingleFieldKey.getGlobType() == keyField.getGlobType() &&
-                    (!otherSingleFieldKey.isNull && !isNull) ? keyField.valueEqual(otherSingleFieldKey.value, value) :
-                    otherSingleFieldKey.isNull && isNull;
+            return otherSingleFieldKey.getGlobType() == keyField.getGlobType()
+                   && keyField.valueEqual(otherSingleFieldKey.value, value);
         }
 
         if (!(o instanceof Key otherKey)) {
             return false;
         }
-        return keyField.getGlobType() == otherKey.getGlobType()
-                && keyField.valueEqual(isNull ? null : value, otherKey.getValue(keyField));
+        return keyField.getGlobType() == otherKey.getGlobType();
     }
 
     // optimized - do not use generated code
     public int hashCode() {
-        return computeHash();
+        return hashCode;
     }
 
     private int computeHash() {
         int hash = getGlobType().hashCode();
-        hash = 31 * hash + (isNull ? 0 : Long.hashCode(value));
+        hash = 31 * hash + Long.hashCode(value);
         if (hash == 0) {
             hash = 31;
         }
@@ -79,35 +70,19 @@ public class LongKeyField extends AbstractKey {
 
     public FieldValue[] toArray() {
         return new FieldValue[]{
-                new FieldValue(keyField, isNull ? null : value),
+                new FieldValue(keyField, value),
         };
     }
 
     public String toString() {
-        return getGlobType().getName() + "[" + keyField.getName() + "=" + (isNull ? "null" : value) + "]";
+        return getGlobType().getName() + "[" + keyField.getName() + "=" + value + "]";
     }
 
-    protected Object doGetValue(Field field) {
+    public Object doGetValue(Field field) {
         if (field.getKeyIndex() == 0) {
-            return isNull ? null : value;
+            return value;
         }
         throw new InvalidParameter(field + " is not a key field");
-    }
-
-    public MutableKey setValue(Field field, Object value) throws ItemNotFound {
-        FieldCheck.checkIsKeyOf(field, getGlobType());
-        isNull = value == null;
-        this.value = value == null ? 0 : (long) value;
-        return this;
-    }
-
-    public void reset() {
-        isNull = true;
-        this.value = 0;
-    }
-
-    public MutableKey duplicateKey() {
-        return new LongKeyField(keyField, isNull, value);
     }
 
     /*

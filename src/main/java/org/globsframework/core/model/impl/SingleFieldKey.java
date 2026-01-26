@@ -10,14 +10,10 @@ import org.globsframework.core.utils.exceptions.MissingInfo;
 
 import java.util.Arrays;
 
-public class SingleFieldKey extends AbstractKey {
+public class SingleFieldKey implements AbstractKey {
     private final Field keyField;
-    private Object value;
-    private int hashCode;
-
-    public SingleFieldKey(Field keyField) {
-        this.keyField = keyField;
-    }
+    private final Object value;
+    private final int hashCode;
 
     public SingleFieldKey(Field field, Object value) throws MissingInfo {
         FieldCheck.checkIsKeyOf(field, field.getGlobType(), value);
@@ -73,12 +69,8 @@ public class SingleFieldKey extends AbstractKey {
                 && keyField.valueEqual(value, otherKey.getValue(keyField));
     }
 
-    // optimized - do not use generated code
     public int hashCode() {
-        if (hashCode != 0) {
-            return hashCode;
-        }
-        return hashCode = computeHash();
+        return hashCode;
     }
 
     private int computeHash() {
@@ -100,26 +92,11 @@ public class SingleFieldKey extends AbstractKey {
         return getGlobType().getName() + "[" + keyField.getName() + "=" + value + "]";
     }
 
-    protected Object doGetValue(Field field) {
+    public Object doGetValue(Field field) {
         if (field.getKeyIndex() == 0) {
             return value;
         }
         throw new InvalidParameter(field + " is not a key field");
-    }
-
-    public MutableKey setValue(Field field, Object value) throws ItemNotFound {
-        FieldCheck.checkIsKeyOf(field, getGlobType());
-        this.value = value;
-        return this;
-    }
-
-    public void reset() {
-        this.value = null;
-        this.hashCode = 0;
-    }
-
-    public MutableKey duplicateKey() {
-        return new SingleFieldKey(keyField, value);
     }
 
     /*

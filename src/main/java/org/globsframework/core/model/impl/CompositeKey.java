@@ -5,18 +5,14 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.AbstractKey;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.model.MutableKey;
-import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.model.utils.FieldValueGetter;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.utils.exceptions.MissingInfo;
 
-import java.util.Arrays;
-
-public class CompositeKey extends AbstractKey {
+public class CompositeKey implements AbstractKey {
     private final GlobType type;
     private final Object[] values;
-    private int hashCode;
+    private final int hashCode;
 
     public CompositeKey(GlobType type, FieldValueGetter getter) {
         this.type = type;
@@ -25,26 +21,11 @@ public class CompositeKey extends AbstractKey {
         for (Field field : keyFields) {
             if (!getter.contains(field)) {
                 throw new MissingInfo("Field '" + field.getName() +
-                        "' missing for identifying a Glob of type: " + type.getName());
+                                      "' missing for identifying a Glob of type: " + type.getName());
             }
             values[field.getKeyIndex()] = getter.get(field);
         }
         hashCode = computeHash();
-    }
-
-    public CompositeKey(GlobType type) {
-        this.type = type;
-        values = new Object[type.getKeyFields().length];
-    }
-
-    private CompositeKey(GlobType type, Object[] globValues, int hashCode) {
-        this.type = type;
-        Field[] keyFields = type.getKeyFields();
-        this.values = new Object[keyFields.length];
-        for (Field field : keyFields) {
-            values[field.getKeyIndex()] = globValues[field.getKeyIndex()];
-        }
-        this.hashCode = hashCode;
     }
 
     public GlobType getGlobType() {
@@ -91,10 +72,7 @@ public class CompositeKey extends AbstractKey {
 
     // optimized - do not use generated code
     public int hashCode() {
-        if (hashCode != 0) {
-            return hashCode;
-        }
-        return hashCode = computeHash();
+        return hashCode;
     }
 
     private int computeHash() {
@@ -140,23 +118,8 @@ public class CompositeKey extends AbstractKey {
         return array;
     }
 
-    protected Object doGetValue(Field field) {
+    public Object doGetValue(Field field) {
         return values[field.getKeyIndex()];
-    }
-
-    public void reset() {
-        Arrays.setAll(values, i -> null);
-        hashCode = 0;
-    }
-
-    public MutableKey duplicateKey() {
-        return new CompositeKey(type, values, hashCode);
-    }
-
-    public MutableKey setValue(Field field, Object value) throws ItemNotFound {
-        FieldCheck.checkIsKeyOf(field, type, value);
-        values[field.getKeyIndex()] = value;
-        return this;
     }
 
     public boolean isSet(Field field) throws ItemNotFound {

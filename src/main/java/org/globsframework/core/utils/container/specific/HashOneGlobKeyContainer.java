@@ -25,7 +25,7 @@ public class HashOneGlobKeyContainer implements HashContainer<Key, Glob> {
     }
 
     static void checkEqual(Key key, Glob value) {
-        if (!key.equals(value.getKey())) {
+        if (value != null && !key.equals(value.getKey())) {
             throw new RuntimeException("Bug inserting a glob with a different key " + GlobPrinter.toString(key.asFieldValues()) + " " + GlobPrinter.toString(value));
         }
     }

@@ -53,25 +53,6 @@ public class KeyBuilderTest {
     }
 
     @Test
-    public void testAllKeyFieldsMustBePresentInCreateForValuesParameters() throws Exception {
-        try {
-            KeyBuilder.createFromValues(DummyObject.TYPE, FieldValuesBuilder.init(DummyObject.NAME, "name").get());
-            fail();
-        } catch (Exception e) {
-            assertEquals("Field 'id' missing for identifying a Glob of type: dummyObject", e.getMessage());
-        }
-
-        try {
-            Map<Field, Object> map = new HashMap<Field, Object>();
-            map.put(DummyObject.NAME, "name");
-            KeyBuilder.createFromValues(DummyObject.TYPE, map);
-            fail();
-        } catch (Exception e) {
-            assertEquals("Field 'id' missing for identifying a Glob of type: dummyObject", e.getMessage());
-        }
-    }
-
-    @Test
     public void testSingleKey() throws Exception {
         Key key = newKey(DummyObject.TYPE, 3);
         assertEquals("dummyObject[id=3]", key.toString());

@@ -5,30 +5,17 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.AbstractKey;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.model.MutableKey;
-import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.utils.exceptions.MissingInfo;
 
 import java.util.Arrays;
 
-public class TwoFieldKey extends AbstractKey {
+public class TwoFieldKey implements AbstractKey {
     private final GlobType type;
-    private Object value1;
-    private Object value2;
-    private int hashCode;
-
-    private TwoFieldKey(GlobType type, Object value1, Object value2, int hashCode) {
-        this.type = type;
-        this.value1 = value1;
-        this.value2 = value2;
-        this.hashCode = hashCode;
-    }
-
-    public TwoFieldKey(GlobType type) {
-        this.type = type;
-    }
+    private final Object value1;
+    private final Object value2;
+    private final int hashCode;
 
     public TwoFieldKey(Field keyField1, Object value1,
                        Field keyField2, Object value2) throws MissingInfo {
@@ -36,11 +23,21 @@ public class TwoFieldKey extends AbstractKey {
         Field[] keyFields = keyField1.getGlobType().getKeyFields();
         if (keyFields.length != 2) {
             throw new InvalidParameter("Cannot use a two-fields key for type " + keyField1.getGlobType() + " - " +
-                    "key fields=" + Arrays.toString(keyFields));
+                                       "key fields=" + Arrays.toString(keyFields));
         }
-        setValue(keyField1, value1);
-        setValue(keyField2, value2);
+        this.value1 = get(0, keyField1, keyField2, value1, value2);
+        this.value2 = get(1, keyField1, keyField2, value1, value2);
         hashCode = computeHash();
+    }
+
+    private Object get(int wanted, Field keyField1, Field keyField2, Object value1, Object value2) {
+        if (keyField1.getKeyIndex() == wanted) {
+            return value1;
+        }
+        if (keyField2.getKeyIndex() == wanted) {
+            return value2;
+        }
+        throw new InvalidParameter("Cannot find key field " + wanted + " in " + type);
     }
 
     public GlobType getGlobType() {
@@ -59,7 +56,7 @@ public class TwoFieldKey extends AbstractKey {
         return 2;
     }
 
-    protected Object doGetValue(Field field) {
+    public Object doGetValue(Field field) {
         switch (field.getKeyIndex()) {
             case 0:
                 return value1;
@@ -80,8 +77,8 @@ public class TwoFieldKey extends AbstractKey {
         if (o instanceof TwoFieldKey twoFieldKey) {
             Field[] keyFields = type.getKeyFields();
             return type == twoFieldKey.getGlobType() &&
-                    keyFields[0].valueEqual(twoFieldKey.value1, value1) &&
-                    keyFields[1].valueEqual(twoFieldKey.value2, value2);
+                   keyFields[0].valueEqual(twoFieldKey.value1, value1) &&
+                   keyFields[1].valueEqual(twoFieldKey.value2, value2);
         }
 
         if (!(o instanceof Key otherKey)) {
@@ -89,16 +86,13 @@ public class TwoFieldKey extends AbstractKey {
         }
         Field[] keyFields = type.getKeyFields();
         return type == otherKey.getGlobType()
-                && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))
-                && keyFields[1].valueEqual(value2, otherKey.getValue(keyFields[1]));
+               && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))
+               && keyFields[1].valueEqual(value2, otherKey.getValue(keyFields[1]));
     }
 
     // optimized - do not use generated code
     public int hashCode() {
-        if (hashCode != 0) {
-            return hashCode;
-        }
-        return hashCode = computeHash();
+        return hashCode;
     }
 
     private int computeHash() {
@@ -122,32 +116,11 @@ public class TwoFieldKey extends AbstractKey {
     public String toString() {
         Field[] fields = type.getKeyFields();
         return getGlobType().getName() + "[" +
-                fields[0].getName() + "=" + value1 + ", " +
-                fields[1].getName() + "=" + value2 + "]";
-    }
-
-    public void reset() {
-        value1 = value2 = null;
-        hashCode = 0;
-    }
-
-    public MutableKey duplicateKey() {
-        return new TwoFieldKey(type, value1, value2, hashCode);
-    }
-
-    public MutableKey setValue(Field field, Object value) throws ItemNotFound {
-        FieldCheck.checkIsKeyOf(field, type);
-        FieldCheck.checkValue(field, value);
-        if (field.getKeyIndex() == 0) {
-            value1 = value;
-        } else {
-            value2 = value;
-        }
-        return this;
+               fields[0].getName() + "=" + value1 + ", " +
+               fields[1].getName() + "=" + value2 + "]";
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
         return true;
     }
-
 }

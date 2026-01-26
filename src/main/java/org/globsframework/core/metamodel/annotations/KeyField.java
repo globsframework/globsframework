@@ -15,8 +15,6 @@ public class KeyField {
     @InitUniqueKey
     public static final Key UNIQUE_KEY;
 
-    public static final Glob UNINITIALIZED;
-
     public static final Glob ZERO;
 
     public static final Glob ONE;
@@ -47,10 +45,10 @@ public class KeyField {
     static {
         DefaultGlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("KeyField");
         INDEX = typeBuilder.declareIntegerField("index");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((KeyField_) annotation).value()));
+        typeBuilder.register(GlobCreateFromAnnotation.class,
+                annotation -> create(((KeyField_) annotation).value()));
         TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
-        UNINITIALIZED = TYPE.instantiate().set(INDEX, -1);
         ZERO = TYPE.instantiate().set(INDEX, 0);
         ONE = TYPE.instantiate().set(INDEX, 1);
         TWO = TYPE.instantiate().set(INDEX, 2);

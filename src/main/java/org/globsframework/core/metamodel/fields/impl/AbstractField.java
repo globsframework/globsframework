@@ -125,7 +125,7 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
 
     public <T> void register(Class<T> klass, T t) {
         if (registered == null) {
-            registered = new HashMap<>();
+            registered = new HashMap<>(4);
         }
         registered.put(klass, t);
     }

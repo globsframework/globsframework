@@ -92,7 +92,7 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
     }
 
     default <CTX, T extends FieldValueVisitorWithContext<CTX>>
-    T acceptOnKeyField(T functor, CTX ctx) throws Exception{
+    T acceptOnKeyField(T functor, CTX ctx) throws Exception {
         for (Field field : getType().getKeyFields()) {
             field.acceptValue(functor, doGet(field), ctx);
         }
@@ -190,96 +190,102 @@ public interface AbstractGlob extends AbstractFieldValues, Glob, Key {
                 if (isNull(field)) {
                     instantiate.setValue(field, null);
                 } else {
-                    field.safeAccept(new FieldVisitor() {
-                        public void visitInteger(IntegerField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitIntegerArray(IntegerArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitDouble(DoubleField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitDoubleArray(DoubleArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitBigDecimal(BigDecimalField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitBigDecimalArray(BigDecimalArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitString(StringField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitStringArray(StringArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitBoolean(BooleanField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitBooleanArray(BooleanArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitLong(LongField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitLongArray(LongArrayField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitDate(DateField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitDateTime(DateTimeField field) throws Exception {
-                            instantiate.set(field, get(field));
-                        }
-
-                        public void visitBytes(BytesField field) throws Exception {
-                            instantiate.set(field, get(field).clone());
-                        }
-
-                        public void visitGlob(GlobField field) throws Exception {
-                            instantiate.set(field, get(field).duplicate());
-                        }
-
-                        public void visitGlobArray(GlobArrayField field) throws Exception {
-                            Glob[] globs = get(field);
-                            Glob[] duplicate = new Glob[globs.length];
-                            for (int i = 0; i < duplicate.length; i++) {
-                                duplicate[i] = globs[i].duplicate();
-                            }
-                            instantiate.set(field, duplicate);
-                        }
-
-                        public void visitUnionGlob(GlobUnionField field) throws Exception {
-                            instantiate.set(field, get(field).duplicate());
-                        }
-
-                        public void visitUnionGlobArray(GlobArrayUnionField field) throws Exception {
-                            Glob[] globs = get(field);
-                            Glob[] duplicate = new Glob[globs.length];
-                            for (int i = 0; i < duplicate.length; i++) {
-                                duplicate[i] = globs[i].duplicate();
-                            }
-                            instantiate.set(field, duplicate);
-                        }
-                    });
+                    // 10% faster than a switch case
+                    field.safeAccept(DuplicateFieldVisitorWithTwoContext.INSTANCE, instantiate, this);
                 }
             }
         }
         return instantiate;
+    }
+
+
+    class DuplicateFieldVisitorWithTwoContext implements FieldVisitorWithTwoContext<MutableGlob, Glob> {
+        static DuplicateFieldVisitorWithTwoContext INSTANCE = new DuplicateFieldVisitorWithTwoContext();
+
+        public void visitInteger(IntegerField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitIntegerArray(IntegerArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitDouble(DoubleField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitDoubleArray(DoubleArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitBigDecimal(BigDecimalField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitBigDecimalArray(BigDecimalArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitString(StringField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitStringArray(StringArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitBoolean(BooleanField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitBooleanArray(BooleanArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitLong(LongField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitLongArray(LongArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitDate(DateField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitDateTime(DateTimeField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field));
+        }
+
+        public void visitBytes(BytesField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).clone());
+        }
+
+        public void visitGlob(GlobField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).duplicate());
+        }
+
+        public void visitGlobArray(GlobArrayField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, duplicate(src.get(field)));
+        }
+
+        private static Glob[] duplicate(Glob[] globs) {
+            Glob[] duplicate = new MutableGlob[globs.length];
+            for (int i = 0; i < duplicate.length; i++) {
+                duplicate[i] = globs[i].duplicate();
+            }
+            return duplicate;
+        }
+
+        public void visitUnionGlob(GlobUnionField field, MutableGlob instantiate, Glob src) throws Exception {
+            instantiate.set(field, src.get(field).duplicate());
+        }
+
+        public void visitUnionGlobArray(GlobArrayUnionField field, MutableGlob instantiate, Glob src) throws Exception {
+            Glob[] globs = src.get(field);
+            final Glob[] duplicate = duplicate(globs);
+            instantiate.set(field, duplicate);
+        }
     }
 }

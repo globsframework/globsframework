@@ -17,15 +17,17 @@ public class CompositeKeyTest {
     public void keyFieldNotAtBegin() throws Exception {
         GlobTypeBuilder builder = GlobTypeBuilderFactory.create("CompositeKey");
         builder.addStringField("field_1");
-        IntegerField id1 = builder.declareIntegerField("id1", KeyField.UNINITIALIZED);
+        IntegerField id1 = builder.declareIntegerField("id1", KeyField.ZERO);
         builder.addStringField("field_2");
-        IntegerField id2 = builder.declareIntegerField("id2", KeyField.UNINITIALIZED);
-        IntegerField id3 = builder.declareIntegerField("id3", KeyField.UNINITIALIZED);
+        IntegerField id2 = builder.declareIntegerField("id2", KeyField.ONE);
+        IntegerField id3 = builder.declareIntegerField("id3", KeyField.TWO);
         GlobType type = builder.build();
         Glob glob = type.instantiate().set(id1, 1).set(id2, 2).set(id3, 3);
-        Key actual = KeyBuilder.init(type).set(id1, 1)
+        Key actual = KeyBuilder.init(type)
+                .set(id1, 1)
                 .set(id2, 2)
-                .set(id3, 3).get();
+                .set(id3, 3)
+                .get();
         assertEquals(glob.getKey(), actual);
         assertEquals(1, actual.get(id1).intValue());
         assertEquals(2, actual.get(id2).intValue());

@@ -1,6 +1,7 @@
 package org.globsframework.core.metamodel;
 
 import org.globsframework.core.metamodel.annotations.DefaultDouble;
+import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.annotations.NamingField;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
@@ -10,6 +11,8 @@ import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobTypeBuilderTest {
@@ -17,7 +20,7 @@ public class GlobTypeBuilderTest {
     @Test
     public void test() throws Exception {
         GlobType type = GlobTypeBuilderFactory.create("aType")
-                .addIntegerKey("id")
+                .addIntegerField("id", KeyField.ZERO)
                 .addStringField("string")
                 .addIntegerField("int")
                 .addLongField("long")
@@ -68,7 +71,7 @@ public class GlobTypeBuilderTest {
     public void testCannotUseTheSameNameTwice() throws Exception {
         try {
             GlobTypeBuilderFactory.create("aType")
-                    .addIntegerKey("id")
+                    .addIntegerField("id", KeyField.ZERO)
                     .addStringField("field")
                     .addIntegerField("field");
             fail();
@@ -91,7 +94,7 @@ public class GlobTypeBuilderTest {
     @Test
     public void testNamingField() throws Exception {
         GlobType type = GlobTypeBuilderFactory.create("aType")
-                .addIntegerKey("id")
+                .addIntegerField("id", KeyField.ZERO)
                 .addStringField("name", NamingField.UNIQUE_GLOB)
                 .build();
 

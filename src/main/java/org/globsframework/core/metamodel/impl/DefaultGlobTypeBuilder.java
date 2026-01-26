@@ -564,7 +564,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 
     public <T> GlobTypeBuilder register(Class<T> klass, T t) {
         if (registered == null) {
-            registered = new HashMap<>();
+            registered = new HashMap<>(4);
         }
         registered.put(klass, t);
         return this;
@@ -576,9 +576,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     public GlobType build() {
-        final GlobType globType = type.get();
-        // fix => multi init is multi call
-        return globType;
+        return type.get();
     }
 
     public boolean isKnown(String fieldName) {

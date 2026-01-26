@@ -33,7 +33,7 @@ public class DefaultGlobUnionArrayField extends AbstractField implements GlobArr
         if (targetTypesByName == null) {
             fill();
         }
-        if (targetTypesByName != null && targetTypesByName.containsKey(t.getName())) {
+        if (targetTypesByName.containsKey(t.getName())) {
             return;
         }
         Map<String, GlobType> tmp = new LinkedHashMap<>(targetTypesByName);

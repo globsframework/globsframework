@@ -5,33 +5,19 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.AbstractKey;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.model.MutableKey;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 import org.globsframework.core.utils.exceptions.MissingInfo;
 
 import java.util.Arrays;
 
-public class FourFieldKey extends AbstractKey {
+public class FourFieldKey implements AbstractKey {
     private final GlobType type;
-    private Object value1;
-    private Object value2;
-    private Object value3;
-    private Object value4;
-    private int hashCode;
-
-    private FourFieldKey(GlobType type, Object value1, Object value2, Object value3, Object value4, int hashCode) {
-        this.type = type;
-        this.value1 = value1;
-        this.value2 = value2;
-        this.value3 = value3;
-        this.value4 = value4;
-        this.hashCode = hashCode;
-    }
-
-    public FourFieldKey(GlobType type) {
-        this.type = type;
-    }
+    private final Object value1;
+    private final Object value2;
+    private final Object value3;
+    private final Object value4;
+    private final int hashCode;
 
     public FourFieldKey(Field keyField1, Object value1,
                         Field keyField2, Object value2,
@@ -42,17 +28,34 @@ public class FourFieldKey extends AbstractKey {
         Field[] keyFields = keyField1.getGlobType().getKeyFields();
         if (keyFields.length != 4) {
             throw new InvalidParameter("Cannot use a three-fields key for type " + keyField1.getGlobType() + " - " +
-                    "key fields=" + Arrays.toString(keyFields));
+                                       "key fields=" + Arrays.toString(keyFields));
         }
-        setValue(keyField1, value1);
-        setValue(keyField2, value2);
-        setValue(keyField3, value3);
-        setValue(keyField4, value4);
+        this.value1 = get(0, keyField1, keyField2, keyField3, keyField4, value1, value2, value3, value4);
+        this.value2 = get(1, keyField1, keyField2, keyField3, keyField4, value1, value2, value3, value4);
+        this.value3 = get(2, keyField1, keyField2, keyField3, keyField4, value1, value2, value3, value4);
+        this.value4 = get(3, keyField1, keyField2, keyField3, keyField4, value1, value2, value3, value4);
         hashCode = computeHash();
     }
 
     public GlobType getGlobType() {
         return type;
+    }
+
+    private Object get(int wanted, Field keyField1, Field keyField2, Field keyField3, Field keyField4,
+                       Object value1, Object value2, Object value3, Object value4) {
+        if (keyField1.getKeyIndex() == wanted) {
+            return value1;
+        }
+        if (keyField2.getKeyIndex() == wanted) {
+            return value2;
+        }
+        if (keyField3.getKeyIndex() == wanted) {
+            return value3;
+        }
+        if (keyField4.getKeyIndex() == wanted) {
+            return value4;
+        }
+        throw new InvalidParameter("Cannot find key field " + wanted + " in " + type);
     }
 
     public <T extends Functor> T apply(T functor) throws Exception {
@@ -81,7 +84,7 @@ public class FourFieldKey extends AbstractKey {
         return 4;
     }
 
-    protected Object doGetValue(Field field) {
+    public Object doGetValue(Field field) {
         return switch (field.getKeyIndex()) {
             case 0 -> value1;
             case 1 -> value2;
@@ -102,10 +105,10 @@ public class FourFieldKey extends AbstractKey {
         if (o instanceof FourFieldKey otherSingleFieldKey) {
             Field[] keyFields = getGlobType().getKeyFields();
             return type == otherSingleFieldKey.getGlobType() &&
-                    keyFields[0].valueEqual(otherSingleFieldKey.value1, value1) &&
-                    keyFields[1].valueEqual(otherSingleFieldKey.value2, value2) &&
-                    keyFields[2].valueEqual(otherSingleFieldKey.value3, value3) &&
-                    keyFields[3].valueEqual(otherSingleFieldKey.value4, value4);
+                   keyFields[0].valueEqual(otherSingleFieldKey.value1, value1) &&
+                   keyFields[1].valueEqual(otherSingleFieldKey.value2, value2) &&
+                   keyFields[2].valueEqual(otherSingleFieldKey.value3, value3) &&
+                   keyFields[3].valueEqual(otherSingleFieldKey.value4, value4);
         }
 
         if (!(o instanceof Key otherKey)) {
@@ -113,10 +116,10 @@ public class FourFieldKey extends AbstractKey {
         }
         Field[] keyFields = type.getKeyFields();
         return type == otherKey.getGlobType()
-                && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))
-                && keyFields[1].valueEqual(value2, otherKey.getValue(keyFields[1]))
-                && keyFields[2].valueEqual(value3, otherKey.getValue(keyFields[2]))
-                && keyFields[3].valueEqual(value4, otherKey.getValue(keyFields[3]));
+               && keyFields[0].valueEqual(value1, otherKey.getValue(keyFields[0]))
+               && keyFields[1].valueEqual(value2, otherKey.getValue(keyFields[1]))
+               && keyFields[2].valueEqual(value3, otherKey.getValue(keyFields[2]))
+               && keyFields[3].valueEqual(value4, otherKey.getValue(keyFields[3]));
     }
 
     // optimized - do not use generated code
@@ -150,41 +153,13 @@ public class FourFieldKey extends AbstractKey {
     public String toString() {
         Field[] fields = type.getKeyFields();
         return getGlobType().getName() + "[" +
-                fields[0].getName() + "=" + value1 + ", " +
-                fields[1].getName() + "=" + value2 + ", " +
-                fields[2].getName() + "=" + value3 + ", " +
-                fields[3].getName() + "=" + value4 + "]";
-    }
-
-    public void reset() {
-        value1 = value2 = value3 = value4 = null;
-        hashCode = 0;
-    }
-
-    public MutableKey duplicateKey() {
-        return new FourFieldKey(type, value1, value2, value3, value4, hashCode);
-    }
-
-    public MutableKey setValue(Field field, Object value) throws ItemNotFound {
-        switch (field.getKeyIndex()) {
-            case 0:
-                value1 = value;
-                break;
-            case 1:
-                value2 = value;
-                break;
-            case 2:
-                value3 = value;
-                break;
-            case 3:
-                value4 = value;
-                break;
-        }
-        return null;
+               fields[0].getName() + "=" + value1 + ", " +
+               fields[1].getName() + "=" + value2 + ", " +
+               fields[2].getName() + "=" + value3 + ", " +
+               fields[3].getName() + "=" + value4 + "]";
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
         return true;
     }
-
 }

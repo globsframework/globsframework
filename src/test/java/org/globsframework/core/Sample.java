@@ -17,7 +17,7 @@ public class Sample {
     @Test
     public void readmeDynamic() {
         GlobType type = GlobTypeBuilderFactory.create("aType")
-                .addIntegerKey("id")
+                .addIntegerField("id", KeyField.ZERO)
                 .addStringField("string", NamingField.UNIQUE_GLOB)
                 .addIntegerField("anInt", FieldName.create("int"))
                 .addLongField("long")

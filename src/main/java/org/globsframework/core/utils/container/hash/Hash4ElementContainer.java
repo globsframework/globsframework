@@ -44,7 +44,8 @@ public class Hash4ElementContainer<T, D> implements HashContainer<T, D> {
     }
 
     public D get(T key) {
-        return Utils.equalWithHash(key, this.key1) ? value1 : Utils.equalWithHash(key, this.key2) ? value2 : Utils.equalWithHash(key, this.key3) ? value3 : Utils.equalWithHash(key, this.key4) ? value4 : null;
+        return Utils.equalWithHash(key, this.key1) ? value1 : Utils.equalWithHash(key, this.key2) ? value2 :
+                Utils.equalWithHash(key, this.key3) ? value3 : Utils.equalWithHash(key, this.key4) ? value4 : null;
     }
 
     public HashContainer<T, D> put(T key, D value) {

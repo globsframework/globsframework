@@ -42,6 +42,10 @@ public class DefaultGlob128 extends AbstractDefaultGlob {
         if (hashCode != 0) {
             return hashCode;
         }
+        return computeHash();
+    }
+
+    private int computeHash() {
         int hashCode = getType().hashCode();
         for (Field keyField : getType().getKeyFields()) {
             Object value = getValue(keyField);

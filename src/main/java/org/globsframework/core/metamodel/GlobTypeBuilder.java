@@ -1,6 +1,5 @@
 package org.globsframework.core.metamodel;
 
-import org.globsframework.core.metamodel.annotations.KeyField;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.index.MultiFieldNotUniqueIndex;
 import org.globsframework.core.metamodel.index.MultiFieldUniqueIndex;
@@ -235,11 +234,6 @@ public interface GlobTypeBuilder {
     <T> GlobTypeBuilder register(Field field, Class<T> klass, T t);
 
     GlobType build();
-
-    default GlobTypeBuilder addIntegerKey(String fieldName) {
-        addIntegerField(fieldName, KeyField.UNINITIALIZED);
-        return this;
-    }
 
     boolean isKnown(String fieldName);
 
