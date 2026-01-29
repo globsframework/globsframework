@@ -173,9 +173,11 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public String toString() {
-        return "ManyFieldsMutableKey{" +
-               "functionalKeyBuilder=" + functionalKeyBuilder +
-               ", values=" + Arrays.toString(values) +
-               '}';
+        final StringBuilder stringBuilder = new StringBuilder();
+        final Field[] fields = functionalKeyBuilder.getFields();
+        for (int i = 0; i < values.length; i++) {
+            stringBuilder.append(fields[i].getName()).append("=").append(values[i]).append("/");
+        }
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 }

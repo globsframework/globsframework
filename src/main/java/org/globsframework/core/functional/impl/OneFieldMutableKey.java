@@ -115,13 +115,13 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        return field == functionalKeyBuilder.field && value != NULL_VALUE;
+        if (field == functionalKeyBuilder.field) {
+            return value != NULL_VALUE;
+        }
+        throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
     public String toString() {
-        return "OneFieldMutableKey{" +
-                "functionalKeyBuilder=" + functionalKeyBuilder +
-                ", value=" + value +
-                '}';
+        return functionalKeyBuilder.field.getName() + "=" + value;
     }
 }

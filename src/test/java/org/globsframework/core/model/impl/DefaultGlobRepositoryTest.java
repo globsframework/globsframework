@@ -296,29 +296,29 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
                         DummyObjectInner.create(2.2), DummyObjectInner.create(3.3)
                 }));
         changeListener.assertLastChangesEqual(
-                "<create ID=\"1\" type=\"DummyObjectWithInner\">\n" +
-                "    <VALUE VALUE=\"1.1\"/>\n" +
-                "    <VALUES VALUE=\"2.2\"/>\n" +
-                "    <VALUES VALUE=\"3.3\"/>\n" +
+                "<create id=\"1\" type=\"dummyObjectWithInner\">\n" +
+                "    <value value=\"1.1\"/>\n" +
+                "    <values value=\"2.2\"/>\n" +
+                "    <values value=\"3.3\"/>\n" +
                 "  </create>");
 
         changeListener.reset();
         repository.update(KeyBuilder.newKey(DummyObjectWithInner.TYPE, 1),
                 DummyObjectWithInner.VALUE, DummyObjectInner.create(4.4));
-        changeListener.assertLastChangesEqual("<update ID=\"1\" type=\"DummyObjectWithInner\">\n" +
-                                              "    <VALUE VALUE=\"4.4\"/>\n" +
-                                              "    <_VALUE VALUE=\"1.1\"/>\n" +
+        changeListener.assertLastChangesEqual("<update id=\"1\" type=\"dummyObjectWithInner\">\n" +
+                                              "    <value value=\"4.4\"/>\n" +
+                                              "    <_value value=\"1.1\"/>\n" +
                                               "  </update>");
 
         changeListener.reset();
         repository.update(KeyBuilder.newKey(DummyObjectWithInner.TYPE, 1),
                 DummyObjectWithInner.VALUES, new Glob[]{DummyObjectInner.create(5.4),
                         DummyObjectInner.create(6.4)});
-        changeListener.assertLastChangesEqual("<update ID=\"1\" type=\"DummyObjectWithInner\">\n" +
-                                              "    <VALUES VALUE=\"5.4\"/>\n" +
-                                              "    <VALUES VALUE=\"6.4\"/>\n" +
-                                              "    <_VALUES VALUE=\"2.2\"/>\n" +
-                                              "    <_VALUES VALUE=\"3.3\"/>\n" +
+        changeListener.assertLastChangesEqual("<update id=\"1\" type=\"dummyObjectWithInner\">\n" +
+                                              "    <values value=\"5.4\"/>\n" +
+                                              "    <values value=\"6.4\"/>\n" +
+                                              "    <_values value=\"2.2\"/>\n" +
+                                              "    <_values value=\"3.3\"/>\n" +
                                               "  </update>");
 
         changeListener.reset();
@@ -326,7 +326,6 @@ public class DefaultGlobRepositoryTest extends DefaultGlobRepositoryTestCase {
                 DummyObjectWithInner.VALUES, new Glob[]{DummyObjectInner.create(5.4),
                         DummyObjectInner.create(6.4)});
         changeListener.assertLastChangesEqual("");
-
     }
 
     @Test

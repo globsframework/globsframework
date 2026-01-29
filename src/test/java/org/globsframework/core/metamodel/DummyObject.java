@@ -7,27 +7,27 @@ import org.globsframework.core.metamodel.links.DirectLink;
 
 public class DummyObject {
 
-    public static GlobType TYPE;
+    public static final GlobType TYPE;
 
     @KeyField_
     @AutoIncrement_
-    public static IntegerField ID;
+    public static final IntegerField ID;
 
     @NamingField_
-    public static StringField NAME;
+    public static final StringField NAME;
 
-    public static DoubleField VALUE;
-    public static IntegerField COUNT;
-    public static BooleanField PRESENT;
-    public static IntegerField DATE;
-    public static BytesField PASSWORD;
+    public static final DoubleField VALUE;
+    public static final IntegerField COUNT;
+    public static final BooleanField PRESENT;
+    public static final IntegerField DATE;
+    public static final BytesField PASSWORD;
     @ContainmentLink_
-    public static IntegerField LINK_ID;
+    public static final IntegerField LINK_ID;
 
     public static DirectLink LINK;
 
     @Target(DummyObject2.class)
-    public static IntegerField LINK2_ID;
+    public static final IntegerField LINK2_ID;
 
     public static DirectLink LINK2;
 

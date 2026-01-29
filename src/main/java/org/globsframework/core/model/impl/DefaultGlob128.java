@@ -61,6 +61,7 @@ public class DefaultGlob128 extends AbstractDefaultGlob {
     public boolean isHashComputed() {
         return hashCode != 0;
     }
+
     @Override
     public void checkReserved() {
         if (reserve < 0) {

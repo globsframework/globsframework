@@ -404,14 +404,14 @@ public class DefaultChangeSetTest {
 
         changeSet.processCreation(DummyObjectWithInner.TYPE, creationValues);
         checker.assertChangesEqual(changeSet,
-                "  <create ID=\"1\" type=\"DummyObjectWithInner\">" +
-                "    <VALUE VALUE=\"1.2\"/>" +
+                "  <create id=\"1\" type=\"dummyObjectWithInner\">" +
+                "    <value value=\"1.2\"/>" +
                 "  </create>");
         changeSet.processUpdate(KeyBuilder.create(DummyObjectWithInner.TYPE, 1), DummyObjectWithInner.VALUE, sub.duplicate()
                 .set(DummyObjectInner.VALUE, 3.3), sub);
         checker.assertChangesEqual(changeSet,
-                "<create ID=\"1\" type=\"DummyObjectWithInner\">" +
-                "    <VALUE VALUE=\"3.3\"/>" +
+                "<create id=\"1\" type=\"dummyObjectWithInner\">" +
+                "    <value value=\"3.3\"/>" +
                 "  </create>");
 
     }
@@ -428,15 +428,15 @@ public class DefaultChangeSetTest {
 
         changeSet.processCreation(DummyObjectWithInner.TYPE, creationValues);
         checker.assertChangesEqual(changeSet,
-                "  <create ID=\"1\" type=\"DummyObjectWithInner\">" +
-                "    <VALUES VALUE=\"1.2\"/>" +
-                "    <VALUES VALUE=\"2.2\"/>" +
+                "  <create id=\"1\" type=\"dummyObjectWithInner\">" +
+                "    <values value=\"1.2\"/>" +
+                "    <values value=\"2.2\"/>" +
                 "  </create>");
         changeSet.processUpdate(KeyBuilder.create(DummyObjectWithInner.TYPE, 1), DummyObjectWithInner.VALUES,
                 new Glob[]{sub.duplicate().set(DummyObjectInner.VALUE, 3.3)}, values);
         checker.assertChangesEqual(changeSet,
-                "<create ID=\"1\" type=\"DummyObjectWithInner\">" +
-                "    <VALUES VALUE=\"3.3\"/>" +
+                "<create id=\"1\" type=\"dummyObjectWithInner\">" +
+                "    <values value=\"3.3\"/>" +
                 "  </create>");
 
     }

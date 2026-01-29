@@ -125,11 +125,11 @@ public abstract class AbstractDefaultGlob implements AbstractMutableGlob {
             return otherKey.equals(this);
         }
 
-        if (getType() != otherKey.getGlobType()) {
+        if (type != otherKey.getGlobType()) {
             return false;
         }
 
-        Field[] keyFields = getType().getKeyFields();
+        Field[] keyFields = type.getKeyFields();
         for (Field field : keyFields) {
             if (!field.valueEqual(getValue(field), otherKey.getValue(field))) {
                 return false;

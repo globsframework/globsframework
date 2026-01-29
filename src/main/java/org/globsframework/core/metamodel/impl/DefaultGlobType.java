@@ -57,7 +57,7 @@ public class DefaultGlobType
         }
         this.fieldsByName = fieldsByName; //StableValue.map(fieldsByName.keySet(), fieldsByName::get);
         globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
-        keyComparator = new UnsaveSupplier<>(() ->
+        keyComparator = new UnsafeSupplier<>(() ->
         {
             Comparator<Key> cmp = null;
             for (Field keyField : keyFields) {

@@ -135,10 +135,7 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
             if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
                 return false;
             }
-            if (!Objects.equals(value1, that.value1)) {
-                return false;
-            }
-            return Objects.equals(value2, that.value2);
+            return Objects.equals(value1, that.value1) && Objects.equals(value2, that.value2);
         } else {
             return false;
         }
@@ -158,10 +155,6 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public String toString() {
-        return "TwoFieldsMutableKey{" +
-                "functionalKeyBuilder=" + functionalKeyBuilder +
-                ", value1=" + value1 +
-                ", value2=" + value2 +
-                '}';
+        return functionalKeyBuilder.field1.getName() + "=" + value1 + "/" + functionalKeyBuilder.field2.getName() + "=" + value2;
     }
 }
