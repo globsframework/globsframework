@@ -10,8 +10,6 @@ import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
-import java.util.Objects;
-
 public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final OneFunctionalKeyBuilder functionalKeyBuilder;
@@ -28,11 +26,17 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     protected MutableFunctionalKey doSet(Field field, Object o) {
+        if (field != functionalKeyBuilder.field) {
+            throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
+        }
         value = o;
         return this;
     }
 
     protected Object doGet(Field field) {
+        if (field != functionalKeyBuilder.field) {
+            throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
+        }
         return getNotNullValue(value);
     }
 
@@ -65,21 +69,21 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
 
     public <T extends Functor> T apply(T functor) throws Exception {
         if (value != NULL_VALUE) {
-            functor.process(functionalKeyBuilder.getFields()[0], value);
+            functor.process(functionalKeyBuilder.field, value);
         }
         return functor;
     }
 
     public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         if (value != NULL_VALUE) {
-            functionalKeyBuilder.getFields()[0].acceptValue(functor, value);
+            functionalKeyBuilder.field.acceptValue(functor, value);
         }
         return functor;
     }
 
     public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T visitor, CTX ctx) throws Exception {
         if (value != NULL_VALUE) {
-            functionalKeyBuilder.getFields()[0].acceptValue(visitor, value, ctx);
+            functionalKeyBuilder.field.acceptValue(visitor, value, ctx);
         }
         return visitor;
     }
@@ -100,12 +104,15 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
             return true;
         }
         if (o instanceof OneFieldMutableKey that) {
-            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
+            if (functionalKeyBuilder.field != that.functionalKeyBuilder.field) {
                 return false;
             }
-            return Objects.equals(value, that.value);
-        }
-        else {
+            if (value == NULL_VALUE || that.value == NULL_VALUE) {
+                return value == that.value;
+            } else {
+                return functionalKeyBuilder.field.valueEqual(value, that.value);
+            }
+        } else {
             return false;
         }
     }

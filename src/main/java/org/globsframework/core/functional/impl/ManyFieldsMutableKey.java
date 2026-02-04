@@ -18,17 +18,20 @@ import java.util.List;
 public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final ManyFunctionalKeyBuilder functionalKeyBuilder;
+    private final int[] index;
     private final Object[] values;
 
     ManyFieldsMutableKey(ManyFunctionalKeyBuilder functionalKeyBuilder) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         values = new Object[functionalKeyBuilder.fields.length];
         Arrays.fill(values, NULL_VALUE);
+        index = functionalKeyBuilder.index;
     }
 
     ManyFieldsMutableKey(ManyFunctionalKeyBuilder functionalKeyBuilder, FieldValues fieldValues) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         Field[] fields = functionalKeyBuilder.fields;
+        index = functionalKeyBuilder.index;
         values = new Object[fields.length];
         int i = 0;
         for (Field field : fields) {
@@ -40,6 +43,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     private ManyFieldsMutableKey(ManyFunctionalKeyBuilder functionalKeyBuilder, Object[] values) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         this.values = values;
+        index = functionalKeyBuilder.index;
     }
 
     protected MutableFunctionalKey doSet(Field field, Object o) {
@@ -47,7 +51,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
             FieldCheck.check(field, functionalKeyBuilder.getType());
         }
 
-        final int index = functionalKeyBuilder.index[field.getIndex()];
+        final int index = this.index[field.getIndex()];
         if (index >= 0) {
             values[index] = o;
             return this;
@@ -56,10 +60,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     protected Object doGet(Field field) {
-        if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, functionalKeyBuilder.getType());
-        }
-        final int index = functionalKeyBuilder.index[field.getIndex()];
+        final int index = this.index[field.getIndex()];
         if (index >= 0) {
             return getNotNullValue(values[index]);
         }
@@ -75,11 +76,8 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public void unset(Field field) {
-        if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, functionalKeyBuilder.getType());
-        }
-        final int index = functionalKeyBuilder.index[field.getIndex()];
-        if (index >= 0 ){
+        final int index = this.index[field.getIndex()];
+        if (index >= 0) {
             values[index] = NULL_VALUE;
             return;
         }
@@ -87,7 +85,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public boolean contains(Field field) {
-        return functionalKeyBuilder.index[field.getIndex()] >= 0;
+        return this.index[field.getIndex()] >= 0;
     }
 
     public int size() {
@@ -143,12 +141,22 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
             return true;
         }
         if (o instanceof ManyFieldsMutableKey that) {
-            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
-                return false;
+            final Field[] f1 = that.functionalKeyBuilder.fields;
+            final Field[] f2 = functionalKeyBuilder.fields;
+            for (int i = 0; i < values.length; i++) {
+                if (f1[i] != f2[i]) {
+                    return false;
+                }
+                if (values[i] == NULL_VALUE || that.values[i] == NULL_VALUE) {
+                    if (values[i] != that.values[i]) {
+                        return false;
+                    }
+                } else if (!f1[i].valueEqual(values[i], that.values[i])) {
+                    return false;
+                }
             }
-            return Arrays.equals(values, that.values);
-        }
-        else {
+            return true;
+        } else {
             return false;
         }
     }
@@ -162,10 +170,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, functionalKeyBuilder.getType());
-        }
-        final int index = functionalKeyBuilder.index[field.getIndex()];
+        final int index = this.index[field.getIndex()];
         if (index >= 0) {
             return values[index] != NULL_VALUE;
         }

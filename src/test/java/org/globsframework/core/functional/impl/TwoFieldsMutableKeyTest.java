@@ -1,6 +1,7 @@
 package org.globsframework.core.functional.impl;
 
 import org.globsframework.core.functional.FunctionalKey;
+import org.globsframework.core.functional.MutableFunctionalKey;
 import org.globsframework.core.metamodel.DummyObjectWithCompositeKey;
 import org.globsframework.core.metamodel.fields.BytesField;
 import org.globsframework.core.metamodel.fields.Field;
@@ -8,6 +9,7 @@ import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -98,6 +100,16 @@ public class TwoFieldsMutableKeyTest {
         assertEquals(8, array[1].getValue());
 
         assertSame(builder, key.getBuilder());
+    }
+
+    @Test
+    void checkOrderMatter() {
+        TwoFunctionalKeyBuilder builder1 = new TwoFunctionalKeyBuilder(ID1, ID2);
+        TwoFunctionalKeyBuilder builder2 = new TwoFunctionalKeyBuilder(ID2, ID1);
+        final MutableFunctionalKey k1 = builder1.create().set(ID1, 5).set(ID2, 8);
+        final MutableFunctionalKey k2 = builder2.create().set(ID1, 5).set(ID2, 8);
+        Assertions.assertNotEquals(k1.hashCode(), k2.hashCode());
+        Assertions.assertNotEquals(k1, k2);
     }
 
     @Test

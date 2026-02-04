@@ -10,8 +10,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderFactory {
-    private GlobType globType;
-    private List<Field> keys = new ArrayList<>();
+    private final GlobType globType;
+    private final List<Field> keys = new ArrayList<>();
 
     public DefaultFunctionalKeyBuilderFactory(GlobType globType) {
         this.globType = globType;
@@ -27,13 +27,12 @@ public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderF
 
     public FunctionalKeyBuilder create() {
         try {
-            if (keys.size() == 0) {
+            if (keys.isEmpty()) {
                 throw new RuntimeException("No key in functional key for type " + globType);
             }
             if (keys.size() == 1) {
-                return new OneFunctionalKeyBuilder(keys.get(0));
+                return new OneFunctionalKeyBuilder(keys.getFirst());
             }
-            keys.sort(Comparator.comparingInt(Field::getIndex)); // ??supprimer le 11/12/2017
             if (keys.size() == 2) {
                 return new TwoFunctionalKeyBuilder(keys.get(0), keys.get(1));
             }

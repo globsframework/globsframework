@@ -132,10 +132,29 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
             return true;
         }
         if (o instanceof TwoFieldsMutableKey that) {
-            if (functionalKeyBuilder.getType() != that.functionalKeyBuilder.getType()) {
+            if (functionalKeyBuilder.field1 != that.functionalKeyBuilder.field1 ||
+                functionalKeyBuilder.field2 != that.functionalKeyBuilder.field2) {
                 return false;
             }
-            return Objects.equals(value1, that.value1) && Objects.equals(value2, that.value2);
+            if (value1 == NULL_VALUE || that.value1 == NULL_VALUE) {
+                if (value1 != that.value1) {
+                    return false;
+                }
+            } else {
+                if (!functionalKeyBuilder.field1.valueEqual(value1, that.value1)) {
+                    return false;
+                }
+            }
+            if (value2 == NULL_VALUE || that.value2 == NULL_VALUE) {
+                if (value2 != that.value2) {
+                    return false;
+                }
+            }else {
+                if (!functionalKeyBuilder.field2.valueEqual(value2, that.value2)) {
+                    return false;
+                }
+            }
+            return true;
         } else {
             return false;
         }
