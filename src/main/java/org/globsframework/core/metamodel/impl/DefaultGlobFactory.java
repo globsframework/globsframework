@@ -9,10 +9,7 @@ import org.globsframework.core.model.globaccessor.get.GlobGetAccessor;
 import org.globsframework.core.model.globaccessor.get.impl.*;
 import org.globsframework.core.model.globaccessor.set.GlobSetAccessor;
 import org.globsframework.core.model.globaccessor.set.impl.*;
-import org.globsframework.core.model.impl.AbstractDefaultGlob;
-import org.globsframework.core.model.impl.DefaultGlob;
-import org.globsframework.core.model.impl.DefaultGlob128;
-import org.globsframework.core.model.impl.DefaultGlob64;
+import org.globsframework.core.model.impl.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -57,6 +54,9 @@ public class DefaultGlobFactory implements GlobFactory {
     }
 
     public MutableGlob create(Object context) {
+        if (type.getFieldCount() <= 32) {
+            return new DefaultGlob32(type);
+        }
         if (type.getFieldCount() <= 64) {
             return new DefaultGlob64(type);
         }

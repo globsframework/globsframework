@@ -1,8 +1,6 @@
 package org.globsframework.core.metamodel;
 
-import org.globsframework.core.metamodel.annotations.DefaultDouble;
-import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.NamingField;
+import org.globsframework.core.metamodel.annotations.*;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.metamodel.utils.GlobTypeUtils;
@@ -12,6 +10,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,5 +108,16 @@ public class GlobTypeBuilderTest {
         GlobTypeBuilderFactory.create("aType")
                 .addDoubleField("aDouble", DefaultDouble.create(2.2));
 
+    }
+
+    @Test
+    void testGlobTypeAnnotations() {
+        final GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("aType")
+                .addAnnotations(List.of(DefaultDouble.create(2.2), DefaultString.create("aString")))
+                .addAnnotation(DefaultLong.create(3));
+        final GlobType type = typeBuilder.build();
+        assertTrue(type.hasAnnotation(DefaultDouble.KEY));
+        assertTrue(type.hasAnnotation(DefaultString.KEY));
+        assertTrue(type.hasAnnotation(DefaultLong.KEY));
     }
 }

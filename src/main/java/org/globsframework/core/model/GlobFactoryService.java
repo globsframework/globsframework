@@ -25,12 +25,16 @@ public interface GlobFactoryService {
         final GlobFactoryService specialized;
 
         public DispatchGlobFactoryService() {
-            String className = System.getProperty("org.globsframework.builder", DefaultGlobFactoryService.class.getName());
-            try {
-                specialized = (GlobFactoryService) Class.forName(className)
-                        .getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("fail to load" + className, e);
+            String className = System.getProperty("org.globsframework.builder");
+            if (className == null) {
+                specialized = globFactoryService;
+            }
+            else {
+                try {
+                    specialized = (GlobFactoryService) Class.forName(className).getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException("fail to load" + className, e);
+                }
             }
         }
 

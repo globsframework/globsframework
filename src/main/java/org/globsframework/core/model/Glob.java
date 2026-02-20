@@ -2,6 +2,7 @@ package org.globsframework.core.model;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
+import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.links.Link;
 
 public interface Glob extends FieldValues {

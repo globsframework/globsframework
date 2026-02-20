@@ -47,7 +47,7 @@ public class FieldCheck {
             if (field.getGlobType() != type) {
                 throwFieldError(field, type);
             }
-            checkValue(field, value);
+            field.checkValue(value);
         }
     }
 

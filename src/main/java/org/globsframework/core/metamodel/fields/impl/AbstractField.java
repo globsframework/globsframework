@@ -34,8 +34,7 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         this.defaultValue = defaultValue;
         this.name = name;
         this.index = index;
-//        this.globTypeSupplier = StableValue.supplier(globTypeSupplier);
-//        this.globType = StableValue.supplier(globTypeSupplier);
+//        this.globTypeSupplier = LazyConstant.of(globTypeSupplier);
         this.valueClass = valueClass;
         this.dataType = dataType;
     }
@@ -52,53 +51,53 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         return value;
     }
 
-    public String getName() {
+    final public String getName() {
         return name;
     }
 
-    public String getFullName() {
+    final public String getFullName() {
 //        return globTypeSupplier.get().getName() + "." + name;
         return globType.getName() + "." + name;
     }
 
-    public GlobType getGlobType() {
+    final public GlobType getGlobType() {
 //        return globTypeSupplier.get();
         return globType;
     }
 
-    public int getIndex() {
+    final public int getIndex() {
         return index;
     }
 
-    public int getKeyIndex() {
+    final public int getKeyIndex() {
         return keyIndex;
     }
 
-    public boolean isKeyField() {
+    final public boolean isKeyField() {
         return keyIndex != -1;
     }
 
-    public boolean isRequired() {
+    final public boolean isRequired() {
         return hasAnnotation(Required.UNIQUE_KEY);
     }
 
-    public DataType getDataType() {
+    final public DataType getDataType() {
         return dataType;
     }
 
     public void checkValue(Object object) throws InvalidParameter {
-        if ((object != null) && (!valueClass.equals(object.getClass()))) {
+        if ((object != null) && (valueClass != object.getClass())) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
                                        + ") is not authorized for field: " + getName() +
                                        " (expected " + valueClass.getName() + ")");
         }
     }
 
-    public Class getValueClass() {
+    final public Class getValueClass() {
         return valueClass;
     }
 
-    public Object getDefaultValue() {
+    final public Object getDefaultValue() {
         return defaultValue;
     }
 

@@ -94,7 +94,7 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     public GlobTypeBuilder addAnnotations(Collection<Glob> annotations) {
-        annotations.addAll(annotations);
+        this.annotations.addAll(annotations);
         return this;
     }
 

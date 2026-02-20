@@ -12,13 +12,13 @@ import java.time.ZonedDateTime;
 
 public interface AbstractKey extends Key, AbstractFieldValues {
 
-    default public boolean contains(Field field) {
+    default boolean contains(Field field) {
         return field.getGlobType() == getGlobType() && field.isKeyField();
     }
 
     GlobType getGlobType();
 
-    default public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
+    default <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         Field[] fields = getGlobType().getKeyFields();
         for (Field field : fields) {
             field.acceptValue(functor, doGetValue(field));

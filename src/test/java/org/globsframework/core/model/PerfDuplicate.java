@@ -1,10 +1,7 @@
 package org.globsframework.core.model;
 
-import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.DummyObjectInner;
 import org.globsframework.core.metamodel.DummyObjectWithInner;
-import org.globsframework.core.model.impl.AbstractGlob;
-import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
 
 @BenchmarkMode(Mode.Throughput)

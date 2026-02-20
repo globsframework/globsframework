@@ -19,7 +19,7 @@ public class DefaultGlobArrayField extends AbstractField implements GlobArrayFie
     public DefaultGlobArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
                                  int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
         super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobArray, annotations);
-        this.targetType = targetType; //StableValue.supplier(targetType);
+        this.targetType = targetType; //LazyConstant.of(targetType);
     }
 
     public static boolean isSameGlob(GlobType type, Glob[] g1, Glob[] g2) {
@@ -46,7 +46,7 @@ public class DefaultGlobArrayField extends AbstractField implements GlobArrayFie
         return true;
     }
 
-    public GlobType getTargetType() {
+    final public GlobType getTargetType() {
         return targetType.get();
     }
 
@@ -156,9 +156,12 @@ public class DefaultGlobArrayField extends AbstractField implements GlobArrayFie
     }
 
     public boolean checkType(Glob[] globs) {
-        for (int i = 0; i < globs.length; i++) {
-            if (globs[i] != null && getTargetType() != globs[i].getType()) {
-                return false;
+        final GlobType tt = getTargetType();
+        for (Glob glob : globs) {
+            if (glob != null) {
+                if (tt != glob.getType()) {
+                    return false;
+                }
             }
         }
         return true;
