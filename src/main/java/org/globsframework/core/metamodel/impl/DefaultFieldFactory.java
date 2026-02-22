@@ -3,29 +3,22 @@ package org.globsframework.core.metamodel.impl;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.impl.*;
-import org.globsframework.core.metamodel.index.MultiFieldNotUniqueIndex;
-import org.globsframework.core.metamodel.index.MultiFieldUniqueIndex;
-import org.globsframework.core.metamodel.index.NotUniqueIndex;
-import org.globsframework.core.metamodel.index.UniqueIndex;
-import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldNotUniqueIndex;
-import org.globsframework.core.metamodel.index.impl.DefaultMultiFieldUniqueIndex;
-import org.globsframework.core.metamodel.index.impl.DefaultNotUniqueIndex;
-import org.globsframework.core.metamodel.index.impl.DefaultUniqueIndex;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.ItemAlreadyExists;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class DefaultFieldFactory {
+    private final String name;
     private final Supplier<GlobType> type;
     private final Map<String, Field> fields;
 
-    public DefaultFieldFactory(Supplier<GlobType> type, Map<String, Field> fields) {
+    public DefaultFieldFactory(String name, Supplier<GlobType> type, Map<String, Field> fields) {
+        this.name = name;
         this.type = type;
         this.fields = fields;
     }
@@ -145,7 +138,7 @@ public class DefaultFieldFactory {
 
     private <T extends Field> T add(T field, boolean isKeyField) {
         if (fields.put(field.getName(), field) != null) {
-            throw new ItemAlreadyExists("Duplicate field '" + field.getName() + "' in type '" + type.get().getName() + "'");
+            throw new ItemAlreadyExists("Duplicate field '" + field.getName() + "' in type '" + name + "'");
         }
         return field;
     }

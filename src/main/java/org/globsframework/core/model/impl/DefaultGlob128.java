@@ -1,8 +1,6 @@
 package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.model.ReservationException;
 
 public final class DefaultGlob128 extends AbstractDefaultGlob {
     private long set1;
@@ -13,6 +11,7 @@ public final class DefaultGlob128 extends AbstractDefaultGlob {
     }
 
     public void setSetAt(int index) {
+        assert index < 128;
         if (index < 64) {
             set1 |= (1L << index);
         } else {
@@ -21,6 +20,7 @@ public final class DefaultGlob128 extends AbstractDefaultGlob {
     }
 
     public boolean isSetAt(int index) {
+        assert index < 128;
         if (index < 64) {
             return (set1 & (1L << index)) != 0;
         } else {
@@ -29,6 +29,7 @@ public final class DefaultGlob128 extends AbstractDefaultGlob {
     }
 
     public void clearSetAt(int index) {
+        assert index < 128;
         if (index < 64) {
             set1 &= ~(1L << index);
         } else {

@@ -1,8 +1,6 @@
 package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.model.ReservationException;
 
 public final class DefaultGlob32 extends AbstractDefaultGlob {
     private int set;
@@ -12,14 +10,17 @@ public final class DefaultGlob32 extends AbstractDefaultGlob {
     }
 
     public void setSetAt(int index) {
+        assert index < 32;
         set |= (1 << index);
     }
 
     public boolean isSetAt(int index) {
+        assert index < 32;
         return (set & (1 << index)) != 0;
     }
 
     public void clearSetAt(int index) {
+        assert index < 32;
         set &= ~(1 << index);
     }
 

@@ -34,10 +34,10 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 
     public DefaultGlobTypeBuilder(String name, Collection<Glob> annotations) {
         this.name = name;
-        type = new CreateSupplier(this); //StableValue.supplier(this::createGlobType);
+        type = new CreateSupplier(this);
         this.annotations = new ArrayList<>(annotations);
         fields = new LinkedHashMap<>();
-        factory = new DefaultFieldFactory(type, fields);
+        factory = new DefaultFieldFactory(name, type, fields);
     }
 
     static class CreateSupplier implements Supplier<GlobType>{
@@ -63,7 +63,13 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     private GlobType createGlobType() {
-        return new DefaultGlobType(name, fields, registered, annotations, indices, keyIndex);
+        final DefaultGlobType defaultGlobType = new DefaultGlobType(name, fields, registered, annotations, indices, keyIndex);
+        fields = null;
+        registered = null;
+        annotations = null;
+        indices = null;
+        keyIndex = -1;
+        return defaultGlobType;
     }
 
     public static GlobTypeBuilder init(String typeName) {

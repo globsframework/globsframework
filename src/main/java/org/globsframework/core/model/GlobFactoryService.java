@@ -21,15 +21,15 @@ public interface GlobFactoryService {
     }
 
     class DispatchGlobFactoryService implements GlobFactoryService {
-        final GlobFactoryService globFactoryService = new DefaultGlobFactoryService();
+        final GlobFactoryService globFactoryService;
         final GlobFactoryService specialized;
 
         public DispatchGlobFactoryService() {
-            String className = System.getProperty("org.globsframework.builder");
+            String className = System.getProperty("globs.builder");
+            globFactoryService = new DefaultGlobFactoryService();
             if (className == null) {
                 specialized = globFactoryService;
-            }
-            else {
+            } else {
                 try {
                     specialized = (GlobFactoryService) Class.forName(className).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {

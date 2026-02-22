@@ -2,7 +2,7 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.metamodel.fields.impl.AbstractField;
+import org.globsframework.core.model.Glob;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 
 public class FieldCheck {
@@ -42,6 +42,14 @@ public class FieldCheck {
         }
     }
 
+    static public void check(GlobType type, Glob glob) {
+        if (CheckGlob.shouldCheck) {
+            if (glob.getType() != type) {
+                throwError(type, glob);
+            }
+        }
+    }
+
     static public void check(Field field, GlobType type, Object value) {
         if (CheckGlob.shouldCheck) {
             if (field.getGlobType() != type) {
@@ -59,7 +67,11 @@ public class FieldCheck {
 
     private static void throwFieldError(Field field, GlobType type) {
         throw new InvalidParameter("Field '" + field.getName() + "' is declared for type '" +
-                field.getGlobType().describe() + "'\n but not for \n'" + type.describe() + "'");
+                                   field.getGlobType().describe() + "'\n but not for \n'" + type.describe() + "'");
+    }
+
+    private static void throwError(GlobType type, Glob data) {
+        throw new InvalidParameter("Type '" + type.describe() + "' does not match data type '" + data.toString() + "'");
     }
 
 }

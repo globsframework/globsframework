@@ -46,14 +46,42 @@ public class DefaultGlobType
         } else {
             keyFields = EMPTY_FIELDS;
         }
-        int i = 0;
-        int k = 0;
+        int countF = 0;
+        int countK = 0;
         for (Map.Entry<String, Field> stringFieldEntry : fieldsByName.entrySet()) {
-            fields[i] = stringFieldEntry.getValue();
-            if (fields[i].isKeyField()) {
-                keyFields[k++] = fields[i];
+            final Field f = stringFieldEntry.getValue();
+            final int i = f.getIndex();
+            if (fields[i] != null) {
+                throw new RuntimeException("Duplicate field at same index " + i + " => " + f.getName() + " in type " + name);
             }
-            i++;
+            countF++;
+            fields[i] = f;
+            if (fields[i].isKeyField()) {
+                final int ki = f.getKeyIndex();
+                if (keyFields[ki] != null) {
+                    throw new RuntimeException("Duplicate key field at same index " + ki + " => " + f.getName() + " in type " + name);
+                }
+                countK++;
+                keyFields[ki] = f;
+            }
+        }
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
+            if (field == null) {
+                throw new RuntimeException("Field at index " + i + "  was not initialized for type " + name);
+            }
+        }
+        if (countF != fields.length) {
+            throw new RuntimeException("Not all fields were initialized for type " + name);
+        }
+        for (int i = 0; i < keyFields.length; i++) {
+            Field keyField = keyFields[i];
+            if (keyField == null) {
+                throw new RuntimeException("KeyField at index " + i + "  was not initialized for type " + name);
+            }
+        }
+        if (countK != keyFields.length) {
+            throw new RuntimeException("Not all keyFields were initialized for type " + name);
         }
         this.fieldsByName = fieldsByName; //StableValue.map(fieldsByName.keySet(), fieldsByName::get);
         globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);

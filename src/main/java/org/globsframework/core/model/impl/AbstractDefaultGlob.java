@@ -16,9 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, Key {
-    protected final GlobType type;
-    protected final Object[] values;
-    protected int hashCode;
+    private final GlobType type;
+    private final Object[] values;
+    private int hashCode;
     private int reserve = 0;
 
     protected AbstractDefaultGlob(GlobType type) {

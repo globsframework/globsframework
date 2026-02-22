@@ -10,6 +10,10 @@ import org.globsframework.core.model.globaccessor.set.GlobSetLongAccessor;
 
 public interface GlobFactory {
 
+    interface Size {
+        int minSize = Integer.getInteger("glob.globType.minSize", 32);
+    }
+
     GlobType getGlobType();
 
     MutableGlob create(Object context);
