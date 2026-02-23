@@ -5,19 +5,19 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultGlobArrayField extends AbstractField implements GlobArrayField {
+public final class DefaultGlobArrayField extends AbstractField implements GlobArrayField {
     private final Supplier<GlobType> targetType;
 
     public DefaultGlobArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
-                                 int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
+                                 int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
         super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobArray, annotations);
         this.targetType = targetType; //LazyConstant.of(targetType);
     }
@@ -147,21 +147,20 @@ public class DefaultGlobArrayField extends AbstractField implements GlobArrayFie
                isSameKeyOrGlob(getTargetType(), ((Glob[]) o1), ((Glob[]) o2));
     }
 
-    public void checkValue(Object object) throws InvalidParameter {
+    public boolean checkValue(Object object) throws InvalidParameter {
         if ((object != null) && ((!(object instanceof Glob[])) || !checkType((Glob[]) object))) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
                                        + ") is not authorized for field: " + getName() +
                                        " (expected Glob)");
         }
+        return true;
     }
 
     public boolean checkType(Glob[] globs) {
         final GlobType tt = getTargetType();
         for (Glob glob : globs) {
-            if (glob != null) {
-                if (tt != glob.getType()) {
-                    return false;
-                }
+            if (glob != null && tt != glob.getType()) {
+                return false;
             }
         }
         return true;

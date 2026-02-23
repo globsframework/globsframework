@@ -5,15 +5,15 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultBytesField extends AbstractField implements BytesField {
+public final class DefaultBytesField extends AbstractField implements BytesField {
 
-    public DefaultBytesField(String name, Supplier<GlobType> globType, int index, HashContainer<Key, Glob> annotations) {
+    public DefaultBytesField(String name, Supplier<GlobType> globType, int index, HashMap<Key, Glob> annotations) {
         super(name, globType, byte[].class, index, -1, false, null, DataType.Bytes, annotations);
     }
 

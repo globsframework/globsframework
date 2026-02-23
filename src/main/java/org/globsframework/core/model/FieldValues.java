@@ -170,8 +170,7 @@ public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
         void process(Field field, Object value) throws Exception;
 
         default Functor withoutKeyField() {
-            return (field, v
-            ) -> {
+            return (field, v) -> {
                 if (!field.isKeyField()) {
                     Functor.this.process(field, v);
                 }

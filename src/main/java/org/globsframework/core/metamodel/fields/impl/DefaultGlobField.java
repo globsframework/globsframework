@@ -5,19 +5,19 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultGlobField extends AbstractField implements GlobField {
+public final class DefaultGlobField extends AbstractField implements GlobField {
     private final Supplier<GlobType> targetType;
 
     public DefaultGlobField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
-                            int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
+                            int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
         super(name, globType, Glob.class, index, keyIndex, isKeyField, null, DataType.Glob, annotations);
         this.targetType = targetType; //StableValue.supplier(targetType);
     }
@@ -117,12 +117,13 @@ public class DefaultGlobField extends AbstractField implements GlobField {
                !((o1 == null) || (o2 == null)) && isSameKeyOrGlob(getTargetType(), (Glob) o1, (Glob) o2);
     }
 
-    public void checkValue(Object object) throws InvalidParameter {
+    public boolean checkValue(Object object) throws InvalidParameter {
         if ((object != null) && ((!(object instanceof Glob)) || ((Glob) object).getType() != getTargetType())) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
                                        + ") is not authorized for field: " + getName() +
                                        " (expected Glob)");
         }
+        return true;
     }
 
     public static boolean isSameGlob(GlobType type, Glob g1, Glob g2) {

@@ -5,7 +5,6 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
@@ -15,13 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class DefaultGlobUnionField extends AbstractField implements GlobUnionField {
+public final class DefaultGlobUnionField extends AbstractField implements GlobUnionField {
     private Supplier<GlobType>[] targetTypes;
     private volatile Map<String, GlobType> targetTypesByName = null;
 
     public DefaultGlobUnionField(String name, Supplier<GlobType> globType,
                                  Supplier<GlobType>[] targetTypes,
-                                 int index, boolean isKeyField, final int keyIndex, HashContainer<Key, Glob> annotations) {
+                                 int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
         super(name, globType, Glob.class, index, keyIndex, isKeyField, null, DataType.GlobUnion, annotations);
         this.targetTypes = targetTypes;
     }
@@ -159,12 +158,13 @@ public class DefaultGlobUnionField extends AbstractField implements GlobUnionFie
                && DefaultGlobField.isSameKeyOrGlob(((Glob) o1).getType(), (Glob) o1, (Glob) o2);
     }
 
-    public void checkValue(Object object) throws InvalidParameter {
+    public boolean checkValue(Object object) throws InvalidParameter {
         if ((object != null) && ((!(object instanceof Glob)) || !getTargetTypes().contains(((Glob) object).getType()))) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
                                        + ") is not authorized for field: " + getName() +
                                        " (expected Glob)");
         }
+        return true;
     }
 
 }

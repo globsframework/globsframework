@@ -5,15 +5,15 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultDoubleField extends AbstractField implements DoubleField {
+public final class DefaultDoubleField extends AbstractField implements DoubleField {
 
     public DefaultDoubleField(String name, Supplier<GlobType> globType,
-                              int index, boolean isKeyField, final int keyIndex, Double defaultValue, HashContainer<Key, Glob> annotations) {
+                              int index, boolean isKeyField, final int keyIndex, Double defaultValue, HashMap<Key, Glob> annotations) {
         super(name, globType, Double.class, index, keyIndex, isKeyField, defaultValue, DataType.Double, annotations);
     }
 

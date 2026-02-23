@@ -5,13 +5,13 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultLongField extends AbstractField implements LongField {
-    public DefaultLongField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashContainer<Key, Glob> annotations) {
+public final class DefaultLongField extends AbstractField implements LongField {
+    public DefaultLongField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashMap<Key, Glob> annotations) {
         super(name, globType, Long.class, index, keyIndex, isKeyField, defaultValue, DataType.Long, annotations);
     }
 

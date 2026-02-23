@@ -82,7 +82,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         setSetAt(index);
     }
 
-    final public MutableGlob uncheckedSet(Field field, Object value) {
+    private MutableGlob uncheckedSet(Field field, Object value) {
         set(field.getIndex(), value);
         return this;
     }
@@ -281,13 +281,8 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         return setObject(field, values);
     }
 
-    final public MutableGlob setValues(FieldValues values) {
-        values.safeApply(this::setObject);
-        return this;
-    }
-
     final public Key getTargetKey(Link link) {
-        if (!link.getSourceType().equals(getType())) {
+        if (!link.getSourceType().equals(type)) {
             throw new InvalidParameter("Link '" + link + " cannot be used with " + this);
         }
 
@@ -302,7 +297,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public FieldValues getValues() {
         FieldValuesBuilder builder = FieldValuesBuilder.init();
-        for (Field field : getType().getFields()) {
+        for (Field field : type.getFields()) {
             if (!field.isKeyField()) {
                 builder.setValue(field, uncheckGet(field));
             }
@@ -312,7 +307,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public FieldValue[] toArray() {
         List<FieldValue> fieldValueList = new ArrayList<>();
-        for (Field field : getType().getFields()) {
+        for (Field field : type.getFields()) {
             if (isSet(field)) {
                 fieldValueList.add(new FieldValue(field, uncheckGet(field)));
             }
@@ -322,19 +317,26 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public Object doCheckedGet(Field field) {
         if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, getType());
+            FieldCheck.check(field, type);
             checkReserved();
+        }else {
+            assert type == field.getGlobType();
         }
         return uncheckGet(field);
     }
 
     final public MutableGlob setObject(Field field, Object value) {
         if (FieldCheck.CheckGlob.shouldCheck) {
-            if (isHashComputed() && field.isKeyField()) {
+            if (hashCode != 0 && field.isKeyField()) {
                 throw new RuntimeException(field.getFullName() + " is a key value and the hashCode is already computed.");
             }
-            FieldCheck.check(field, getType(), value);
+            FieldCheck.check(field, type, value);
             checkReserved();
+        }
+        else {
+            assert hashCode == 0 || !field.isKeyField();
+            assert type == field.getGlobType();
+            assert field.checkValue(value);
         }
         return uncheckedSet(field, value);
     }
@@ -351,9 +353,9 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     private int computeHash() {
-        int hashCode = getType().hashCode();
-        for (Field keyField : getType().getKeyFields()) {
-            Object value = getValue(keyField);
+        int hashCode = type.hashCode();
+        for (Field keyField : type.getKeyFields()) {
+            Object value = uncheckGet(keyField);
             hashCode = 31 * hashCode + (value != null ? keyField.valueHash(value) : 0);
         }
         if (hashCode == 0) {
@@ -363,11 +365,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         return hashCode;
     }
 
-    final public boolean isHashComputed() {
-        return hashCode != 0;
-    }
-
-    public void checkReserved() {
+    private void checkReserved() {
         if (reserve < 0) {
             throw new ReservationException("Data not reserved");
         }
@@ -385,7 +383,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     @Override
-    public boolean release(int key) {
+    final public boolean release(int key) {
         if (key <= 0) {
             throw new ReservationException("Released key <= 0 Got " + key);
         }
@@ -406,7 +404,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     @Override
-    public void unReserve() {
+    final public void unReserve() {
         hashCode = 0;
         reserve = 0;
         resetSet();
@@ -415,17 +413,17 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     abstract void resetSet();
 
     @Override
-    public boolean isReserved() {
+    final public boolean isReserved() {
         return reserve > 0;
     }
 
     @Override
-    public boolean isReservedBy(int key) {
+    final public boolean isReservedBy(int key) {
         return key > 0 && reserve == key;
     }
 
     @Override
-    public void checkWasReservedBy(int key) {
+    final public void checkWasReservedBy(int key) {
         if (key <= 0 || reserve != -key) {
             throw new ReservationException("Data was not reserved by " + reserve + " != " + key);
         }
@@ -433,9 +431,8 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     // we don't want to add a dependency on any json framework here : we output a json like string here => need help : may be a bad idea
     final public void toString(StringBuilder buffer) {
-        buffer.append("{ \"_kind\":\"").append(escapeQuote(getType().getName())).append("\"");
+        buffer.append("{ \"_kind\":\"").append(escapeQuote(type.getName())).append("\"");
 
-        GlobType type = getType();
         for (Field field : type.getFields()) {
             if (isSet(field)) {
                 buffer.append(", ");
@@ -472,7 +469,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public <T extends FieldValueVisitor> T acceptOnKeyField(T functor) throws Exception {
-        for (Field field : getType().getFields()) {
+        for (Field field : type.getFields()) {
             field.acceptValue(functor, uncheckGet(field));
         }
         return functor;
@@ -480,7 +477,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public <T extends FieldValueVisitor> T safeAcceptOnKeyField(T functor) {
         try {
-            for (Field field : getType().getKeyFields()) {
+            for (Field field : type.getKeyFields()) {
                 field.acceptValue(functor, uncheckGet(field));
             }
         } catch (Exception e) {
@@ -491,7 +488,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public <T extends Functor>
     T applyOnKeyField(T functor) throws Exception {
-        for (Field field : getType().getFields()) {
+        for (Field field : type.getFields()) {
             functor.process(field, uncheckGet(field));
         }
         return functor;
@@ -500,7 +497,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     final public <T extends Functor>
     T safeApplyOnKeyField(T functor) {
         try {
-            for (Field field : getType().getKeyFields()) {
+            for (Field field : type.getKeyFields()) {
                 functor.process(field, uncheckGet(field));
             }
         } catch (RuntimeException e) {
@@ -513,7 +510,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public <CTX, T extends FieldValueVisitorWithContext<CTX>>
     T acceptOnKeyField(T functor, CTX ctx) throws Exception {
-        for (Field field : getType().getKeyFields()) {
+        for (Field field : type.getKeyFields()) {
             field.acceptValue(functor, uncheckGet(field), ctx);
         }
         return functor;
@@ -578,19 +575,18 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public boolean contains(Field field) {
-        return field.getGlobType().equals(getType());
+        return field.getGlobType().equals(type);
     }
 
     final public int size() {
-        return getType().getFieldCount();
+        return type.getFieldCount();
     }
 
     final public GlobType getGlobType() {
-        return getType();
+        return type;
     }
 
     private boolean reallyEquals(Glob glob) {
-        GlobType type = getType();
         for (Field field : type.getFields()) {
             if (!field.valueEqual(getValue(field), glob.getValue(field))) {
                 return false;
@@ -600,8 +596,8 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public MutableGlob duplicate() {
-        AbstractDefaultGlob instantiate = (AbstractDefaultGlob) getType().instantiate();
-        for (Field field : getType().getFields()) {
+        AbstractDefaultGlob instantiate = (AbstractDefaultGlob) type.instantiate();
+        for (Field field : type.getFields()) {
             if (isSet(field)) {
                 if (isNull(field)) {
                     instantiate.uncheckedSet(field, null);

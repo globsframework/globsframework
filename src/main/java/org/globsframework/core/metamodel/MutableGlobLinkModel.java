@@ -3,8 +3,6 @@ package org.globsframework.core.metamodel;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.links.DirectLink;
 import org.globsframework.core.metamodel.links.Link;
-import org.globsframework.core.metamodel.utils.MutableAnnotations;
-import org.globsframework.core.model.Glob;
 
 public interface MutableGlobLinkModel extends GlobLinkModel {
 
@@ -12,7 +10,7 @@ public interface MutableGlobLinkModel extends GlobLinkModel {
 
     DirectLinkBuilder getDirectLinkBuilder(String modelName, String name, boolean isRequered);
 
-    default DirectLinkBuilder getDirectLinkBuilder(String modelName, String name){
+    default DirectLinkBuilder getDirectLinkBuilder(String modelName, String name) {
         return getDirectLinkBuilder(modelName, name, false);
     }
 
@@ -45,7 +43,7 @@ public interface MutableGlobLinkModel extends GlobLinkModel {
         DirectLink publish();
     }
 
-    interface LinkBuilder<T extends LinkBuilder>{
+    interface LinkBuilder<T extends LinkBuilder> {
 
         T add(Field sourceField, Field targetField);
 

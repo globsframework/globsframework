@@ -5,15 +5,15 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultBigDecimalField extends AbstractField implements BigDecimalField {
+public final class DefaultBigDecimalField extends AbstractField implements BigDecimalField {
     public DefaultBigDecimalField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex,
-                                  BigDecimal defaultValue, HashContainer<Key, Glob> annotations) {
+                                  BigDecimal defaultValue, HashMap<Key, Glob> annotations) {
         super(name, globType, BigDecimal.class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimal, annotations);
     }
 

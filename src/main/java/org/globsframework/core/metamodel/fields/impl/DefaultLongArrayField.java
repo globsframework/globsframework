@@ -5,14 +5,14 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DefaultLongArrayField extends AbstractField implements LongArrayField {
-    public DefaultLongArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashContainer<Key, Glob> annotations) {
+public final class DefaultLongArrayField extends AbstractField implements LongArrayField {
+    public DefaultLongArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashMap<Key, Glob> annotations) {
         super(name, globType, long[].class, index, keyIndex, isKeyField, defaultValue, DataType.LongArray, annotations);
     }
 

@@ -39,13 +39,14 @@ public class DefaultGlobFactory implements GlobFactory {
     }
 
     private DefaultGlobFactory.CreateType createType() {
-        if (type.getFieldCount() <= 32 && Size.minSize <= 32) {
+        final int fieldCount = type.getFieldCount();
+        if (fieldCount <= 32 && Size.minSize <= 32) {
             return DefaultGlob32::new;
         }
-        if (type.getFieldCount() <= 64 && Size.minSize <= 64) {
+        if (fieldCount <= 64 && Size.minSize <= 64) {
             return DefaultGlob64::new;
         }
-        if (type.getFieldCount() <= 128 && Size.minSize <= 128) {
+        if (fieldCount <= 128 && Size.minSize <= 128) {
             return  DefaultGlob128::new;
         }
         return DefaultGlob::new;

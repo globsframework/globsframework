@@ -149,6 +149,10 @@ public interface GlobTypeBuilder {
         return addDoubleArrayField(fieldName, Arrays.asList(annotations));
     }
 
+    default GlobTypeBuilder addStringArrayField(String fieldName, Glob... annotations) {
+        return addStringArrayField(fieldName, Arrays.asList(annotations));
+    }
+
     default GlobTypeBuilder addBytesField(String fieldName, Glob... annotations) {
         return addBytesField(fieldName, Arrays.asList(annotations));
     }

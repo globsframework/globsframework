@@ -17,6 +17,8 @@ public class FieldCheck {
             if (!field.isKeyField()) {
                 throwKeyError(field);
             }
+        } else {
+            assert field.getGlobType() == type;
         }
     }
 
@@ -27,6 +29,10 @@ public class FieldCheck {
             if (!field.isKeyField()) {
                 throwKeyError(field);
             }
+        } else {
+            assert field.getGlobType() == type;
+            assert field.isKeyField();
+            assert field.checkValue(value);
         }
     }
 
@@ -39,6 +45,8 @@ public class FieldCheck {
             if (field.getGlobType() != type) {
                 throwFieldError(field, type);
             }
+        } else {
+            assert field.getGlobType() == type;
         }
     }
 
@@ -47,6 +55,8 @@ public class FieldCheck {
             if (glob.getType() != type) {
                 throwError(type, glob);
             }
+        } else {
+            assert glob.getType() == type;
         }
     }
 
@@ -56,6 +66,9 @@ public class FieldCheck {
                 throwFieldError(field, type);
             }
             field.checkValue(value);
+        } else {
+            assert field.getGlobType() == type;
+            assert field.checkValue(value);
         }
     }
 

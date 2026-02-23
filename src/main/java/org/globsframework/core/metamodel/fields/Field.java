@@ -16,7 +16,7 @@ public sealed interface Field extends Annotations
 
     GlobType getGlobType();
 
-    void checkValue(Object object) throws InvalidParameter;
+    boolean checkValue(Object object) throws InvalidParameter;
 
     Class getValueClass();
 

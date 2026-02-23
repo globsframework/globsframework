@@ -1,34 +1,35 @@
 package org.globsframework.core.metamodel.fields.impl;
 
+import org.globsframework.core.metamodel.Annotations;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.annotations.Required;
-import org.globsframework.core.metamodel.impl.AbstractDefaultAnnotations;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.Utils;
-import org.globsframework.core.utils.container.hash.HashContainer;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
+import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-abstract public class AbstractField implements AbstractDefaultAnnotations {
+abstract public class AbstractField implements Annotations {
     private final int index;
     private final int keyIndex;
-//    private final Supplier<GlobType> globTypeSupplier;
+    //    private final Supplier<GlobType> globTypeSupplier;
     private GlobType globType;
     private final String name;
     private final Class valueClass;
     private final Object defaultValue;
     private final DataType dataType;
     private Map<Class<?>, Object> registered = null;
-    private final HashContainer<Key, Glob> annotations;
+    private final HashMap<Key, Glob> annotations;
 
     protected AbstractField(String name, Supplier<GlobType> globTypeSupplier,
                             Class valueClass, int index, int keyIndex, boolean isKeyField,
-                            Object defaultValue, DataType dataType, HashContainer<Key, Glob> annotations) {
+                            Object defaultValue, DataType dataType, HashMap<Key, Glob> annotations) {
         this.annotations = annotations;
         this.keyIndex = isKeyField ? keyIndex : -1;
         this.defaultValue = defaultValue;
@@ -43,7 +44,7 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
 //        if ( globType != globTypeSupplier.get()) {
 //            throw new IllegalStateException("GlobType changed for field " + this);
 //        }
-        this.globType  = globType;
+        this.globType = globType;
 //        globType.get();
     }
 
@@ -85,12 +86,13 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         return dataType;
     }
 
-    public void checkValue(Object object) throws InvalidParameter {
+    public boolean checkValue(Object object) throws InvalidParameter {
         if ((object != null) && (valueClass != object.getClass())) {
             throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
                                        + ") is not authorized for field: " + getName() +
                                        " (expected " + valueClass.getName() + ")");
         }
+        return true;
     }
 
     final public Class getValueClass() {
@@ -137,17 +139,31 @@ abstract public class AbstractField implements AbstractDefaultAnnotations {
         if (this == o) {
             return true;
         }
-//        if (o == null || getClass() != o.getClass()) {
-            return false;
-//        }
-
-//        AbstractField other = (AbstractField) o;
-//        return name.equals(other.name) && globType == other.globType;
-//        return name.equals(other.name) && globTypeSupplier.get() == other.globTypeSupplier.get();
+        return false;
     }
 
-    @Override
-    public HashContainer<Key, Glob> getAnnotations() {
-        return annotations;
+    public Stream<Glob> streamAnnotations() {
+        return annotations.values().stream();
     }
+
+    public Stream<Glob> streamAnnotations(GlobType type) {
+        return annotations.values().stream().filter(glob -> glob.getType() == type);
+    }
+
+    public boolean hasAnnotation(Key key) {
+        return annotations.containsKey(key);
+    }
+
+    public Glob getAnnotation(Key key) {
+        Glob annotation = annotations.get(key);
+        if (annotation == null) {
+            throw new ItemNotFound(key.toString() + " on " + toString());
+        }
+        return annotation;
+    }
+
+    public Glob findAnnotation(Key key) {
+        return annotations.get(key);
+    }
+
 }
