@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
-public class ByteBufferInputStream extends InputStream {
+public final class ByteBufferInputStream extends InputStream {
     private final ByteBuffer byteBuffer;
     private final SeekableByteChannel channel;
     boolean eofReach = false;

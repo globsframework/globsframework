@@ -3,9 +3,9 @@ package org.globsframework.core.utils.serialization;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public class SerializedByteArrayOutput {
-    protected ByteArrayOutputStream outputStream;
-    protected SerializedOutput serializedOutput;
+public final class SerializedByteArrayOutput {
+    private final ByteArrayOutputStream outputStream;
+    private final SerializedOutput serializedOutput;
 
     public SerializedByteArrayOutput() {
         outputStream = new ByteArrayOutputStream();

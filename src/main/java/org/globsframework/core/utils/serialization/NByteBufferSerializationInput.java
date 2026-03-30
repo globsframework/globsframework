@@ -11,7 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
-public class NByteBufferSerializationInput extends InputStream implements SerializedInput {
+public final class NByteBufferSerializationInput extends InputStream implements SerializedInput {
     private final NextBuffer nextBuffer;
     private ByteBuffer data;
     private byte[] buffer;

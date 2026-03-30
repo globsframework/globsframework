@@ -3,7 +3,7 @@ package org.globsframework.core.utils.serialization;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BufferInputStreamWithLimit extends InputStream {
+public final class BufferInputStreamWithLimit extends InputStream {
     private final byte[] buffer;
     private int currentPos;
     private int count;

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public class ByteBufferSerializationOutput implements SerializedOutput {
+public final class ByteBufferSerializationOutput implements SerializedOutput {
     private final ByteOutput outputStream;
     private final byte[] buffer;
     private int position = 0;

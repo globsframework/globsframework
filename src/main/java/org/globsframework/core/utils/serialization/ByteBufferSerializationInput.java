@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
-public class ByteBufferSerializationInput implements SerializedInput {
+public final class ByteBufferSerializationInput implements SerializedInput {
     private byte[] data;
     private int len;
     private int count;
