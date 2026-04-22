@@ -2,21 +2,29 @@ package org.globsframework.core.utils.serialization;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.math.BigDecimal;
+import java.nio.ByteOrder;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public final class ByteBufferSerializationOutput implements SerializedOutput {
+    static final VarHandle INT_VH =
+            MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
+    static final VarHandle LONG_VH =
+            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     private final ByteOutput outputStream;
     private final byte[] buffer;
+    private final int limit;
     private int position = 0;
-
     public interface ByteOutput {
         void writeOutputBytes(byte[] b, int len);
     }
 
     public ByteBufferSerializationOutput(byte[] buffer) {
         this.buffer = buffer;
+        limit = buffer.length - 8;
         outputStream = (b, len) -> {
             throw new RuntimeException("Not implemented");
         };
@@ -41,6 +49,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
     public ByteBufferSerializationOutput(ByteOutput outputStream, int bufferSize) {
         this.outputStream = outputStream;
         buffer = new byte[bufferSize];
+        limit = bufferSize - 8;
     }
 
     public ByteBufferSerializationOutput(OutputStream outputStream) {
@@ -59,6 +68,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
             }
         };
         buffer = new byte[bufferSize];
+        limit = bufferSize - 8;
     }
 
     public byte[] getBuffer() {
@@ -154,17 +164,24 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         writeUtf8String(value.toPlainString());
     }
 
+    // manual optimisation
     public void write(int value) {
-        reserve(4);
-        writeUncheckedInt(value);
+        int p = position;
+        if (p >= limit) {
+            flush(4);
+        }
+        INT_VH.set(buffer, position, value);
+        position += 4;
     }
 
     private void writeUncheckedInt(int value) {
-        int p = position;
-        buffer[p] = (byte) ((value >>> 24) & 0xFF);
-        buffer[p + 1] = (byte) ((value >>> 16) & 0xFF);
-        buffer[p + 2] = (byte) ((value >>> 8) & 0xFF);
-        buffer[p + 3] = (byte) ((value >>> 0) & 0xFF);
+//        int p = position;
+//        final byte[] b = buffer;
+//        b[p] = (byte) ((value >>> 24) & 0xFF);
+//        b[p + 1] = (byte) ((value >>> 16) & 0xFF);
+//        b[p + 2] = (byte) ((value >>> 8) & 0xFF);
+//        b[p + 3] = (byte) ((value) & 0xFF);
+        INT_VH.set(buffer, position, value);
         position += 4;
     }
 
@@ -191,22 +208,27 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         }
     }
 
+    // manual optimisation
     public void write(long value) {
-        reserve(8);
-        writeUncheckedLong(value);
+        if (position >= limit) {
+            flush(8);
+        }
+        LONG_VH.set(buffer, position, value);
+        position += 8;
     }
 
     private void writeUncheckedLong(long value) {
-        int p = position;
-        buffer[p] = ((byte) (value >>> 56));
-        buffer[p + 1] = ((byte) (value >>> 48));
-        buffer[p + 2] = ((byte) (value >>> 40));
-        buffer[p + 3] = ((byte) (value >>> 32));
-        buffer[p + 4] = ((byte) (value >>> 24));
-        buffer[p + 5] = ((byte) (value >>> 16));
-        buffer[p + 6] = ((byte) (value >>> 8));
-        buffer[p + 7] = ((byte) (value >>> 0));
-        position = p + 8;
+//        int p = position;
+//        buffer[p] = ((byte) (value >>> 56));
+//        buffer[p + 1] = ((byte) (value >>> 48));
+//        buffer[p + 2] = ((byte) (value >>> 40));
+//        buffer[p + 3] = ((byte) (value >>> 32));
+//        buffer[p + 4] = ((byte) (value >>> 24));
+//        buffer[p + 5] = ((byte) (value >>> 16));
+//        buffer[p + 6] = ((byte) (value >>> 8));
+//        buffer[p + 7] = ((byte) (value >>> 0));
+        LONG_VH.set(buffer, position, value);
+        position += 8;
     }
 
     public void writeLong(Long value) {
@@ -353,7 +375,9 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
     }
 
     public void writeByte(int value) {
-        reserve(1);
+        if (position >= limit) {
+            flush(1);
+        }
         buffer[position++] = (byte) value;
     }
 
@@ -362,7 +386,9 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
     }
 
     public void writeByte(byte value) {
-        reserve(1);
+        if (position >= limit) {
+            flush(1);
+        }
         buffer[position++] = (byte) value;
     }
 

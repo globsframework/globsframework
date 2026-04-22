@@ -65,14 +65,14 @@ public class SerializerPerf {
         }
     }
 
-    @Benchmark
-    public void kryoSerialization() {
-        kryo.writeObject(output, bean);
-        if (output.position() != 23) {
-            Assertions.fail("position is " + output.position());
-        }
-        output.reset();
-    }
+//    @Benchmark
+//    public void kryoSerialization() {
+//        kryo.writeObject(output, bean);
+//        if (output.position() != 23) {
+//            Assertions.fail("position is " + output.position());
+//        }
+//        output.reset();
+//    }
 
 
     public static class NoTypicalBeanType {
