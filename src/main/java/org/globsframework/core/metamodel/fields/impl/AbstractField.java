@@ -1,4 +1,4 @@
-package org.globsframework.core.metamodel.fields;
+package org.globsframework.core.metamodel.fields.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.annotations.Required;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-abstract public non-sealed class AbstractField implements Field {
+abstract public class AbstractField {
     private final int index;
     private final int keyIndex;
     //    private final Supplier<GlobType> globTypeSupplier;

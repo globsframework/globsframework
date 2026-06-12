@@ -8,7 +8,7 @@ import org.globsframework.core.utils.exceptions.InvalidParameter;
 
 public sealed interface Field extends Annotations
         permits BooleanField, IntegerField, LongField, StringField, DoubleField, BytesField, BigDecimalField, DateField, DateTimeField, GlobField, GlobUnionField,
-        BooleanArrayField, IntegerArrayField, LongArrayField, StringArrayField, DoubleArrayField, BigDecimalArrayField, GlobArrayField, GlobArrayUnionField, AbstractField {
+        BooleanArrayField, IntegerArrayField, LongArrayField, StringArrayField, DoubleArrayField, BigDecimalArrayField, GlobArrayField, GlobArrayUnionField {
 
     String getName();
 
