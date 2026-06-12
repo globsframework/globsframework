@@ -11,7 +11,7 @@ import org.globsframework.core.model.globaccessor.set.GlobSetLongAccessor;
 public interface GlobFactory {
 
     interface Size {
-        int minSize = Integer.getInteger("glob.globType.minSize", 32);
+        int minSize = Integer.getInteger("gfw.minSize", 64);
     }
 
     GlobType getGlobType();

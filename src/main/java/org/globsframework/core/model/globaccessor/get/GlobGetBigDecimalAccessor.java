@@ -6,4 +6,9 @@ import java.math.BigDecimal;
 
 public interface GlobGetBigDecimalAccessor extends GlobGetAccessor {
     BigDecimal get(Glob glob);
+
+    default Object getValue(Glob glob) {
+        return get(glob);
+    }
+
 }

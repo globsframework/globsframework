@@ -319,7 +319,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         if (FieldCheck.CheckGlob.shouldCheck) {
             FieldCheck.check(field, type);
             checkReserved();
-        }else {
+        } else {
             assert type == field.getGlobType();
         }
         return uncheckGet(field);
@@ -332,8 +332,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
             }
             FieldCheck.check(field, type, value);
             checkReserved();
-        }
-        else {
+        } else {
             assert hashCode == 0 || !field.isKeyField();
             assert type == field.getGlobType();
             assert field.checkValue(value);

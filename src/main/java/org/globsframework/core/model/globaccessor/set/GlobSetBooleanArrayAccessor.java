@@ -6,4 +6,8 @@ public interface GlobSetBooleanArrayAccessor extends GlobSetAccessor {
 
     void set(MutableGlob glob, boolean[] value);
 
+    default void setValue(MutableGlob glob, Object value) {
+        set(glob, ((boolean[]) value));
+    }
+
 }

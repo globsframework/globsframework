@@ -39,7 +39,7 @@ public class GlobTypeToGlobTest {
         final Collection<GlobType> globTypes = GlobTypeToGlob.fromGlob(glob, GlobTypeResolver.ERROR);
         assertEquals(3, globTypes.size());
         final GlobType first = globTypes.iterator().next();
-        assertEquals(6, first.getFieldCount());
+        assertEquals(7, first.getFieldCount());
         first.getField(DummyObjectWithInner.VALUE_UNION.getName());
         first.getField(DummyObjectWithInner.VALUES_UNION.getName());
     }

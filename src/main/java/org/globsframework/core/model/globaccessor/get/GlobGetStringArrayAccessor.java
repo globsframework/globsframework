@@ -4,4 +4,9 @@ import org.globsframework.core.model.Glob;
 
 public interface GlobGetStringArrayAccessor extends GlobGetAccessor {
     String[] get(Glob glob);
+
+    default Object getValue(Glob glob) {
+        return get(glob);
+    }
+
 }

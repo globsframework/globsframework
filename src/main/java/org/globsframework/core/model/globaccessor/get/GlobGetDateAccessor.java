@@ -6,4 +6,9 @@ import java.time.LocalDate;
 
 public interface GlobGetDateAccessor extends GlobGetAccessor {
     LocalDate get(Glob glob);
+
+    default Object getValue(Glob glob) {
+        return get(glob);
+    }
+
 }

@@ -29,6 +29,8 @@ public class DummyObjectWithInner {
     @Targets({DummyObjectInner.class, DummyObject.class})
     public static final GlobArrayUnionField VALUES_UNION;
 
+    public static final StringArrayField STRS;
+
     static {
         final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("dummyObjectWithInner");
         ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO);
@@ -39,6 +41,7 @@ public class DummyObjectWithInner {
                 new Supplier[]{() -> DummyObjectInner.TYPE, () -> DummyObject.TYPE});
         VALUES_UNION = globTypeBuilder.declareGlobUnionArrayField("valuesUnion",
                 new Supplier[]{() -> DummyObjectInner.TYPE, () -> DummyObject.TYPE});
+        STRS = globTypeBuilder.declareStringArrayField("strs");
         TYPE = globTypeBuilder.build();
     }
 }

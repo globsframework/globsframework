@@ -5,10 +5,8 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.GlobFactory;
 import org.globsframework.core.model.MutableGlob;
-import org.globsframework.core.model.globaccessor.get.GlobGetAccessor;
-import org.globsframework.core.model.globaccessor.get.impl.*;
-import org.globsframework.core.model.globaccessor.set.GlobSetAccessor;
-import org.globsframework.core.model.globaccessor.set.impl.*;
+import org.globsframework.core.model.globaccessor.get.*;
+import org.globsframework.core.model.globaccessor.set.*;
 import org.globsframework.core.model.impl.*;
 import org.globsframework.core.model.utils.FieldCheck;
 
@@ -47,12 +45,12 @@ public class DefaultGlobFactory implements GlobFactory {
             return DefaultGlob64::new;
         }
         if (fieldCount <= 128 && Size.minSize <= 128) {
-            return  DefaultGlob128::new;
+            return DefaultGlob128::new;
         }
         return DefaultGlob::new;
     }
 
-    private GlobSetAccessor[] getSetAccessor(){
+    private GlobSetAccessor[] getSetAccessor() {
         GlobSetAccessor[] globSetAccessors = new GlobSetAccessor[type.getFieldCount()];
         SetAccessorValueVisitor setAccessorValueVisitor = new SetAccessorValueVisitor(type);
         for (Field field : type.getFields()) {
@@ -258,7 +256,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetIntAccessor extends AbstractGlobGetIntAccessor {
+    private final static class DefaultGlobGetIntAccessor implements GlobGetIntAccessor {
         private final int index;
         private final GlobType type;
 
@@ -288,7 +286,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetIntArrayAccessor extends AbstractGlobGetIntArrayAccessor {
+    private final static class DefaultGlobGetIntArrayAccessor implements GlobGetIntArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -318,7 +316,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetDoubleAccessor extends AbstractGlobGetDoubleAccessor {
+    private final static class DefaultGlobGetDoubleAccessor implements GlobGetDoubleAccessor {
         private final int index;
         private final GlobType type;
 
@@ -348,7 +346,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetDoubleArrayAccessor extends AbstractGlobGetDoubleArrayAccessor {
+    private final static class DefaultGlobGetDoubleArrayAccessor implements GlobGetDoubleArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -378,7 +376,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetBigDecimalAccessor extends AbstractGlobGetBigDecimalAccessor {
+    private final static class DefaultGlobGetBigDecimalAccessor implements GlobGetBigDecimalAccessor {
         private final int index;
         private final GlobType type;
 
@@ -408,7 +406,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetBigDecimalArrayAccessor extends AbstractGlobGetBigDecimalArrayAccessor {
+    private final static class DefaultGlobGetBigDecimalArrayAccessor implements GlobGetBigDecimalArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -438,7 +436,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetStringAccessor extends AbstractGlobGetStringAccessor {
+    private final static class DefaultGlobGetStringAccessor implements GlobGetStringAccessor {
         private final int index;
         private final GlobType type;
 
@@ -468,7 +466,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetStringArrayAccessor extends AbstractGlobGetStringArrayAccessor {
+    private final static class DefaultGlobGetStringArrayAccessor implements GlobGetStringArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -498,7 +496,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetBooleanAccessor extends AbstractGlobGetBooleanAccessor {
+    private final static class DefaultGlobGetBooleanAccessor implements GlobGetBooleanAccessor {
         private final int index;
         private final GlobType type;
 
@@ -528,7 +526,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetBooleanArrayAccessor extends AbstractGlobGetBooleanArrayAccessor {
+    private final static class DefaultGlobGetBooleanArrayAccessor implements GlobGetBooleanArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -558,7 +556,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetLongAccessor extends AbstractGlobGetLongAccessor {
+    private final static class DefaultGlobGetLongAccessor implements GlobGetLongAccessor {
         private final int index;
         private final GlobType type;
 
@@ -588,7 +586,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetLongArrayAccessor extends AbstractGlobGetLongArrayAccessor {
+    private final static class DefaultGlobGetLongArrayAccessor implements GlobGetLongArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -618,7 +616,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetDateAccessor extends AbstractGlobGetDateAccessor {
+    private final static class DefaultGlobGetDateAccessor implements GlobGetDateAccessor {
         private final int index;
         private final GlobType type;
 
@@ -648,7 +646,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetDateTimeAccessor extends AbstractGlobGetDateTimeAccessor {
+    private final static class DefaultGlobGetDateTimeAccessor implements GlobGetDateTimeAccessor {
         private final int index;
         private final GlobType type;
 
@@ -678,7 +676,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetBytesAccessor extends AbstractGlobGetBytesAccessor {
+    private final static class DefaultGlobGetBytesAccessor implements GlobGetBytesAccessor {
         private final int index;
         private final GlobType type;
 
@@ -708,7 +706,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetGlobAccessor extends AbstractGlobGetGlobAccessor {
+    private final static class DefaultGlobGetGlobAccessor implements GlobGetGlobAccessor {
         private final int index;
         private final GlobType type;
 
@@ -738,7 +736,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetGlobArrayAccessor extends AbstractGlobGetGlobArrayAccessor {
+    private final static class DefaultGlobGetGlobArrayAccessor implements GlobGetGlobArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -768,7 +766,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetGlobUnionAccessor extends AbstractGlobGetGlobUnionAccessor {
+    private final static class DefaultGlobGetGlobUnionAccessor implements GlobGetGlobAccessor {
         private final int index;
         private final GlobType type;
 
@@ -798,7 +796,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetGlobUnionArrayAccessor extends AbstractGlobGetGlobUnionArrayAccessor {
+    private final static class DefaultGlobGetGlobUnionArrayAccessor implements GlobGetGlobArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -828,7 +826,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetIntAccessor extends AbstractGlobSetIntAccessor {
+    private final static class DefaultGlobSetIntAccessor implements GlobSetIntAccessor {
         private final int index;
         private final GlobType type;
 
@@ -844,7 +842,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetIntArrayAccessor extends AbstractGlobSetIntArrayAccessor {
+    private final static class DefaultGlobSetIntArrayAccessor implements GlobSetIntArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -860,7 +858,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetDoubleAccessor extends AbstractGlobSetDoubleAccessor {
+    private final static class DefaultGlobSetDoubleAccessor implements GlobSetDoubleAccessor {
         private final int index;
         private final GlobType type;
 
@@ -876,7 +874,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetDoubleArrayAccessor extends AbstractGlobSetDoubleArrayAccessor {
+    private final static class DefaultGlobSetDoubleArrayAccessor implements GlobSetDoubleArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -892,7 +890,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetBigDecimalAccessor extends AbstractGlobSetBigDecimalAccessor {
+    private final static class DefaultGlobSetBigDecimalAccessor implements GlobSetBigDecimalAccessor {
         private final int index;
         private final GlobType type;
 
@@ -908,7 +906,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetBigDecimalArrayAccessor extends AbstractGlobSetBigDecimalArrayAccessor {
+    private final static class DefaultGlobSetBigDecimalArrayAccessor implements GlobSetBigDecimalArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -924,7 +922,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetStringAccessor extends AbstractGlobSetStringAccessor {
+    private final static class DefaultGlobSetStringAccessor implements GlobSetStringAccessor {
         private final int index;
         private final GlobType type;
 
@@ -941,7 +939,7 @@ public class DefaultGlobFactory implements GlobFactory {
 
     }
 
-    private final static class DefaultGlobSetStringArrayAccessor extends AbstractGlobSetStringArrayAccessor {
+    private final static class DefaultGlobSetStringArrayAccessor implements GlobSetStringArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -957,7 +955,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetBooleanAccessor extends AbstractGlobSetBooleanAccessor {
+    private final static class DefaultGlobSetBooleanAccessor implements GlobSetBooleanAccessor {
         private final int index;
         private final GlobType type;
 
@@ -973,7 +971,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetBooleanArrayAccessor extends AbstractGlobSetBooleanArrayAccessor {
+    private final static class DefaultGlobSetBooleanArrayAccessor implements GlobSetBooleanArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -989,7 +987,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetLongAccessor extends AbstractGlobSetLongAccessor {
+    private final static class DefaultGlobSetLongAccessor implements GlobSetLongAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1005,7 +1003,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetLongArrayAccessor extends AbstractGlobSetLongArrayAccessor {
+    private final static class DefaultGlobSetLongArrayAccessor implements GlobSetLongArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1021,7 +1019,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetDateAccessor extends AbstractGlobSetDateAccessor {
+    private final static class DefaultGlobSetDateAccessor implements GlobSetDateAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1037,7 +1035,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetDateTimeAccessor extends AbstractGlobSetDateTimeAccessor {
+    private final static class DefaultGlobSetDateTimeAccessor implements GlobSetDateTimeAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1053,7 +1051,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetBytesAccessor extends AbstractGlobSetBytesAccessor {
+    private final static class DefaultGlobSetBytesAccessor implements GlobSetBytesAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1069,7 +1067,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetGlobAccessor extends AbstractGlobSetGlobAccessor {
+    private final static class DefaultGlobSetGlobAccessor implements GlobSetGlobAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1085,7 +1083,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetGlobArrayAccessor extends AbstractGlobSetGlobArrayAccessor {
+    private final static class DefaultGlobSetGlobArrayAccessor implements GlobSetGlobArrayAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1101,7 +1099,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetGlobUnionAccessor extends AbstractGlobSetGlobUnionAccessor {
+    private final static class DefaultGlobSetGlobUnionAccessor implements GlobSetGlobAccessor {
         private final int index;
         private final GlobType type;
 
@@ -1117,7 +1115,7 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobSetGlobUnionArrayAccessor extends AbstractGlobSetGlobUnionArrayAccessor {
+    private final static class DefaultGlobSetGlobUnionArrayAccessor implements GlobSetGlobArrayAccessor {
         private final int index;
         private final GlobType type;
 

@@ -27,7 +27,6 @@ public final class DefaultGlob extends AbstractDefaultGlob {
     }
 
 
-    @Override
     void resetSet() {
         isSet.clear();
     }

@@ -14,7 +14,6 @@ import org.globsframework.core.metamodel.index.impl.DefaultUniqueIndex;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
-import org.globsframework.core.utils.container.hash.HashContainer;
 
 import java.math.BigDecimal;
 import java.util.*;

@@ -37,7 +37,6 @@ public final class DefaultGlob128 extends AbstractDefaultGlob {
         }
     }
 
-    @Override
     void resetSet() {
         set1 = 0;
         set2 = 0;

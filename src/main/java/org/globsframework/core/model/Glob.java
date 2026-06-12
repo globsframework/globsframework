@@ -30,11 +30,11 @@ public interface Glob extends FieldValues {
 
     boolean isReservedBy(int key);
 
+    void checkWasReservedBy(int key);
+
     default Key getNewKey() {
         return KeyBuilder.createFromValues(getType(), this);
     }
-
-    void checkWasReservedBy(int key);
 
     default boolean same(Glob glob) {
         if (glob == this) {

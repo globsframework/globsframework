@@ -60,7 +60,7 @@ public class SerializationInputChecker implements SerializedInput {
 
     public String[] readStringArray() {
         String value = serializedInput.readUtf8String();
-        if ("string[]".equals(value)) {
+        if ("String[]".equals(value)) {
             return serializedInput.readStringArray();
         } else {
             throw new UnexpectedApplicationState("string array expected but got " + value);

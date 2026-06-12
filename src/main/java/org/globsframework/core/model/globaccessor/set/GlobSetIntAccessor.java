@@ -4,7 +4,14 @@ import org.globsframework.core.model.MutableGlob;
 
 public interface GlobSetIntAccessor extends GlobSetAccessor {
 
-    void setNative(MutableGlob glob, int value);
-
     void set(MutableGlob glob, Integer value);
+
+    default void setValue(MutableGlob glob, Object value) {
+        set(glob, ((Integer) value));
+    }
+
+    default void setNative(MutableGlob glob, int value) {
+        set(glob, value);
+    }
+
 }

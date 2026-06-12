@@ -6,4 +6,8 @@ public interface GlobSetIntArrayAccessor extends GlobSetAccessor {
 
     void set(MutableGlob glob, int[] value);
 
+    default void setValue(MutableGlob glob, Object value) {
+        set(glob, ((int[]) value));
+    }
+
 }
