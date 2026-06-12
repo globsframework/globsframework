@@ -9,17 +9,21 @@ import org.globsframework.core.model.FieldValues;
 
 import static org.globsframework.core.functional.impl.AbstractFieldValue.NULL_VALUE;
 
-public class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
+final class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
+    final GlobType type;
     final Field field;
-    private Field fields[];
+    final int hash;
+    final Field[] fields;
 
     public OneFunctionalKeyBuilder(Field field) {
         this.field = field;
+        this.type = field.getGlobType();
         fields = new Field[]{field};
+        hash = type.getName().hashCode() * 31;
     }
 
     public GlobType getType() {
-        return field.getGlobType();
+        return type;
     }
 
     public Field[] getFields() {
@@ -41,7 +45,7 @@ public class OneFunctionalKeyBuilder implements FunctionalKeyBuilder {
 
     public String toString() {
         return "OneFunctionalKeyBuilder{" +
-                "field=" + field +
-                '}';
+               "field=" + field +
+               '}';
     }
 }

@@ -10,17 +10,19 @@ import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
-public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
+import java.util.Objects;
+
+final class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final OneFunctionalKeyBuilder functionalKeyBuilder;
     private Object value;
 
-    public OneFieldMutableKey(OneFunctionalKeyBuilder functionalKeyBuilder, Object value) {
+    OneFieldMutableKey(OneFunctionalKeyBuilder functionalKeyBuilder, Object value) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         this.value = value;
     }
 
-    public OneFieldMutableKey(OneFunctionalKeyBuilder functionalKeyBuilder) {
+    OneFieldMutableKey(OneFunctionalKeyBuilder functionalKeyBuilder) {
         this.functionalKeyBuilder = functionalKeyBuilder;
         value = NULL_VALUE;
     }
@@ -37,7 +39,7 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         if (field != functionalKeyBuilder.field) {
             throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
         }
-        return getNotNullValue(value);
+        return getOrNullValue(value);
     }
 
     public FunctionalKey getShared() {
@@ -50,7 +52,7 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
 
     public void unset(Field field) {
         if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, functionalKeyBuilder.getType());
+            FieldCheck.check(field, functionalKeyBuilder.type);
         }
         if (field == functionalKeyBuilder.field) {
             value = NULL_VALUE;
@@ -117,8 +119,9 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         }
     }
 
+    @Override
     public int hashCode() {
-        return 31 + (value != null ? value.hashCode() : 0);
+        return functionalKeyBuilder.hash +  Objects.hashCode(value);
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
@@ -129,6 +132,6 @@ public class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     public String toString() {
-        return functionalKeyBuilder.field.getName() + "=" + value;
+        return functionalKeyBuilder.type.getName() + " : " + functionalKeyBuilder.field.getName() + "=" + value;
     }
 }

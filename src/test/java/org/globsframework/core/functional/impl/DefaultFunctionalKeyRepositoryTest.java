@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultFunctionalKeyRepositoryTest {
 
-
     @Test
     public void testQuery() {
         DefaultFunctionalKeyRepository linkManager =

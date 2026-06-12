@@ -12,7 +12,7 @@ import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.util.Objects;
 
-public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
+final class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final TwoFunctionalKeyBuilder functionalKeyBuilder;
     private Object value1;
@@ -42,8 +42,8 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     protected Object doGet(Field field) {
-        if (field == functionalKeyBuilder.field1) return getNotNullValue(value1);
-        if (field == functionalKeyBuilder.field2) return getNotNullValue(value2);
+        if (field == functionalKeyBuilder.field1) return getOrNullValue(value1);
+        if (field == functionalKeyBuilder.field2) return getOrNullValue(value2);
         throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
@@ -57,22 +57,20 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
 
     public void unset(Field field) {
         if (FieldCheck.CheckGlob.shouldCheck) {
-            FieldCheck.check(field, functionalKeyBuilder.getType());
+            FieldCheck.check(field, functionalKeyBuilder.type);
         }
         if (field == functionalKeyBuilder.field1) {
             value1 = NULL_VALUE;
-        }
-        else if (field == functionalKeyBuilder.field2) {
+        } else if (field == functionalKeyBuilder.field2) {
             value2 = NULL_VALUE;
-        }
-        else {
+        } else {
             throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
         }
     }
 
     public boolean contains(Field field) {
         return field == functionalKeyBuilder.field1 ||
-                field == functionalKeyBuilder.field2;
+               field == functionalKeyBuilder.field2;
     }
 
     public int size() {
@@ -99,7 +97,7 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
         return visitor;
     }
 
-        public <T extends Functor> T apply(T functor) throws Exception {
+    public <T extends Functor> T apply(T functor) throws Exception {
         if (value1 != NULL_VALUE) {
             functor.process(functionalKeyBuilder.field1, value1);
         }
@@ -149,7 +147,7 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
                 if (value2 != that.value2) {
                     return false;
                 }
-            }else {
+            } else {
                 if (!functionalKeyBuilder.field2.valueEqual(value2, that.value2)) {
                     return false;
                 }
@@ -161,10 +159,8 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public int hashCode() {
-        int result = 1;
-        result = 31 * result + (value1 != null ? value1.hashCode() : 0);
-        result = 31 * result + (value2 != null ? value2.hashCode() : 0);
-        return result;
+        return 31 * (functionalKeyBuilder.hash + Objects.hashCode(value1))
+               + Objects.hashCode(value2);
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
@@ -174,6 +170,6 @@ public class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public String toString() {
-        return functionalKeyBuilder.field1.getName() + "=" + value1 + "/" + functionalKeyBuilder.field2.getName() + "=" + value2;
+        return functionalKeyBuilder.type.getName() + " : " + functionalKeyBuilder.field1.getName() + "=" + value1 + " ; " + functionalKeyBuilder.field2.getName() + "=" + value2;
     }
 }

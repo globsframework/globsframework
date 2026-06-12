@@ -9,19 +9,14 @@ import org.globsframework.core.model.FieldValues;
 
 import static org.globsframework.core.functional.impl.AbstractFieldValue.NULL_VALUE;
 
-final class TwoFunctionalKeyBuilder implements FunctionalKeyBuilder {
-    final GlobType type;
-    final Field field1;
-    final Field field2;
+public class ZeroFunctionalKeyBuilder implements FunctionalKeyBuilder {
+    private static final Field[] FIELDS = new Field[0];
     final int hash;
-    final Field[] fields;
+    final GlobType type;
 
-    public TwoFunctionalKeyBuilder(Field field1, Field field2) {
-        this.field1 = field1;
-        this.field2 = field2;
-        type = field1.getGlobType();
-        fields = new Field[]{field1, field2};
-        hash = type.getName().hashCode() * 31;
+    public ZeroFunctionalKeyBuilder(GlobType type) {
+        this.type = type;
+        hash = type.getName().hashCode();
     }
 
     public GlobType getType() {
@@ -29,13 +24,11 @@ final class TwoFunctionalKeyBuilder implements FunctionalKeyBuilder {
     }
 
     public Field[] getFields() {
-        return fields;
+        return FIELDS;
     }
 
     public FunctionalKey create(FieldValues fieldValues) {
-        return new TwoFieldsMutableKey(this,
-                fieldValues.isSet(field1) ? fieldValues.getValue(field1) : NULL_VALUE,
-                fieldValues.isSet(field2) ? fieldValues.getValue(field2) : NULL_VALUE);
+        return new ZeroFieldMutableKey(this);
     }
 
     public FunctionalKey proxy(FieldValues fieldValues) {
@@ -43,13 +36,13 @@ final class TwoFunctionalKeyBuilder implements FunctionalKeyBuilder {
     }
 
     public MutableFunctionalKey create() {
-        return new TwoFieldsMutableKey(this);
+        return new ZeroFieldMutableKey(this);
     }
 
+    @Override
     public String toString() {
-        return "TwoFunctionalKeyBuilder{" +
-               "field1=" + field1 +
-               ", field2=" + field2 +
+        return "ZeroFunctionalKeyBuilder{" +
+               "type=" + type.getName() +
                '}';
     }
 }

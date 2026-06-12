@@ -6,7 +6,6 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderFactory {
@@ -28,7 +27,7 @@ public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderF
     public FunctionalKeyBuilder create() {
         try {
             if (keys.isEmpty()) {
-                throw new RuntimeException("No key in functional key for type " + globType);
+                return new ZeroFunctionalKeyBuilder(globType);
             }
             if (keys.size() == 1) {
                 return new OneFunctionalKeyBuilder(keys.getFirst());

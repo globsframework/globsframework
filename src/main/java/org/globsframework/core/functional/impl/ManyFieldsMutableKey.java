@@ -14,8 +14,9 @@ import org.globsframework.core.utils.exceptions.ItemNotFound;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
+final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
     private final ManyFunctionalKeyBuilder functionalKeyBuilder;
     private final int[] index;
@@ -62,7 +63,7 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     protected Object doGet(Field field) {
         final int index = this.index[field.getIndex()];
         if (index >= 0) {
-            return getNotNullValue(values[index]);
+            return getOrNullValue(values[index]);
         }
         throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
@@ -162,9 +163,9 @@ public class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKe
     }
 
     public int hashCode() {
-        int result = 1; // make hash stable => GlobType is not part of the hash
+        int result = functionalKeyBuilder.hash; // make hash stable between run => use globtype.name
         for (Object value : values) {
-            result = 31 * result + (value == null ? 0 : value.hashCode());
+            result = 31 * result + Objects.hashCode(value);
         }
         return result;
     }

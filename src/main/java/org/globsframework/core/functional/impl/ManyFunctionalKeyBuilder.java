@@ -10,11 +10,14 @@ import org.globsframework.core.model.FieldValues;
 import java.util.Arrays;
 
 public class ManyFunctionalKeyBuilder implements FunctionalKeyBuilder {
-    final Field[] fields;
+    final GlobType type;
+    final int hash;
     final int[] index;
+    final Field[] fields;
 
     ManyFunctionalKeyBuilder(Field[] fields) {
         this.fields = fields;
+        type = fields[0].getGlobType();
         index = new int[fields[0].getGlobType().getFieldCount()];
         Arrays.fill(index, -1);
         int i = 0;
@@ -22,10 +25,11 @@ public class ManyFunctionalKeyBuilder implements FunctionalKeyBuilder {
             index[field.getIndex()] = i;
             ++i;
         }
+        hash = type.getName().hashCode();
     }
 
     public GlobType getType() {
-        return fields[0].getGlobType();
+        return type;
     }
 
     public Field[] getFields() {
@@ -46,7 +50,7 @@ public class ManyFunctionalKeyBuilder implements FunctionalKeyBuilder {
 
     public String toString() {
         return "ManyFunctionalKeyBuilder{" +
-                "fields=" + Arrays.toString(fields) +
-                '}';
+               "fields=" + Arrays.toString(fields) +
+               '}';
     }
 }

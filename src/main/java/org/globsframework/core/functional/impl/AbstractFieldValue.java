@@ -212,7 +212,7 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
         return (Glob[]) doGet(field);
     }
 
-    public Object getNotNullValue(Object o) {
+    public Object getOrNullValue(Object o) {
         return o == NULL_VALUE ? null : o;
     }
 }
