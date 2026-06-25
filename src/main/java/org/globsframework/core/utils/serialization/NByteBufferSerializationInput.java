@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 public final class NByteBufferSerializationInput extends InputStream implements SerializedInput {
+    public static final ByteBuffer EMPTY = ByteBuffer.allocate(0);
     private final NextBuffer nextBuffer;
     private ByteBuffer data;
     private byte[] buffer;
@@ -21,6 +22,14 @@ public final class NByteBufferSerializationInput extends InputStream implements 
 
     public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer) {
         this(data, nextBuffer, 1024);
+    }
+
+    public NByteBufferSerializationInput(NextBuffer nextBuffer) {
+        this(nextBuffer, 1024);
+    }
+
+    public NByteBufferSerializationInput(NextBuffer nextBuffer, int minSize) {
+        this(EMPTY, nextBuffer, minSize);
     }
 
     public NByteBufferSerializationInput(ByteBuffer data, NextBuffer nextBuffer, int minSize) {

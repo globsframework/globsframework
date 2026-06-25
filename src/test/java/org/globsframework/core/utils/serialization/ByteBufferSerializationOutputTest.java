@@ -5,9 +5,15 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +27,25 @@ public class ByteBufferSerializationOutputTest {
         final int position = out.position();
         ByteBufferSerializationInput in = new ByteBufferSerializationInput(buffer, position);
         check(in, zdt);
+    }
+
+    @Test
+    void checkBytesThatDoNotFit() {
+        List<byte[]> tmp = new ArrayList<>();
+        final ByteBufferSerializationOutput byteBufferSerializationOutput = new ByteBufferSerializationOutput(
+                (b, len) -> {
+                    tmp.add(Arrays.copyOf(b, len));
+                },
+                10);
+        final byte[] data = "0".repeat(20).getBytes(StandardCharsets.UTF_8);
+        byteBufferSerializationOutput.writeBytes(data);
+        byteBufferSerializationOutput.flush();
+
+        NByteBufferSerializationInput input = new NByteBufferSerializationInput(d -> {
+            return ByteBuffer.wrap(tmp.removeFirst());
+        });
+        final byte[] bytes = input.readBytes();
+        assertArrayEquals(data, bytes);
     }
 
     @Test
@@ -47,10 +72,9 @@ public class ByteBufferSerializationOutputTest {
 
         DefaultSerializationInput inDefault = new DefaultSerializationInput(new ByteArrayInputStream(data));
         check(inDefault, zdt);
-
     }
 
-    private static ZonedDateTime writeValues(ByteBufferSerializationOutput out) {
+    public static ZonedDateTime writeValues(SerializedOutput out) {
         out.write(3);
         out.write(-3);
         out.write(Integer.MAX_VALUE);
@@ -86,7 +110,7 @@ public class ByteBufferSerializationOutputTest {
         return zdt;
     }
 
-    private static void check(SerializedInput in, ZonedDateTime zdt) {
+    public static void check(SerializedInput in, ZonedDateTime zdt) {
         assertEquals(3, in.readNotNullInt());
         assertEquals(-3, in.readNotNullInt());
         assertEquals(Integer.MAX_VALUE, in.readNotNullInt());

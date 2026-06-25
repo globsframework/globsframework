@@ -1,81 +1,37 @@
 package org.globsframework.core.utils.serialization;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.math.BigDecimal;
-import java.nio.ByteOrder;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public final class ByteBufferSerializationOutput implements SerializedOutput {
-    static final VarHandle INT_VH =
-            MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
-    static final VarHandle LONG_VH =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
+public final class NByteBufferSerializationOutput implements SerializedOutput {
     private final ByteOutput outputStream;
-    private final byte[] buffer;
-    private final int limit;
-    private int position = 0;
+    private ByteBuffer buffer;
+
     public interface ByteOutput {
-        void writeOutputBytes(byte[] b, int len);
+        ByteBuffer writeOutputBytes(ByteBuffer byteBuffer);
     }
 
-    public ByteBufferSerializationOutput(byte[] buffer) {
-        if (buffer.length < 8) {
-            throw new RuntimeException("buffer size is 8 minimum got " + buffer.length);
-        }
-        this.buffer = buffer;
-        limit = buffer.length - 8;
-        outputStream = (b, len) -> {
+    public NByteBufferSerializationOutput(int size) {
+        this((b) -> {
             throw new RuntimeException("Not implemented");
-        };
+        }, ByteBuffer.allocateDirect(size));
     }
 
-    public int position() {
-        return position;
+    public NByteBufferSerializationOutput(ByteBuffer byteBuffer) {
+        this((b) -> {
+            throw new RuntimeException("Not implemented");
+        }, byteBuffer);
     }
 
-    public void reset() {
-        position = 0;
-    }
-
-    public void reset(int position) {
-        this.position = position;
-    }
-
-    public ByteBufferSerializationOutput(ByteOutput outputStream) {
-        this(outputStream, 8192);
-    }
-
-    public ByteBufferSerializationOutput(ByteOutput outputStream, int bufferSize) {
+    public NByteBufferSerializationOutput(ByteOutput outputStream, ByteBuffer byteBuffer) {
         this.outputStream = outputStream;
-        buffer = new byte[bufferSize];
-        limit = bufferSize - 8;
+        this.buffer = byteBuffer;
     }
 
-    public ByteBufferSerializationOutput(OutputStream outputStream) {
-        this(outputStream, 8192);
-    }
-
-    public ByteBufferSerializationOutput(OutputStream outputStream, int bufferSize) {
-        this.outputStream = new ByteOutput() {
-
-            public void writeOutputBytes(byte[] b, int len) {
-                try {
-                    outputStream.write(b, 0, len);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-        buffer = new byte[bufferSize];
-        limit = bufferSize - 8;
-    }
-
-    public byte[] getBuffer() {
-        return buffer;
+    public NByteBufferSerializationOutput(ByteOutput outputStream, int bufferSize) {
+        this(outputStream, ByteBuffer.allocateDirect(bufferSize));
     }
 
     public void write(int[] values) {
@@ -90,7 +46,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
             } else {
                 writeUncheckedInt(values.length);
                 for (int value : values) {
-                    if (position + 4 >= buffer.length) {
+                    if (buffer.position() + 4 >= buffer.limit()) {
                         flush();
                     }
                     writeUncheckedInt(value);
@@ -111,7 +67,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
             } else {
                 writeUncheckedInt(values.length);
                 for (long value : values) {
-                    if (position + 8 >= buffer.length) {
+                    if (buffer.position() + 8 >= buffer.limit()) {
                         flush();
                     }
                     writeUncheckedLong(value);
@@ -132,7 +88,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
             } else {
                 writeUncheckedInt(values.length);
                 for (double value : values) {
-                    if (position + 8 >= buffer.length) {
+                    if (buffer.position() + 8 >= buffer.limit()) {
                         flush();
                     }
                     writeUncheckedLong(Double.doubleToLongBits(value));
@@ -167,40 +123,35 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         writeUtf8String(value.toPlainString());
     }
 
-    // manual optimisation
     public void write(int value) {
-        int p = position;
-        if (p >= limit) {
+        if (buffer.remaining() < 4) {
             flush(4);
         }
-        INT_VH.set(buffer, position, value);
-        position += 4;
+        buffer.putInt(value);
     }
 
     private void writeUncheckedInt(int value) {
-//        int p = position;
-//        final byte[] b = buffer;
-//        b[p] = (byte) ((value >>> 24) & 0xFF);
-//        b[p + 1] = (byte) ((value >>> 16) & 0xFF);
-//        b[p + 2] = (byte) ((value >>> 8) & 0xFF);
-//        b[p + 3] = (byte) ((value) & 0xFF);
-        INT_VH.set(buffer, position, value);
-        position += 4;
+        buffer.putInt(value);
     }
 
     private boolean reserve(int len) {
-        if (position + len >= buffer.length) {
+        if (buffer.position() + len >= buffer.limit()) {
             return flush(len);
         }
         return true;
     }
 
     private boolean flush(int len) {
-        if (position != 0) {
-            outputStream.writeOutputBytes(buffer, position);
-            position = 0;
+        if (buffer.position() > 0) {
+            buffer = outputStream.writeOutputBytes(buffer);
         }
-        return len <= buffer.length;
+        return len <= buffer.limit();
+    }
+
+    public void flush() {
+        if (buffer.position() > 0) {
+            buffer = outputStream.writeOutputBytes(buffer);
+        }
     }
 
     public void writeInteger(Integer value) {
@@ -213,13 +164,11 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         }
     }
 
-    // manual optimisation
     public void write(long value) {
-        if (position >= limit) {
+        if (buffer.remaining() < 8) {
             flush(8);
         }
-        LONG_VH.set(buffer, position, value);
-        position += 8;
+        buffer.putLong(value);
     }
 
     private void writeUncheckedLong(long value) {
@@ -232,8 +181,7 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
 //        buffer[p + 5] = ((byte) (value >>> 16));
 //        buffer[p + 6] = ((byte) (value >>> 8));
 //        buffer[p + 7] = ((byte) (value >>> 0));
-        LONG_VH.set(buffer, position, value);
-        position += 8;
+        buffer.putLong(value);
     }
 
     public void writeLong(Long value) {
@@ -270,20 +218,21 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
             final int strlen = str.length();
             int utflen = strlen; // optimized for ASCII
 
-            boolean enoughSpace = 4 + strlen * 3 < buffer.length - position;
+            boolean enoughSpace = strlen < 1000000 && 4 + strlen * 3 < buffer.limit() - buffer.position();
             if (!enoughSpace) {
-                enoughSpace = 4 + strlen * 3 < buffer.length;
+                enoughSpace = strlen < 1000000 && 4 + strlen * 3 < buffer.limit();
                 if (enoughSpace) {
                     flush();
                 }
             }
             if (enoughSpace) {
-                int previousPos  = position;
-                position += 4; // place for int
-                int newPos = write(str, 0, strlen, buffer, position);
-                position = previousPos;
+                int previousPos = buffer.position();
+                buffer.position(previousPos + 4); // place for int
+                write(str, 0, strlen, buffer);
+                int newPos = buffer.position();
+                buffer.position(previousPos);
                 writeUncheckedInt(newPos - previousPos - 4);
-                position = newPos;
+                buffer.position(newPos);
             } else {
                 for (int i = 0; i < strlen; i++) {
                     int c = str.charAt(i);
@@ -293,14 +242,13 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
 
                 if (reserve(utflen + 4)) {
                     writeUncheckedInt(utflen);
-                    write(str, 0, strlen, buffer, position);
-                    position += utflen;
+                    write(str, 0, strlen, buffer);
                 } else {
                     writeUncheckedInt(utflen);
                     int startAt = 0;
                     while (true) {
-                        final int toRead = Math.min(strlen - startAt, (buffer.length - position) / 3 - 1);
-                        position = write(str, startAt, toRead, buffer, position);
+                        final int toRead = Math.min(strlen - startAt, (buffer.remaining()) / 3 - 1);
+                        write(str, startAt, toRead, buffer);
                         startAt += toRead;
                         if (startAt == strlen) {
                             return;
@@ -312,29 +260,28 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         }
     }
 
-    private int write(String str, int startAt, int strlen, byte[] buffer, int position) {
+    private void write(String str, int startAt, int strlen, ByteBuffer buffer) {
         int i;
         strlen += startAt;
         for (i = startAt; i < strlen; i++) {
             int c = str.charAt(i);
             if (c >= 0x80 || c == 0) break;
-            buffer[position++] = (byte) c;
+            buffer.put((byte) c);
         }
 
         for (; i < strlen; i++) {
             int c = str.charAt(i);
             if (c < 0x80 && c != 0) {
-                buffer[position++] = (byte) c;
+                buffer.put((byte) c);
             } else if (c >= 0x800) {
-                buffer[position++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
-                buffer[position++] = (byte) (0x80 | ((c >> 6) & 0x3F));
-                buffer[position++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+                buffer.put((byte) (0xE0 | ((c >> 12) & 0x0F)));
+                buffer.put((byte) (0x80 | ((c >> 6) & 0x3F)));
+                buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
             } else {
-                buffer[position++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
-                buffer[position++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+                buffer.put((byte) (0xC0 | ((c >> 6) & 0x1F)));
+                buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
             }
         }
-        return position;
     }
 
     public void write(boolean value) {
@@ -356,11 +303,9 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
         }
         if (reserve(value.length + 4)) {
             writeUncheckedInt(value.length);
-            int p = position;
             for (int i = 0; i < value.length; i++) {
-                buffer[p++] = (byte) (value[i] ? 1 : 0);
+                buffer.put((byte) (value[i] ? 1 : 0));
             }
-            position = p;
         } else {
             writeChecked(value);
         }
@@ -368,33 +313,30 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
 
     private void writeChecked(boolean[] value) {
         writeUncheckedInt(value.length);
-        int p = position;
         for (int i = 0; i < value.length; i++) {
-            if (p >= buffer.length) {
+            if (!buffer.hasRemaining()) {
                 flush(1);
-                p = 0;
             }
-            buffer[p++] = (byte) (value[i] ? 1 : 0);
+            buffer.put((byte) (value[i] ? 1 : 0));
         }
-        position = p;
     }
 
     public void writeByte(int value) {
-        if (position >= limit) {
+        if (!buffer.hasRemaining()) {
             flush(1);
         }
-        buffer[position++] = (byte) value;
+        buffer.put((byte) value);
     }
 
     private void writeUncheckByte(byte value) {
-        buffer[position++] = value;
+        buffer.put(value);
     }
 
     public void writeByte(byte value) {
-        if (position >= limit) {
+        if (!buffer.hasRemaining()) {
             flush(1);
         }
-        buffer[position++] = (byte) value;
+        buffer.put((byte) value);
     }
 
     public void writeBytes(byte[] value) {
@@ -405,12 +347,18 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
 
         if (reserve(value.length + 4)) {
             writeUncheckedInt(value.length);
-            System.arraycopy(value, 0, buffer, position, value.length);
-            position += value.length;
+            buffer.put(value);
         } else {
             write(value.length);
-            flush();
-            outputStream.writeOutputBytes(value, value.length);
+            int pos = 0;
+            while (pos != value.length) {
+                int toWrite = Math.min(value.length - pos, buffer.remaining());
+                buffer.put(value, pos, pos + toWrite);
+                pos += toWrite;
+                if (pos != value.length) {
+                    flush();
+                }
+            }
         }
     }
 
@@ -452,13 +400,6 @@ public final class ByteBufferSerializationOutput implements SerializedOutput {
                 write(date.getNano());
             }
             writeUtf8String(date.getZone().getId());
-        }
-    }
-
-    public void flush() {
-        if (position > 0) {
-            outputStream.writeOutputBytes(buffer, position);
-            position = 0;
         }
     }
 }
