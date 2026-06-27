@@ -83,7 +83,7 @@ public final class NByteBufferSerializationOutput implements SerializedOutput {
             if (reserve(values.length * 8 + 4)) {
                 writeUncheckedInt(values.length);
                 for (double value : values) {
-                    writeUncheckedLong(Double.doubleToLongBits(value));
+                    writeUncheckedDouble(value);
                 }
             } else {
                 writeUncheckedInt(values.length);
@@ -91,7 +91,7 @@ public final class NByteBufferSerializationOutput implements SerializedOutput {
                     if (buffer.position() + 8 >= buffer.limit()) {
                         flush();
                     }
-                    writeUncheckedLong(Double.doubleToLongBits(value));
+                    writeUncheckedDouble(value);
                 }
             }
         }
@@ -195,7 +195,10 @@ public final class NByteBufferSerializationOutput implements SerializedOutput {
     }
 
     public void write(double value) {
-        write(Double.doubleToLongBits(value));
+        if (buffer.remaining() < 8) {
+            flush(8);
+        }
+        buffer.putDouble(value);
     }
 
     public void writeDouble(Double value) {
@@ -204,8 +207,12 @@ public final class NByteBufferSerializationOutput implements SerializedOutput {
         } else {
             reserve(9);
             writeUncheckByte((byte) 0);
-            writeUncheckedLong(Double.doubleToLongBits(value));
+            writeUncheckedDouble(value);
         }
+    }
+
+    private void writeUncheckedDouble(double value) {
+        buffer.putDouble(value);
     }
 
     /*

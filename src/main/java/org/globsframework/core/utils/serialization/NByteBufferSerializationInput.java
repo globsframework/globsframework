@@ -188,7 +188,6 @@ public final class NByteBufferSerializationInput extends InputStream implements 
         return new BigDecimal(s);
     }
 
-
     public LocalDate readDate() {
         int year = readNotNullInt();
         if (year == Integer.MIN_VALUE) {
