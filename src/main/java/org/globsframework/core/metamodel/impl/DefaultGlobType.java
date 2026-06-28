@@ -31,6 +31,7 @@ public final class DefaultGlobType implements GlobType {
     private final Map<String, Index> indices;
     private final Map<Class<?>, Object> registered;
     private final HashContainer<Key, Glob> annotations;
+    // use stable value
     private Object[] properties = EMPTY_PROP;
 
     public DefaultGlobType(String name, Map<String, Field> fieldsByName, Map<Class<?>, Object> registered,
@@ -193,9 +194,9 @@ public final class DefaultGlobType implements GlobType {
         return globFactory;
     }
 
-    public <T> void register(Class<T> klass, T t) {
-        registered.put(klass, t);
-    }
+//    public <T> void register(Class<T> klass, T t) {
+//        registered.put(klass, t);
+//    }
 
     public <T> T getRegistered(Class<T> klass) {
         return (T) registered.get(klass);
@@ -251,7 +252,7 @@ public final class DefaultGlobType implements GlobType {
 
     synchronized public <T> T get(Property<T> property) {
         int index = property.getIndex();
-        if (properties.length < index) {
+        if (properties.length <= index) {
             properties = Arrays.copyOf(properties, index + 2);
         }
         final Object p = properties[index];

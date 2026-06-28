@@ -787,14 +787,17 @@ public class DefaultGlobRepository implements GlobRepository, IndexSource {
     }
 
     public void addTrigger(ChangeSetListener trigger) {
+        triggers = new ArrayList<>(triggers);
         triggers.add(trigger);
     }
 
     public void addTriggerAtFirst(ChangeSetListener trigger) {
-        triggers.add(0, trigger);
+        triggers = new ArrayList<>(triggers);
+        triggers.addFirst(trigger);
     }
 
     public void removeTrigger(ChangeSetListener trigger) {
+        triggers = new ArrayList<>(triggers);
         triggers.remove(trigger);
     }
 
