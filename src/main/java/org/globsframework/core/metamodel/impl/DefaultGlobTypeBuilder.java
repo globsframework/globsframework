@@ -346,18 +346,18 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return field;
     }
 
-    private GlobField createGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
+    private <T> GlobField<T> createGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultGlobField field = factory.addGlob(fieldName, globType, keyPos != -1, keyPos, index, annotations);
+        DefaultGlobField<T> field = factory.addGlob(fieldName, globType, keyPos != -1, keyPos, index, annotations);
         index++;
         return field;
     }
 
-    private GlobArrayField createGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
+    private <T> GlobArrayField<T> createGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultGlobArrayField field = factory.addGlobArray(fieldName, globType, keyPos != -1,
+        DefaultGlobArrayField<T> field = factory.addGlobArray(fieldName, globType, keyPos != -1,
                 keyPos, index, annotations);
         index++;
         return field;
@@ -447,11 +447,11 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return createBytesField(fieldName, annotations);
     }
 
-    public GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
+    public <T>  GlobField<T> declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
         return createGlobField(fieldName, globType, annotations);
     }
 
-    public GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
+    public <T> GlobArrayField<T> declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
         return createGlobArrayField(fieldName, globType, annotations);
     }
 

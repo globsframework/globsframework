@@ -117,14 +117,14 @@ public class DefaultFieldFactory {
         return add(new DefaultBytesField(name, type, index, annotations), false);
     }
 
-    public DefaultGlobField addGlob(String name, Supplier<GlobType> globType, boolean isKeyField,
+    public <T> DefaultGlobField<T> addGlob(String name, Supplier<GlobType> globType, boolean isKeyField,
                                     int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobField(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
+        return add(new DefaultGlobField<>(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
     }
 
-    public DefaultGlobArrayField addGlobArray(String name, Supplier<GlobType> globType, boolean isKeyField,
+    public <T> DefaultGlobArrayField<T> addGlobArray(String name, Supplier<GlobType> globType, boolean isKeyField,
                                               int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobArrayField(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
+        return add(new DefaultGlobArrayField<>(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
     }
 
     public DefaultGlobUnionField addGlobUnion(String fieldName, Supplier<GlobType>[] types,

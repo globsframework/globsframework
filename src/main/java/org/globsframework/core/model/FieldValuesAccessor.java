@@ -75,9 +75,21 @@ public interface FieldValuesAccessor {
 
     byte[] get(BytesField field) throws ItemNotFound;
 
-    Glob get(GlobField field) throws ItemNotFound;
+    Glob get(GlobField<?> field) throws ItemNotFound;
 
-    Glob[] get(GlobArrayField field) throws ItemNotFound;
+    // experimental
+    default <T>
+    TGlob<T> getT(GlobField<T> field) throws ItemNotFound{
+        return TGlob.of(get(field));
+    }
+
+    Glob[] get(GlobArrayField<?> field) throws ItemNotFound;
+
+    // experimental
+    default <T>
+    TGlobArray<T> getT(GlobArrayField<T> field) throws ItemNotFound{
+        return TGlobArray.of(get(field));
+    }
 
     Glob get(GlobUnionField field) throws ItemNotFound;
 

@@ -13,13 +13,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-public final class DefaultGlobField extends AbstractField implements GlobField {
+public final class DefaultGlobField<T> extends AbstractField implements GlobField<T> {
     private final Supplier<GlobType> targetType;
 
     public DefaultGlobField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
                             int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
         super(name, globType, Glob.class, index, keyIndex, isKeyField, null, DataType.Glob, annotations);
-        this.targetType = targetType; //StableValue.supplier(targetType);
+        this.targetType = targetType; //LazyConstant.of(targetType):
     }
 
     public GlobType getTargetType() {

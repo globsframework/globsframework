@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-public final class DefaultGlobArrayField extends AbstractField implements GlobArrayField {
+public final class DefaultGlobArrayField<T> extends AbstractField implements GlobArrayField<T> {
     private final Supplier<GlobType> targetType;
 
     public DefaultGlobArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,

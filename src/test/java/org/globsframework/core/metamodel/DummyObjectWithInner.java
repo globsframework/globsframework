@@ -16,10 +16,9 @@ public class DummyObjectWithInner {
     public static final BytesField byteArrayData;
 
     @Target(DummyObjectInner.class)
-    public static final GlobField VALUE;
+    public static final GlobField<DummyObjectInner> VALUE;
 
-    @Target(DummyObjectInner.class)
-    public static final GlobArrayField VALUES;
+    public static final GlobArrayField<DummyObjectInner> VALUES;
 
     @Targets({DummyObjectInner.class, DummyObject.class})
     public static final GlobUnionField VALUE_UNION;

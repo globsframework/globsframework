@@ -5,6 +5,7 @@ import org.globsframework.core.metamodel.DummyObjectInner;
 import org.globsframework.core.metamodel.DummyObjectWithInner;
 import org.globsframework.core.model.MutableGlob;
 import org.globsframework.core.model.ReservationException;
+import org.globsframework.core.model.TGlob;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,6 +113,7 @@ class DefaultGlobsCacheTest {
         // Add a nested glob so that recursive release is exercised before the main release
         MutableGlob inner = cache.newGlob(DummyObjectInner.TYPE, id);
         g.set(DummyObjectWithInner.VALUE, inner);
+        final TGlob<DummyObjectInner> t = g.getT(DummyObjectWithInner.VALUE);
 
         // Releasing with wrong id should throw
         assertThrows(ReservationException.class, () -> cache.release(g, id + 1));

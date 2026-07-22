@@ -85,9 +85,9 @@ public interface GlobTypeBuilder {
 
     BytesField declareBytesField(String fieldName, Collection<Glob> annotations);
 
-    GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
+    <T> GlobField<T> declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
 
-    GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
+    <T> GlobArrayField<T> declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations);
 
     GlobUnionField declareGlobUnionField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations);
 
@@ -217,11 +217,11 @@ public interface GlobTypeBuilder {
         return declareDateTimeField(fieldName, Arrays.asList(annotations));
     }
 
-    default GlobField declareGlobField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
+    default <T> GlobField<T> declareGlobField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
         return declareGlobField(fieldName, globType, Arrays.asList(annotations));
     }
 
-    default GlobArrayField declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
+    default <T> GlobArrayField<T> declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Glob... annotations) {
         return declareGlobArrayField(fieldName, globType, Arrays.asList(annotations));
     }
 
