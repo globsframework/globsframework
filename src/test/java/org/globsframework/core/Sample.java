@@ -41,13 +41,10 @@ public class Sample {
     public static class AType {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
-        @NamingField_()
         public static StringField string;
 
-        @FieldName_("int")
         public static IntegerField anInt;
 
         static {

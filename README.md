@@ -89,39 +89,48 @@ public interface GlobType {
     ...
 ```
 
-A Field interface
+A Field interface (a sealed hierarchy : the permitted subtypes are exactly the known field kinds)
 
 ```
-public interface Field {
-   GlobType getGlobType()
+public sealed interface Field extends Annotations
+        permits BooleanField, IntegerField, LongField, StringField, DoubleField, ... {
+   GlobType getGlobType();
    String getName();
+   DataType getDataType();
+   int getIndex();
    <T extends FieldVisitor> T accept(T visitor) throws Exception;
    Glob getAnnotation(Key key);
    ...
 }
 
-public interface StringField extends Field {
+public non-sealed interface StringField extends Field, Function<FieldValuesAccessor, String> {
 };
 
 ...
-public interface GlobField extends Field {
+public non-sealed interface GlobField extends Field, Function<FieldValuesAccessor, Glob> {
   GlobType getTargetType();
 };
 ...
 ```
 
-A Glob interface:
+A Glob interface (the value accessors come from FieldValues / FieldValuesAccessor):
 
 ```
-public interface Glob {
+public interface Glob extends FieldValues {
     GlobType getType();
+    Key getKey();
+    MutableGlob duplicate();
+    ...
+}
+
+public interface FieldValuesAccessor {
     boolean isSet(Field field) throws ItemNotFound;
     boolean isNull(Field field) throws ItemNotFound;
     Object getValue(Field field) throws ItemNotFound;
     Double get(DoubleField field) throws ItemNotFound;
     double get(DoubleField field, double valueIfNull) throws ItemNotFound;
     Optional<Double> getOpt(DoubleField field);
-    Integer getValue(IntegerField field) throws ItemNotFound;
+    Integer get(IntegerField field) throws ItemNotFound;
     ...
     Glob get(GlobField field) throws ItemNotFound;
     ...
@@ -132,25 +141,25 @@ public interface Glob {
 A mutable Glob :
 
 ```
-public insterface MutableGlob extends Glob {
-   MutableGlob set(DoubleField field, Double value);
-   void unset(Field field);
+public interface MutableGlob extends Glob, FieldSetter<MutableGlob> {
+   MutableGlob set(DoubleField field, Double value);   // from FieldSetter
+   MutableGlob unset(Field field);
    ...
 ```
 
 To create a GlobType (used in the json deserialization of a GlobType for exemple)
 In these example, we create a GlobType, associate an 'annotation' called NamingField to a field, set and get a value for
 the given field,
-and retreive the field using the NamingFieldAnnotationType which is also a Glob.
+and retreive the field using the NamingField annotation, which is itself a Glob.
 
 ```
          GlobType type = GlobTypeBuilderFactory.create("product")
             .addLongField("id")
-            .addStringField("title", NamingFieldAnnotationType.INSTANCE)
+            .addStringField("title", NamingField.UNIQUE_GLOB)
             .addStringField("handle")
             .addDoubleField("price")
             .addBooleanField("published")
-            .get();
+            .build();
 
         MutableGlob data = type.instantiate();
 
@@ -159,31 +168,39 @@ and retreive the field using the NamingFieldAnnotationType which is also a Glob.
 
         assertEquals("XPhone", data.get(titleField));
 
-        Field namingField = data.getType().findFieldWithAnnotation(NamingFieldAnnotationType.UNIQUE_KEY);
+        Field namingField = data.getType().findFieldWithAnnotation(NamingField.KEY);
         assertEquals("XPhone", data.getValue(namingField));
 ```
 
 ## static way when the type is known
 
+The same builder is used, but each field is *declared* : ```declareXxxField``` returns the typed Field instead of the
+builder, so it can be assigned to a ```static final``` field of a holder class.
+
 ```
 public static class ProductType {
-   public static GlobType TYPE;
-   
-   public static LongField id;
+   public static final GlobType TYPE;
 
-   public static StringField title;
-   
-   public static DoubleField price;
-   
-   public static BooleanField published;
-   
+   public static final LongField id;
+
+   public static final StringField title;
+
+   public static final DoubleField price;
+
+   public static final BooleanField published;
+
    static {
-      GlobTypeLoaderFactory.init(ProductType.class, "Product").load();
+      GlobTypeBuilder builder = GlobTypeBuilderFactory.create("Product");
+      id = builder.declareLongField("id", KeyField.ZERO);
+      title = builder.declareStringField("title", NamingField.UNIQUE_GLOB);
+      price = builder.declareDoubleField("price");
+      published = builder.declareBooleanField("published");
+      TYPE = builder.build();
    }
 }
 
-MutableGlob data = ProductType.TYPE.instance();
-data.set(ProductType.id, 43235)
+MutableGlob data = ProductType.TYPE.instantiate();
+data.set(ProductType.id, 43235L)
     .set(ProductType.title, "XPhone")
     .set(ProductType.price, 1599.);
 

@@ -62,13 +62,10 @@ public class MaxSizeTest {
     public static class Dummy_Level1 {
         public static GlobType TYPE;
 
-        @MaxSize_(3)
         public static StringField VALUE_1;
 
-        @MaxSize_(value = 3, allow_truncate = true)
         public static StringField VALUE_2;
 
-        @MaxSize_(value = 50, allow_truncate = true)
         public static StringField VALUE_3;
 
         @Target(Dummy_Level1.class)

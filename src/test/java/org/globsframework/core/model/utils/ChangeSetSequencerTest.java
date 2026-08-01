@@ -2,7 +2,6 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.fields.StringField;
@@ -22,10 +21,8 @@ public class ChangeSetSequencerTest {
     public static class ObjectWithCompositeKey {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID1;
 
-        @KeyField_
         public static IntegerField ID2;
 
         public static StringField NAME;
@@ -42,7 +39,6 @@ public class ChangeSetSequencerTest {
     public static class LinkedToObjectWithCompositeKey {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         public static IntegerField LINK1;
@@ -95,7 +91,6 @@ public class ChangeSetSequencerTest {
     public static class ObjectWithSelfReference {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         public static IntegerField LINK_ID;
@@ -145,10 +140,8 @@ public class ChangeSetSequencerTest {
     public static class LinkCycle1 {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID1;
 
-        @KeyField_
         public static IntegerField ID2;
 
         @Target(ObjectWithCompositeKey.class)
@@ -176,10 +169,8 @@ public class ChangeSetSequencerTest {
     public static class LinkCycle2 {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID1;
 
-        @KeyField_
         public static IntegerField ID2;
 
         @Target(ObjectWithCompositeKey.class)
@@ -246,7 +237,6 @@ public class ChangeSetSequencerTest {
     public static class LargeLinkCycle1 {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         //    @Target(LargeLinkCycle2.class)
@@ -269,7 +259,6 @@ public class ChangeSetSequencerTest {
     public static class LargeLinkCycle2 {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         //    @Target(LargeLinkCycle3.class)
@@ -292,7 +281,6 @@ public class ChangeSetSequencerTest {
     public static class LargeLinkCycle3 {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         @Target(LargeLinkCycle1.class)

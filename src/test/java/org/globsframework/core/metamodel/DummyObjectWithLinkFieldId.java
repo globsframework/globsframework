@@ -7,7 +7,6 @@ import org.globsframework.core.metamodel.links.Link;
 public class DummyObjectWithLinkFieldId {
     public static GlobType TYPE;
 
-    @KeyField_
     public static IntegerField LINK_ID;
 
     @Target(DummyObject.class)

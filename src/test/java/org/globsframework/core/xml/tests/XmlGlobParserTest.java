@@ -2,7 +2,6 @@ package org.globsframework.core.xml.tests;
 
 import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.links.Link;
@@ -145,7 +144,6 @@ public class XmlGlobParserTest {
     public static class AnObjectLinkingToATypeWithNoNamingField {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         public static IntegerField OBJ2_ID;
@@ -214,7 +212,6 @@ public class XmlGlobParserTest {
     public static class AnObject {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField ID;
 
         static {
@@ -226,7 +223,6 @@ public class XmlGlobParserTest {
 
     public static class AnObjectWithTwoLinks {
         public static GlobType TYPE;
-        @KeyField_
         public static IntegerField ID;
 
         @Target(AnObject.class)

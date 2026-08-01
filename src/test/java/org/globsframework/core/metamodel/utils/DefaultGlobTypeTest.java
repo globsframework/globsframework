@@ -1,9 +1,7 @@
 package org.globsframework.core.metamodel.utils;
 
 import org.globsframework.core.metamodel.*;
-import org.globsframework.core.metamodel.annotations.FieldName_;
 import org.globsframework.core.metamodel.annotations.FieldName;
-import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.impl.DefaultGlobModel;
@@ -40,7 +38,6 @@ public class DefaultGlobTypeTest {
     public static class Type {
         public static GlobType TYPE;
 
-        @KeyField_
         public static IntegerField FIELD1;
     }
 
@@ -57,10 +54,8 @@ public class DefaultGlobTypeTest {
     public static class TypeWithAnnotation {
         public static GlobType TYPE;
 
-        @FieldName_("qty")
         public static IntegerField F1;
 
-        @FieldName_("ean")
         public static IntegerField F2;
 
         static {

@@ -3,9 +3,7 @@ package org.globsframework.core.utils.container.specific;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
-import org.globsframework.core.metamodel.annotations.AutoIncrement_;
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.KeyField_;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
@@ -24,16 +22,10 @@ public class HashMapGlobKeyContainerTest {
 
         public static GlobType TYPE;
 
-        @KeyField_
-        @AutoIncrement_
         public static IntegerField ID1;
 
-        @KeyField_
-        @AutoIncrement_
         public static IntegerField ID2;
 
-        @KeyField_
-        @AutoIncrement_
         public static IntegerField ID3;
 
         static {
