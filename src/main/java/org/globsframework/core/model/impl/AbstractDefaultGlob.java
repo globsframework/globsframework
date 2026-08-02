@@ -19,7 +19,6 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     private final GlobType type;
     private final Object[] values;
     private int hashCode;
-    private int reserve = 0;
 
     protected AbstractDefaultGlob(GlobType type) {
         this(type, new Object[type.getFieldCount()]);
@@ -318,7 +317,6 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     final public Object doCheckedGet(Field field) {
         if (FieldCheck.CheckGlob.shouldCheck) {
             FieldCheck.check(field, type);
-            checkReserved();
         } else {
             assert type == field.getGlobType();
         }
@@ -331,7 +329,6 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
                 throw new RuntimeException(field.getFullName() + " is a key value and the hashCode is already computed.");
             }
             FieldCheck.check(field, type, value);
-            checkReserved();
         } else {
             assert hashCode == 0 || !field.isKeyField();
             assert type == field.getGlobType();
@@ -362,70 +359,6 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         }
         this.hashCode = hashCode;
         return hashCode;
-    }
-
-    private void checkReserved() {
-        if (reserve < 0) {
-            throw new ReservationException("Data not reserved");
-        }
-    }
-
-    @Override
-    public void reserve(int key) {
-        if (key <= 0) {
-            throw new ReservationException("Reserved key <= 0 Got " + key);
-        }
-        if (reserve > 0) {
-            throw new ReservationException("Already reserved by " + key);
-        }
-        reserve = key;
-    }
-
-    @Override
-    final public boolean release(int key) {
-        if (key <= 0) {
-            throw new ReservationException("Released key <= 0 Got " + key);
-        }
-        if (reserve == -key) {
-            return false;
-        }
-        if (reserve != 0) {
-            if (reserve != key) {
-                throw new ReservationException("Can not release data : reserved by " + reserve + " != " + key);
-            }
-            reserve = -key;
-        } else {
-            throw new ReservationException("Can not release not own Glob '" + key + "'");
-        }
-        hashCode = 0;
-        resetSet();
-        return true;
-    }
-
-    @Override
-    final public void unReserve() {
-        hashCode = 0;
-        reserve = 0;
-        resetSet();
-    }
-
-    abstract void resetSet();
-
-    @Override
-    final public boolean isReserved() {
-        return reserve > 0;
-    }
-
-    @Override
-    final public boolean isReservedBy(int key) {
-        return key > 0 && reserve == key;
-    }
-
-    @Override
-    final public void checkWasReservedBy(int key) {
-        if (key <= 0 || reserve != -key) {
-            throw new ReservationException("Data was not reserved by " + reserve + " != " + key);
-        }
     }
 
     // we don't want to add a dependency on any json framework here : we output a json like string here => need help : may be a bad idea

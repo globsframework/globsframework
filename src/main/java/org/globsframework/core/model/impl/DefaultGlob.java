@@ -2,7 +2,6 @@ package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.model.ReservationException;
 
 import java.util.BitSet;
 
@@ -24,10 +23,5 @@ public final class DefaultGlob extends AbstractDefaultGlob {
 
     public void clearSetAt(int index) {
         isSet.clear(index);
-    }
-
-
-    void resetSet() {
-        isSet.clear();
     }
 }

@@ -36,9 +36,4 @@ public final class DefaultGlob128 extends AbstractDefaultGlob {
             set2 &= ~(1L << (index - 64));
         }
     }
-
-    void resetSet() {
-        set1 = 0;
-        set2 = 0;
-    }
 }

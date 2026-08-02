@@ -24,8 +24,4 @@ public final class DefaultGlob32 extends AbstractDefaultGlob {
         set &= ~(1 << index);
     }
 
-    public void resetSet() {
-        set = 0;
-    }
-
 }
