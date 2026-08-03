@@ -58,13 +58,13 @@ class GlobInputStreamFieldVisitor implements FieldVisitorWithContext<MutableGlob
         mutableGlob.set(field, serializedInput.readBytes());
     }
 
-    public void visitGlob(GlobField field, MutableGlob mutableGlob) {
+    public void visitGlob(GlobField<?> field, MutableGlob mutableGlob) {
         if (serializedInput.readBoolean()) {
             mutableGlob.set(field, globDeSerializer.readKnowGlob(field.getTargetType()));
         }
     }
 
-    public void visitGlobArray(GlobArrayField field, MutableGlob mutableGlob) {
+    public void visitGlobArray(GlobArrayField<?> field, MutableGlob mutableGlob) {
         int len = serializedInput.readNotNullInt();
         if (len >= 0) {
             Glob[] values = new Glob[len];

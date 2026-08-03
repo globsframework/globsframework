@@ -80,7 +80,7 @@ public class GlobSerializer {
             }
         }
 
-        public void visitGlob(GlobField field, Glob data, SerializedOutput output) throws Exception {
+        public void visitGlob(GlobField<?> field, Glob data, SerializedOutput output) throws Exception {
             Glob glob = data.get(field);
             output.write(glob != null);
             if (glob != null) {
@@ -88,7 +88,7 @@ public class GlobSerializer {
             }
         }
 
-        public void visitGlobArray(GlobArrayField field, Glob data, SerializedOutput output) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, Glob data, SerializedOutput output) throws Exception {
             Glob[] globs = data.get(field);
             if (globs == null) {
                 output.write(-1);

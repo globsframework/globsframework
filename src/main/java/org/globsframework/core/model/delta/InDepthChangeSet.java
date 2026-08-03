@@ -22,45 +22,41 @@ public class InDepthChangeSet extends DefaultChangeSet {
 
     private void process(FieldsValueScanner values, GlobType globType) {
         values.safeAccept(new FieldValueVisitor.AbstractFieldValueVisitor() {
-            public void visitGlob(GlobField field, Glob value) throws Exception {
-                Glob glob = value;
-                if (glob != null) {
-                    DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                    if (!glob1.isModified()) {
-                        processCreation(glob1.getKey(), glob);
+            public void visitGlob(GlobField<?> field, Glob value) throws Exception {
+                if (value != null) {
+                    DefaultDeltaGlob deltaGlob = getGlob(value.getKey());
+                    if (!deltaGlob.isModified()) {
+                        processCreation(deltaGlob.getKey(), value);
                     }
                 }
             }
 
             public void visitUnionGlob(GlobUnionField field, Glob value) throws Exception {
-                Glob glob = value;
-                if (glob != null) {
-                    DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                    if (!glob1.isModified()) {
-                        processCreation(glob1.getKey(), glob);
+                if (value != null) {
+                    DefaultDeltaGlob deltaGlob = getGlob(value.getKey());
+                    if (!deltaGlob.isModified()) {
+                        processCreation(deltaGlob.getKey(), value);
                     }
                 }
             }
 
             public void visitUnionGlobArray(GlobArrayUnionField field, Glob[] value) throws Exception {
-                Glob[] globs = value;
-                if (globs != null) {
-                    for (Glob glob : globs) {
-                        DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                        if (!glob1.isModified()) {
-                            processCreation(glob1.getKey(), glob);
+                if (value != null) {
+                    for (Glob glob : value) {
+                        DefaultDeltaGlob deltaGlob = getGlob(glob.getKey());
+                        if (!deltaGlob.isModified()) {
+                            processCreation(deltaGlob.getKey(), glob);
                         }
                     }
                 }
             }
 
-            public void visitGlobArray(GlobArrayField field, Glob[] value) throws Exception {
-                Glob[] globs = value;
-                if (globs != null) {
-                    for (Glob glob : globs) {
-                        DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                        if (!glob1.isModified()) {
-                            processCreation(glob1.getKey(), glob);
+            public void visitGlobArray(GlobArrayField<?> field, Glob[] value) throws Exception {
+                if (value != null) {
+                    for (Glob glob : value) {
+                        DefaultDeltaGlob deltaGlob = getGlob(glob.getKey());
+                        if (!deltaGlob.isModified()) {
+                            processCreation(deltaGlob.getKey(), glob);
                         }
                     }
                 }
@@ -150,45 +146,41 @@ public class InDepthChangeSet extends DefaultChangeSet {
     public void processDeletion(Key key, FieldsValueScanner values) {
         super.processDeletion(key, values);
         values.safeAccept(new FieldValueVisitor.AbstractFieldValueVisitor() {
-            public void visitGlob(GlobField field, Glob value) throws Exception {
-                Glob glob = value;
-                if (glob != null) {
-                    DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                    if (!glob1.isModified()) {
-                        processDeletion(glob1.getKey(), glob);
+            public void visitGlob(GlobField<?> field, Glob value) throws Exception {
+                if (value != null) {
+                    DefaultDeltaGlob deltaGlob = getGlob(value.getKey());
+                    if (!deltaGlob.isModified()) {
+                        processDeletion(deltaGlob.getKey(), value);
                     }
                 }
             }
 
             public void visitUnionGlob(GlobUnionField field, Glob value) throws Exception {
-                Glob glob = value;
-                if (glob != null) {
-                    DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                    if (!glob1.isModified()) {
-                        processDeletion(glob1.getKey(), glob);
+                if (value != null) {
+                    DefaultDeltaGlob deltaGlob = getGlob(value.getKey());
+                    if (!deltaGlob.isModified()) {
+                        processDeletion(deltaGlob.getKey(), value);
                     }
                 }
             }
 
             public void visitUnionGlobArray(GlobArrayUnionField field, Glob[] value) throws Exception {
-                Glob[] globs = value;
-                if (globs != null) {
-                    for (Glob glob : globs) {
-                        DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                        if (!glob1.isModified()) {
-                            processDeletion(glob1.getKey(), glob);
+                if (value != null) {
+                    for (Glob glob : value) {
+                        DefaultDeltaGlob deltaGlob = getGlob(glob.getKey());
+                        if (!deltaGlob.isModified()) {
+                            processDeletion(deltaGlob.getKey(), glob);
                         }
                     }
                 }
             }
 
-            public void visitGlobArray(GlobArrayField field, Glob[] value) throws Exception {
-                Glob[] globs = value;
-                if (globs != null) {
-                    for (Glob glob : globs) {
-                        DefaultDeltaGlob glob1 = getGlob(glob.getKey());
-                        if (!glob1.isModified()) {
-                            processDeletion(glob1.getKey(), glob);
+            public void visitGlobArray(GlobArrayField<?> field, Glob[] value) throws Exception {
+                if (value != null) {
+                    for (Glob glob : value) {
+                        DefaultDeltaGlob deltaGlob = getGlob(glob.getKey());
+                        if (!deltaGlob.isModified()) {
+                            processDeletion(deltaGlob.getKey(), glob);
                         }
                     }
                 }

@@ -208,14 +208,14 @@ public class DefaultGlobFactoryTest {
         MutableGlob inner = innerType.instantiate().set(innerType.getTypedField("val"), Integer.valueOf(1));
 
         // GlobField
-        GlobField globField = type.getTypedField("glob");
+        GlobField<?> globField = type.getTypedField("glob");
         GlobSetGlobAccessor setGlob = (GlobSetGlobAccessor) factory.getSetValueAccessor(globField);
         GlobGetGlobAccessor getGlob = (GlobGetGlobAccessor) factory.getGetValueAccessor(globField);
         setGlob.set(glob, inner);
         assertEquals(inner, getGlob.get(glob));
 
         // GlobArrayField
-        GlobArrayField globArrayField = type.getTypedField("globArray");
+        GlobArrayField<?> globArrayField = type.getTypedField("globArray");
         GlobSetGlobArrayAccessor setGlobArray = (GlobSetGlobArrayAccessor) factory.getSetValueAccessor(globArrayField);
         GlobGetGlobArrayAccessor getGlobArray = (GlobGetGlobArrayAccessor) factory.getGetValueAccessor(globArrayField);
         MutableGlob[] inners = new MutableGlob[]{inner};

@@ -90,10 +90,10 @@ public class InDepthChangeSetTest {
         public static StringField NAME;
 
         @Target(SubType.class)
-        public static GlobField SUB_ELEMENT;
+        public static GlobField<SubType> SUB_ELEMENT;
 
         @Target(SubTypeWWithoutKey.class)
-        public static GlobArrayField COUNTS;
+        public static GlobArrayField<SubTypeWWithoutKey> COUNTS;
 
         static {
             final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("Dummy");

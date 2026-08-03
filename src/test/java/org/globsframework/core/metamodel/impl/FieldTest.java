@@ -29,11 +29,11 @@ public class FieldTest {
             }
             case DoubleField doubleField -> {
             }
-            case GlobArrayField globArrayField -> {
+            case GlobArrayField<?> globArrayField -> {
             }
             case GlobArrayUnionField globArrayUnionField -> {
             }
-            case GlobField globField -> {
+            case GlobField<?> globField -> {
             }
             case GlobUnionField globUnionField -> {
             }

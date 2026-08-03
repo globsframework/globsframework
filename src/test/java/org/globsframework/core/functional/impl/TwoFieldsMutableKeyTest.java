@@ -3,12 +3,10 @@ package org.globsframework.core.functional.impl;
 import org.globsframework.core.functional.FunctionalKey;
 import org.globsframework.core.functional.MutableFunctionalKey;
 import org.globsframework.core.metamodel.DummyObjectWithCompositeKey;
-import org.globsframework.core.metamodel.fields.BytesField;
-import org.globsframework.core.metamodel.fields.Field;
-import org.globsframework.core.metamodel.fields.FieldValueVisitor;
-import org.globsframework.core.metamodel.fields.IntegerField;
+import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.model.FieldValue;
 import org.globsframework.core.model.FieldValues;
+import org.globsframework.core.model.Glob;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -70,8 +68,8 @@ public class TwoFieldsMutableKeyTest {
             public void visitBooleanArray(org.globsframework.core.metamodel.fields.BooleanArrayField field, boolean[] value) {}
             public void visitDate(org.globsframework.core.metamodel.fields.DateField field, java.time.LocalDate value) {}
             public void visitDateTime(org.globsframework.core.metamodel.fields.DateTimeField field, java.time.ZonedDateTime value) {}
-            public void visitGlob(org.globsframework.core.metamodel.fields.GlobField field, org.globsframework.core.model.Glob value) {}
-            public void visitGlobArray(org.globsframework.core.metamodel.fields.GlobArrayField field, org.globsframework.core.model.Glob[] values) {}
+            public void visitGlob(GlobField<?> field, Glob value) {}
+            public void visitGlobArray(GlobArrayField<?> field, Glob[] values) {}
             public void visitUnionGlob(org.globsframework.core.metamodel.fields.GlobUnionField field, org.globsframework.core.model.Glob value) {}
             public void visitUnionGlobArray(org.globsframework.core.metamodel.fields.GlobArrayUnionField field, org.globsframework.core.model.Glob[] values) {}
         };

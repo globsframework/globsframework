@@ -126,14 +126,14 @@ public class FieldValueVisitorWithContextButKey<CTX> implements FieldValueVisito
     }
 
     @Override
-    public void visitGlob(GlobField field, Glob value, CTX ctx) throws Exception {
+    public void visitGlob(GlobField<?> field, Glob value, CTX ctx) throws Exception {
         if (!field.isKeyField()) {
             fieldValueVisitor.visitGlob(field, value, ctx);
         }
     }
 
     @Override
-    public void visitGlobArray(GlobArrayField field, Glob[] value, CTX ctx) throws Exception {
+    public void visitGlobArray(GlobArrayField<?> field, Glob[] value, CTX ctx) throws Exception {
         if (!field.isKeyField()) {
             fieldValueVisitor.visitGlobArray(field, value, ctx);
         }

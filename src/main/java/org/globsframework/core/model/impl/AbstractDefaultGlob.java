@@ -141,12 +141,12 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     @Override
-    final public MutableGlob getMutable(GlobField field) throws ItemNotFound {
+    final public MutableGlob getMutable(GlobField<?> field) throws ItemNotFound {
         return getMutableGlob(get(field), field);
     }
 
     @Override
-    final public MutableGlob[] getMutable(GlobArrayField field) throws ItemNotFound {
+    final public MutableGlob[] getMutable(GlobArrayField<?> field) throws ItemNotFound {
         return getMutableGlobs(get(field), field);
     }
 
@@ -264,11 +264,11 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         return setObject(field, value);
     }
 
-    final public MutableGlob set(GlobField field, Glob value) throws ItemNotFound {
+    final public MutableGlob set(GlobField<?> field, Glob value) throws ItemNotFound {
         return setObject(field, value);
     }
 
-    final public MutableGlob set(GlobArrayField field, Glob[] values) throws ItemNotFound {
+    final public MutableGlob set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
         return setObject(field, values);
     }
 
@@ -451,7 +451,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     // implement asFieldValues for key
     final public FieldValues asFieldValues() {
         return new AbstractFieldValues() {
-            GlobType type = getType();
+            final GlobType type = getType();
 
             public boolean isSet(Field field) throws ItemNotFound {
                 return AbstractDefaultGlob.this.isSet(field);
@@ -606,11 +606,11 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
             instantiate.uncheckedSet(field, ((byte[]) src.uncheckGet(field)).clone());
         }
 
-        public void visitGlob(GlobField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
+        public void visitGlob(GlobField<?> field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
             instantiate.uncheckedSet(field, ((Glob) src.uncheckGet(field)).duplicate());
         }
 
-        public void visitGlobArray(GlobArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
             instantiate.uncheckedSet(field, duplicate((Glob[]) src.uncheckGet(field)));
         }
 
@@ -684,7 +684,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public boolean get(BooleanField field, boolean defaultIfNull) {
         Object value = doCheckedGet(field);
-        return value == null ? Boolean.valueOf(defaultIfNull) : (boolean) value;
+        return value == null ? defaultIfNull : (boolean) value;
     }
 
     final public Long get(LongField field) {
@@ -732,11 +732,11 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         return (BigDecimal[]) doCheckedGet(field);
     }
 
-    final public Glob get(GlobField field) throws ItemNotFound {
+    final public Glob get(GlobField<?> field) throws ItemNotFound {
         return (Glob) doCheckedGet(field);
     }
 
-    final public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    final public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         return (Glob[]) doCheckedGet(field);
     }
 

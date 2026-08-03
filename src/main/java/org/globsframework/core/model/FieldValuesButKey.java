@@ -188,12 +188,12 @@ public class FieldValuesButKey implements FieldValues {
         return fieldValues.get(field);
     }
 
-    public Glob get(GlobField field) throws ItemNotFound {
+    public Glob get(GlobField<?> field) throws ItemNotFound {
         checkNotAKey(field);
         return fieldValues.get(field);
     }
 
-    public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         checkNotAKey(field);
         return fieldValues.get(field);
     }

@@ -14,7 +14,7 @@ public class NodeType {
 
         public static final IntegerField ID;
 
-        public static final GlobField NODE;
+        public static final GlobField<Node1> NODE;
 
         static {
             GlobTypeBuilder globTypeBuilder = DefaultGlobTypeBuilder.init("Node1");
@@ -29,7 +29,7 @@ public class NodeType {
 
         public static final IntegerField ID;
 
-        public static final GlobField NODE;
+        public static final GlobField<Node1> NODE;
 
         static {
             GlobTypeBuilder globTypeBuilder = DefaultGlobTypeBuilder.init("Node2");

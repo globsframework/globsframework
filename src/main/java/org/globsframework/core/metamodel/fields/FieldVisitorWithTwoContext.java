@@ -31,9 +31,9 @@ public interface FieldVisitorWithTwoContext<C, D> {
 
     void visitBytes(BytesField field, C ctx1, D ctx2) throws Exception;
 
-    void visitGlob(GlobField field, C ctx1, D ctx2) throws Exception;
+    void visitGlob(GlobField<?> field, C ctx1, D ctx2) throws Exception;
 
-    void visitGlobArray(GlobArrayField field, C ctx1, D ctx2) throws Exception;
+    void visitGlobArray(GlobArrayField<?> field, C ctx1, D ctx2) throws Exception;
 
     void visitUnionGlob(GlobUnionField field, C ctx1, D ctx2) throws Exception;
 
@@ -101,11 +101,11 @@ public interface FieldVisitorWithTwoContext<C, D> {
             notManaged(field, ctx1, ctx2);
         }
 
-        public void visitGlob(GlobField field, C ctx1, D ctx2) throws Exception {
+        public void visitGlob(GlobField<?> field, C ctx1, D ctx2) throws Exception {
             notManaged(field, ctx1, ctx2);
         }
 
-        public void visitGlobArray(GlobArrayField field, C ctx1, D ctx2) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, C ctx1, D ctx2) throws Exception {
             notManaged(field, ctx1, ctx2);
         }
 

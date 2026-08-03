@@ -115,11 +115,11 @@ public class EmptyKey implements Key {
         throw new RuntimeException("Empty key '" + field.getFullName() + " not available");
     }
 
-    public Glob get(GlobField field) throws ItemNotFound {
+    public Glob get(GlobField<?> field) throws ItemNotFound {
         throw new RuntimeException("Empty key '" + field.getFullName() + " not available");
     }
 
-    public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         throw new RuntimeException("Empty key '" + field.getFullName() + " not available");
     }
 

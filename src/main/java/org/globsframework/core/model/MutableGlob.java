@@ -8,9 +8,9 @@ import org.globsframework.core.utils.exceptions.ItemNotFound;
 public interface MutableGlob extends Glob, FieldSetter<MutableGlob> {
     MutableGlob unset(Field field);
 
-    MutableGlob getMutable(GlobField field) throws ItemNotFound;
+    MutableGlob getMutable(GlobField<?> field) throws ItemNotFound;
 
-    MutableGlob[] getMutable(GlobArrayField field) throws ItemNotFound;
+    MutableGlob[] getMutable(GlobArrayField<?> field) throws ItemNotFound;
 
     MutableGlob getMutable(GlobUnionField field) throws ItemNotFound;
 
@@ -31,7 +31,7 @@ public interface MutableGlob extends Glob, FieldSetter<MutableGlob> {
         }
     }
 
-    default MutableGlob add(GlobArrayField field, Glob...values) {
+    default MutableGlob add(GlobArrayField<?> field, Glob...values) {
         if (values == null) {
             return this;
         }

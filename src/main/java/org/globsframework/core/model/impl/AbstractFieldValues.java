@@ -109,11 +109,11 @@ public interface AbstractFieldValues extends FieldValues {
         return (BigDecimal[]) doCheckedGet(field);
     }
 
-    default Glob get(GlobField field) throws ItemNotFound {
+    default Glob get(GlobField<?> field) throws ItemNotFound {
         return (Glob) doCheckedGet(field);
     }
 
-    default Glob[] get(GlobArrayField field) throws ItemNotFound {
+    default Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         return (Glob[]) doCheckedGet(field);
     }
 

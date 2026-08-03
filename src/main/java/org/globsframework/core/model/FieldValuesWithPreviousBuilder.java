@@ -107,11 +107,11 @@ public class FieldValuesWithPreviousBuilder {
         setValue(field, newValue, previousValue);
     }
 
-    public void set(GlobField field, Glob newValue, Glob previousValue) {
+    public void set(GlobField<?> field, Glob newValue, Glob previousValue) {
         setValue(field, newValue, previousValue);
     }
 
-    public void set(GlobArrayField field, Glob[] newValue, Glob[] previousValue) {
+    public void set(GlobArrayField<?> field, Glob[] newValue, Glob[] previousValue) {
         setValue(field, newValue, previousValue);
     }
 

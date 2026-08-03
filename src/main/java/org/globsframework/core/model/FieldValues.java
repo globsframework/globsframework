@@ -130,11 +130,11 @@ public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
             throw new ItemNotFound(field.getName());
         }
 
-        public Glob get(GlobField field) throws ItemNotFound {
+        public Glob get(GlobField<?> field) throws ItemNotFound {
             throw new ItemNotFound(field.getName());
         }
 
-        public Glob[] get(GlobArrayField field) throws ItemNotFound {
+        public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
             throw new ItemNotFound(field.getName());
         }
 

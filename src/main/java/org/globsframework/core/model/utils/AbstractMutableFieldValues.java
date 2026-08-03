@@ -94,11 +94,11 @@ public abstract class AbstractMutableFieldValues implements AbstractFieldValues,
         return setValue(field, value);
     }
 
-    public FieldSetter set(GlobField field, Glob value) throws ItemNotFound {
+    public MutableFieldValues set(GlobField<?> field, Glob value) throws ItemNotFound {
         return setValue(field, value);
     }
 
-    public MutableFieldValues set(GlobArrayField field, Glob[] values) throws ItemNotFound {
+    public MutableFieldValues set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
         return setValue(field, values);
     }
 
@@ -118,7 +118,7 @@ public abstract class AbstractMutableFieldValues implements AbstractFieldValues,
         });
     }
 
-    public FieldSetter set(BigDecimalArrayField field, BigDecimal[] value) throws ItemNotFound {
+    public MutableFieldValues set(BigDecimalArrayField field, BigDecimal[] value) throws ItemNotFound {
         return setValue(field, value);
     }
 }

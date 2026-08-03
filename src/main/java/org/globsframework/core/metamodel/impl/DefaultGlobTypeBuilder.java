@@ -540,9 +540,9 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
             case Bytes -> factory.addBytes(name, index, hashContainer);
             case Glob ->
-                    factory.addGlob(name, () -> ((GlobField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlob(name, () -> ((GlobField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
             case GlobArray ->
-                    factory.addGlobArray(name, () ->((GlobArrayField) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlobArray(name, () ->((GlobArrayField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
             case GlobUnion ->
                     factory.addGlobUnion(name, getSupplier(((GlobUnionField) field).getTargetTypes()), index, hashContainer);
             case GlobUnionArray ->

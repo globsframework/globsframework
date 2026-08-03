@@ -116,13 +116,13 @@ public class FieldValueVisitorButKey implements FieldValueVisitor {
         }
     }
 
-    public void visitGlob(GlobField field, Glob value) throws Exception {
+    public void visitGlob(GlobField<?> field, Glob value) throws Exception {
         if (!field.isKeyField()) {
             fieldValueVisitor.visitGlob(field, value);
         }
     }
 
-    public void visitGlobArray(GlobArrayField field, Glob[] value) throws Exception {
+    public void visitGlobArray(GlobArrayField<?> field, Glob[] value) throws Exception {
         if (!field.isKeyField()) {
             fieldValueVisitor.visitGlobArray(field, value);
         }

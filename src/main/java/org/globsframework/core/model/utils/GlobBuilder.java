@@ -155,12 +155,12 @@ public class GlobBuilder implements FieldSetter<GlobBuilder>, FieldValues {
         return this;
     }
 
-    public GlobBuilder set(GlobField field, Glob value) throws ItemNotFound {
+    public GlobBuilder set(GlobField<?> field, Glob value) throws ItemNotFound {
         mutableGlob.set(field, value);
         return this;
     }
 
-    public GlobBuilder set(GlobArrayField field, Glob[] values) throws ItemNotFound {
+    public GlobBuilder set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
         mutableGlob.set(field, values);
         return this;
     }
@@ -293,11 +293,11 @@ public class GlobBuilder implements FieldSetter<GlobBuilder>, FieldValues {
         return mutableGlob.get(field);
     }
 
-    public Glob get(GlobField field) throws ItemNotFound {
+    public Glob get(GlobField<?> field) throws ItemNotFound {
         return mutableGlob.get(field);
     }
 
-    public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         return mutableGlob.get(field);
     }
 

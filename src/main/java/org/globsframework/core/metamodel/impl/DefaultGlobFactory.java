@@ -154,11 +154,11 @@ public class DefaultGlobFactory implements GlobFactory {
             getAccessor = new DefaultGlobFactory.DefaultGlobGetBytesAccessor(type, field.getIndex());
         }
 
-        public void visitGlob(GlobField field) {
+        public void visitGlob(GlobField<?> field) {
             getAccessor = new DefaultGlobFactory.DefaultGlobGetGlobAccessor(type, field.getIndex());
         }
 
-        public void visitGlobArray(GlobArrayField field) {
+        public void visitGlobArray(GlobArrayField<?> field) {
             getAccessor = new DefaultGlobFactory.DefaultGlobGetGlobArrayAccessor(type, field.getIndex());
         }
 
@@ -239,11 +239,11 @@ public class DefaultGlobFactory implements GlobFactory {
             setAccessor = new DefaultGlobFactory.DefaultGlobSetBytesAccessor(type, field.getIndex());
         }
 
-        public void visitGlob(GlobField field) {
+        public void visitGlob(GlobField<?> field) {
             setAccessor = new DefaultGlobFactory.DefaultGlobSetGlobAccessor(type, field.getIndex());
         }
 
-        public void visitGlobArray(GlobArrayField field) {
+        public void visitGlobArray(GlobArrayField<?> field) {
             setAccessor = new DefaultGlobFactory.DefaultGlobSetGlobArrayAccessor(type, field.getIndex());
         }
 

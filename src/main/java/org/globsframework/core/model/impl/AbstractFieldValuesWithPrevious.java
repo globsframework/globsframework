@@ -109,11 +109,11 @@ public abstract class AbstractFieldValuesWithPrevious implements FieldValuesWith
         return (byte[]) doGet(field);
     }
 
-    public Glob get(GlobField field) throws ItemNotFound {
+    public Glob get(GlobField<?> field) throws ItemNotFound {
         return (Glob) doGet(field);
     }
 
-    public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         return (Glob[]) doGet(field);
     }
 
@@ -206,11 +206,11 @@ public abstract class AbstractFieldValuesWithPrevious implements FieldValuesWith
         return (BigDecimal[]) doGetPrevious(field);
     }
 
-    public Glob getPrevious(GlobField field) throws ItemNotFound {
+    public Glob getPrevious(GlobField<?> field) throws ItemNotFound {
         return (Glob) doGetPrevious(field);
     }
 
-    public Glob[] getPrevious(GlobArrayField field) throws ItemNotFound {
+    public Glob[] getPrevious(GlobArrayField<?> field) throws ItemNotFound {
         return (Glob[]) doGetPrevious(field);
     }
 

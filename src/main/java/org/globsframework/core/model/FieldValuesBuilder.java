@@ -151,11 +151,11 @@ public class FieldValuesBuilder {
         return setValue(field, date);
     }
 
-    public FieldValuesBuilder set(GlobField field, Glob value) {
+    public FieldValuesBuilder set(GlobField<?> field, Glob value) {
         return setValue(field, value);
     }
 
-    public FieldValuesBuilder set(GlobArrayField field, Glob[] values) {
+    public FieldValuesBuilder set(GlobArrayField<?> field, Glob[] values) {
         return setValue(field, values);
     }
 

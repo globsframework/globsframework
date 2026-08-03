@@ -69,7 +69,7 @@ public class MaxSizeTest {
         public static StringField VALUE_3;
 
         @Target(Dummy_Level1.class)
-        public static GlobField UNDER;
+        public static GlobField<Dummy_Level1> UNDER;
 
         static {
             GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("Dummy_Level1");

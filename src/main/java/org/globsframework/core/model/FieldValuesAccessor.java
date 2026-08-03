@@ -187,11 +187,11 @@ public interface FieldValuesAccessor {
         return new NullableOptional<>(isSet(field), get(field));
     }
 
-    default NullableOptional<Glob> getNullableOpt(GlobField field) {
+    default NullableOptional<Glob> getNullableOpt(GlobField<?> field) {
         return new NullableOptional<>(isSet(field), get(field));
     }
 
-    default NullableOptional<Glob[]> getNullableOpt(GlobArrayField field) {
+    default NullableOptional<Glob[]> getNullableOpt(GlobArrayField<?> field) {
         return new NullableOptional<>(isSet(field), get(field));
     }
 
@@ -260,11 +260,11 @@ public interface FieldValuesAccessor {
         return Optional.ofNullable(getValue(field));
     }
 
-    default Optional<Glob> getOpt(GlobField field) {
+    default Optional<Glob> getOpt(GlobField<?> field) {
         return Optional.ofNullable(get(field));
     }
 
-    default Optional<Glob> getOptional(GlobField field) {
+    default Optional<Glob> getOptional(GlobField<?> field) {
         return getOpt(field);
     }
 
@@ -276,7 +276,7 @@ public interface FieldValuesAccessor {
         return getOpt(field);
     }
 
-    default Optional<Glob[]> getOpt(GlobArrayField field) {
+    default Optional<Glob[]> getOpt(GlobArrayField<?> field) {
         return Optional.ofNullable(get(field));
     }
 
@@ -340,7 +340,7 @@ public interface FieldValuesAccessor {
         return d != null ? DoubleStream.of(d) : DoubleStream.empty();
     }
 
-    default Stream<Glob> stream(GlobArrayField field) {
+    default Stream<Glob> stream(GlobArrayField<?> field) {
         final Glob[] d = get(field);
         return d != null ? Stream.of(d) : Stream.empty();
     }
@@ -374,7 +374,7 @@ public interface FieldValuesAccessor {
         return new NullableOptional<>(isSet(field), getOrEmpty(field));
     }
 
-    default NullableOptional<Glob[]> getNullableOrEmptyOpt(GlobArrayField field) {
+    default NullableOptional<Glob[]> getNullableOrEmptyOpt(GlobArrayField<?> field) {
         return new NullableOptional<>(isSet(field), getOrEmpty(field));
     }
 
@@ -383,7 +383,7 @@ public interface FieldValuesAccessor {
         return globs != null ? globs : EMPTY_GLOB_ARRAY;
     }
 
-    default Glob[] getOrEmpty(GlobArrayField field) {
+    default Glob[] getOrEmpty(GlobArrayField<?> field) {
         Glob[] globs = get(field);
         return globs != null ? globs : EMPTY_GLOB_ARRAY;
     }
@@ -415,7 +415,7 @@ public interface FieldValuesAccessor {
         return value;
     }
 
-    default Glob[] getNotNull(GlobArrayField field) {
+    default Glob[] getNotNull(GlobArrayField<?> field) {
         Glob[] value = get(field);
         if (value == null) {
             throw new NullPointerException(field.getFullName() + " should not be null.");
@@ -431,7 +431,7 @@ public interface FieldValuesAccessor {
         return value;
     }
 
-    default Glob getNotNull(GlobField field) {
+    default Glob getNotNull(GlobField<?> field) {
         Glob value = get(field);
         if (value == null) {
             throw new NullPointerException(field.getFullName() + " should not be null.");

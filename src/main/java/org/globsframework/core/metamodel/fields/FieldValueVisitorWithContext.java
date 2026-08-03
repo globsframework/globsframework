@@ -37,9 +37,9 @@ public interface FieldValueVisitorWithContext<Context> {
 
     void visitBytes(BytesField field, byte[] value, Context context) throws Exception;
 
-    void visitGlob(GlobField field, Glob value, Context context) throws Exception;
+    void visitGlob(GlobField<?> field, Glob value, Context context) throws Exception;
 
-    void visitGlobArray(GlobArrayField field, Glob[] value, Context context) throws Exception;
+    void visitGlobArray(GlobArrayField<?> field, Glob[] value, Context context) throws Exception;
 
     void visitUnionGlob(GlobUnionField field, Glob value, Context context) throws Exception;
 
@@ -95,7 +95,7 @@ public interface FieldValueVisitorWithContext<Context> {
             notManaged(field, value, context);
         }
 
-        public void visitGlob(GlobField field, Glob value, Context context) throws Exception {
+        public void visitGlob(GlobField<?> field, Glob value, Context context) throws Exception {
             notManaged(field, value, context);
         }
 
@@ -107,7 +107,7 @@ public interface FieldValueVisitorWithContext<Context> {
             notManaged(field, value, context);
         }
 
-        public void visitGlobArray(GlobArrayField field, Glob[] value, Context context) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, Glob[] value, Context context) throws Exception {
             notManaged(field, value, context);
         }
 

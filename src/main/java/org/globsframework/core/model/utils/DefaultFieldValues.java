@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class DefaultFieldValues extends AbstractMutableFieldValues {
-    private Map<Field, Object> values = new HashMap<Field, Object>();
+    private final Map<Field, Object> values = new HashMap<Field, Object>();
 
     public DefaultFieldValues() {
     }

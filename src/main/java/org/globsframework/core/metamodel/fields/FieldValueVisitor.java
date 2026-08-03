@@ -38,9 +38,9 @@ public interface FieldValueVisitor {
 
     void visitBytes(BytesField field, byte[] value) throws Exception;
 
-    void visitGlob(GlobField field, Glob value) throws Exception;
+    void visitGlob(GlobField<?> field, Glob value) throws Exception;
 
-    void visitGlobArray(GlobArrayField field, Glob[] value) throws Exception;
+    void visitGlobArray(GlobArrayField<?> field, Glob[] value) throws Exception;
 
     void visitUnionGlob(GlobUnionField field, Glob value) throws Exception;
 
@@ -96,7 +96,7 @@ public interface FieldValueVisitor {
             notManaged(field, value);
         }
 
-        public void visitGlob(GlobField field, Glob value) throws Exception {
+        public void visitGlob(GlobField<?> field, Glob value) throws Exception {
             notManaged(field, value);
         }
 
@@ -108,7 +108,7 @@ public interface FieldValueVisitor {
             notManaged(field, value);
         }
 
-        public void visitGlobArray(GlobArrayField field, Glob[] value) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, Glob[] value) throws Exception {
             notManaged(field, value);
         }
 

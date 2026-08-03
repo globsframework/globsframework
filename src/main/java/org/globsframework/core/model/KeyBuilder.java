@@ -327,11 +327,11 @@ public class KeyBuilder implements FieldSetter<KeyBuilder> {
         return setObject(field, value);
     }
 
-    public KeyBuilder set(GlobField field, Glob value) throws ItemNotFound {
+    public KeyBuilder set(GlobField<?> field, Glob value) throws ItemNotFound {
         return setObject(field, value);
     }
 
-    public KeyBuilder set(GlobArrayField field, Glob[] values) throws ItemNotFound {
+    public KeyBuilder set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
         return setObject(field, values);
     }
 

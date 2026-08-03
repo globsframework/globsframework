@@ -47,9 +47,9 @@ public interface FieldValuesWithPrevious extends FieldValues, FieldsValueWithPre
 
     byte[] getPrevious(BytesField field) throws ItemNotFound;
 
-    Glob getPrevious(GlobField field) throws ItemNotFound;
+    Glob getPrevious(GlobField<?> field) throws ItemNotFound;
 
-    Glob[] getPrevious(GlobArrayField field) throws ItemNotFound;
+    Glob[] getPrevious(GlobArrayField<?> field) throws ItemNotFound;
 
     Glob getPrevious(GlobUnionField field) throws ItemNotFound;
 

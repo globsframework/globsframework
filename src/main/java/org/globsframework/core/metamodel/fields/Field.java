@@ -129,18 +129,18 @@ public sealed interface Field extends Annotations
         return (DateTimeField) this;
     }
 
-    default GlobArrayField asGlobArrayField() {
+    default GlobArrayField<?> asGlobArrayField() {
         if (!(this instanceof GlobArrayField)) {
             throw new RuntimeException(getFullName() + " is not a GlobArrayField but a " + getDataType());
         }
-        return (GlobArrayField) this;
+        return (GlobArrayField<?>) this;
     }
 
-    default GlobField asGlobField() {
+    default GlobField<?> asGlobField() {
         if (!(this instanceof GlobField)) {
             throw new RuntimeException(getFullName() + " is not a GlobField but a " + getDataType());
         }
-        return (GlobField) this;
+        return (GlobField<?>) this;
     }
 
     default GlobArrayUnionField asGlobArrayUnionField() {

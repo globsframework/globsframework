@@ -31,9 +31,9 @@ public interface FieldVisitorWithContext<C> {
 
     void visitBytes(BytesField field, C context) throws Exception;
 
-    void visitGlob(GlobField field, C context) throws Exception;
+    void visitGlob(GlobField<?> field, C context) throws Exception;
 
-    void visitGlobArray(GlobArrayField field, C context) throws Exception;
+    void visitGlobArray(GlobArrayField<?> field, C context) throws Exception;
 
     void visitUnionGlob(GlobUnionField field, C context) throws Exception;
 
@@ -101,11 +101,11 @@ public interface FieldVisitorWithContext<C> {
             notManaged(field, context);
         }
 
-        public void visitGlob(GlobField field, C context) throws Exception {
+        public void visitGlob(GlobField<?> field, C context) throws Exception {
             notManaged(field, context);
         }
 
-        public void visitGlobArray(GlobArrayField field, C context) throws Exception {
+        public void visitGlobArray(GlobArrayField<?> field, C context) throws Exception {
             notManaged(field, context);
         }
 

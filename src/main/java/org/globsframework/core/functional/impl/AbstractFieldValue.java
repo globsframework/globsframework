@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public abstract class AbstractFieldValue<T extends FieldSetter> implements FieldSetter<T>, FieldValues {
+public abstract class AbstractFieldValue<T extends FieldSetter<?>> implements FieldSetter<T>, FieldValues {
     protected static final Object NULL_VALUE = new Object();
 
     protected abstract T doSet(Field field, Object o);
@@ -87,11 +87,11 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
         return doSet(field, value);
     }
 
-    public T set(GlobField field, Glob value) throws ItemNotFound {
+    public T set(GlobField<?> field, Glob value) throws ItemNotFound {
         return doSet(field, value);
     }
 
-    public T set(GlobArrayField field, Glob[] values) throws ItemNotFound {
+    public T set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
         return doSet(field, values);
     }
 
@@ -196,11 +196,11 @@ public abstract class AbstractFieldValue<T extends FieldSetter> implements Field
         return (ZonedDateTime) doGet(field);
     }
 
-    public Glob get(GlobField field) throws ItemNotFound {
+    public Glob get(GlobField<?> field) throws ItemNotFound {
         return (Glob) doGet(field);
     }
 
-    public Glob[] get(GlobArrayField field) throws ItemNotFound {
+    public Glob[] get(GlobArrayField<?> field) throws ItemNotFound {
         return (Glob[]) doGet(field);
     }
 

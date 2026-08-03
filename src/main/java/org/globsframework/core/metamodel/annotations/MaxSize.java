@@ -105,9 +105,9 @@ public class MaxSize {
                         }
                     }
                 } else if (field instanceof GlobField) {
-                    deepInPlaceTruncate((MutableGlob) glob.get((GlobField) field));
+                    deepInPlaceTruncate((MutableGlob) glob.get((GlobField<?>) field));
                 } else if (field instanceof GlobArrayField) {
-                    Glob[] globs = glob.get(((GlobArrayField) field));
+                    Glob[] globs = glob.get(((GlobArrayField<?>) field));
                     for (Glob value : globs) {
                         deepInPlaceTruncate((MutableGlob) value);
                     }

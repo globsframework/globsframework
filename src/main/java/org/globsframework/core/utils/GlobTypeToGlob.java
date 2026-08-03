@@ -49,14 +49,14 @@ public class GlobTypeToGlob {
                         case DateTime -> extractAnnotation(field, DateTimeFieldType.create(field.getName()));
                         case Bytes -> extractAnnotation(field, BytesFieldType.create(field.getName()));
                         case Glob -> {
-                            final GlobType targetType = ((GlobField) field).getTargetType();
+                            final GlobType targetType = ((GlobField<?>) field).getTargetType();
                             final MutableGlob set = extractAnnotation(field, GlobFieldType.create(field.getName()))
                                     .set(GlobFieldType.targetType, targetType.getName());
                             types.addAll(toGlob(targetType, done));
                             yield set;
                         }
                         case GlobArray -> {
-                            final GlobType targetType = ((GlobArrayField) field).getTargetType();
+                            final GlobType targetType = ((GlobArrayField<?>) field).getTargetType();
                             final MutableGlob set = extractAnnotation(field, GlobArrayFieldType.create(field.getName()))
                                     .set(GlobArrayFieldType.targetType, targetType.getName());
                             types.addAll(toGlob(targetType, done));
