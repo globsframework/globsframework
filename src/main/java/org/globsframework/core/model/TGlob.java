@@ -4,17 +4,38 @@ import java.util.Objects;
 import java.util.Optional;
 
 // experimental
-public record TGlob<T>(Glob value) {
+public record TGlob<T>(Glob data) {
+
     public static <T> TGlob<T> of(Glob glob) {
         return new TGlob<>(glob);
     }
 
-    public Glob getNotNull() {
-        Objects.requireNonNull(value);
-        return value;
+    public Glob notNull() {
+        Objects.requireNonNull(data);
+        return data;
     }
 
-    public Optional<Glob> getOpt() {
-        return Optional.ofNullable(value);
+    public boolean isPresent() {
+        return data != null;
+    }
+
+    public boolean isNotNull() {
+        return data != null;
+    }
+
+    public boolean isNull() {
+        return data == null;
+    }
+
+    public Glob data() {
+        return data;
+    }
+
+    public Glob get() {
+        return data;
+    }
+
+    public Optional<Glob> optional() {
+        return Optional.ofNullable(data);
     }
 }
