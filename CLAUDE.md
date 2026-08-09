@@ -56,6 +56,17 @@ The bridge is `typeBuilder.register(GlobCreateFromAnnotation.class, annotation -
 
 `GlobRepository` (`model/repository/`) is an in-memory store keyed by `Key`, with index support (`metamodel/index/`, `model/indexing/`), links (`metamodel/links/`), and change tracking: mutations produce a `ChangeSet` of `DeltaGlob`s (`model/delta/`) delivered to `ChangeSetListener`s. `LocalGlobRepository` gives a transactional local view over another repository.
 
+**`model/generate/`** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
+implementation of it. `GlobGenerateFactory` (`GlobFactory` + `GenerateCaller`) lets a factory build a
+`GeneratedFunctionCaller`, which applies one `FieldValueFunction` per field to a Glob — a codec's answer to
+the megamorphic dispatch a loop over the fields costs, since a generated caller gives one monomorphic call
+site per field. It lives here, not in `globs-generate`, so that a serialization library can be written
+against it without depending on the module that does the generating. `GenerateCaller.callerFor(type, fns)`
+is the entry point: the generated caller when the type's factory can build one, a `DefaultFunctionCaller`
+(the plain loop, same behaviour) otherwise, so callers never carry a second code path. `isNull` there means
+"`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
+`DefaultFunctionCallerTest` is what a generated implementation has to agree with.
+
 `functional/` — `FunctionalKey` is a key over an arbitrary field subset (not the type's key fields), used for joins/lookups. Its hash intentionally uses `GlobType.getName()` rather than the type's identity hash, so hashes stay stable across JVMs.
 
 **`utils/serialization/`** — hand-rolled binary format. `SerializedInput`/`SerializedOutput` with `Default*` (streams), `ByteBuffer*` / `NByteBuffer*` (ByteBuffer-backed), `Compressed*`, and `*Checker` decorators; `GlobSerializer`/`GlobDeSerializer` do the Glob-level encoding. These classes are `final` and written for throughput — changes here need the serialization tests to pass round-trip in both directions.
