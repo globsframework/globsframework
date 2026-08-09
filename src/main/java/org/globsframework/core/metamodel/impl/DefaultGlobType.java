@@ -83,7 +83,6 @@ public final class DefaultGlobType implements GlobType {
             throw new RuntimeException("Not all keyFields were initialized for type " + name);
         }
         this.fieldsByName = fieldsByName; //StableValue.map(fieldsByName.keySet(), fieldsByName::get);
-        globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
         keyComparator = new UnsafeSupplier<>(() ->
         {
             Comparator<Key> cmp = null;
@@ -104,6 +103,7 @@ public final class DefaultGlobType implements GlobType {
                 this.annotations.put(annotation.getKey(), annotation);
             }
         }
+        globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
     }
 
     final public int getFieldCount() {
