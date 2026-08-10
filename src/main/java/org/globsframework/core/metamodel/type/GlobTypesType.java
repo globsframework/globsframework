@@ -10,7 +10,7 @@ public class GlobTypesType {
     public static final GlobType TYPE;
 
     @Target(GlobTypeType.class)
-    public static final GlobArrayField types;
+    public static final GlobArrayField<GlobTypeType> types;
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("GlobTypes");
