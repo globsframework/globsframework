@@ -1,7 +1,9 @@
 package org.globsframework.core.model.generate;
 
 import org.globsframework.core.metamodel.DummyObject;
+import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
+import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.MutableGlob;
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +65,70 @@ public class DefaultFunctionCallerTest {
         assertFalse(DummyObject.TYPE.getGlobFactory() instanceof GlobGenerateFactory);
         assertInstanceOf(DefaultFunctionCaller.class,
                 GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+    }
+
+    /**
+     * The extension point : with a GenerateCallerService installed, callerFor stops answering the loop for a
+     * type core builds itself. Core has no implementation of its own — globs-generate's is the one that
+     * generates over a DefaultGlob — so the test installs a stand-in and only checks the wiring.
+     */
+    @Test
+    public void anInstalledServiceIsPreferredToTheLoop() {
+        System.setProperty("globs.caller", StandInService.class.getName());
+        GenerateCallerService.Builder.reset();
+        try {
+            assertInstanceOf(StandInCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+        } finally {
+            System.clearProperty("globs.caller");
+            GenerateCallerService.Builder.reset();
+        }
+        assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+    }
+
+    /** "not mine" is a null, and the loop takes over — it is not an error to report. */
+    @Test
+    public void aServiceThatDoesNotKnowTheTypeFallsBackToTheLoop() {
+        System.setProperty("globs.caller", AbstainingService.class.getName());
+        GenerateCallerService.Builder.reset();
+        try {
+            assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+        } finally {
+            System.clearProperty("globs.caller");
+            GenerateCallerService.Builder.reset();
+        }
+    }
+
+    /** an explicitly asked for service that cannot be loaded is a misconfiguration, not a slow path */
+    @Test
+    public void anUnloadableServiceThrowsRatherThanDegradingSilently() {
+        System.setProperty("globs.caller", "not.a.Class");
+        try {
+            assertThrows(RuntimeException.class, GenerateCallerService.Builder::reset);
+        } finally {
+            System.clearProperty("globs.caller");
+            GenerateCallerService.Builder.reset();
+        }
+    }
+
+    public static class StandInService implements GenerateCallerService {
+        public GenerateCaller getGenerateCaller(GlobType type) {
+            return new GenerateCaller() {
+                public <D, E> GeneratedFunctionCaller<D, E> create(GetFieldValueFunction<D, E> functions) {
+                    return new StandInCaller<>();
+                }
+            };
+        }
+    }
+
+    public static class AbstainingService implements GenerateCallerService {
+        public GenerateCaller getGenerateCaller(GlobType type) {
+            return null;
+        }
+    }
+
+    static class StandInCaller<D, E> implements GeneratedFunctionCaller<D, E> {
+        public void call(Glob data, D ctx1, E ctx2) {
+        }
     }
 
     @Test

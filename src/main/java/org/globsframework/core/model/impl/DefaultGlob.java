@@ -6,7 +6,10 @@ import org.globsframework.core.metamodel.fields.Field;
 import java.util.BitSet;
 
 public final class DefaultGlob extends AbstractDefaultGlob {
-    private final BitSet isSet;
+    // public, not private : a generated caller (globs-generate's AsmCallerGenerator.forDefaultGlob)
+    // GETFIELDs the set BitSet straight out of another package, to walk the fields of a Glob without a
+    // Field object, a getIndex() or a virtual call. Treat it as read-only from the outside.
+    public final BitSet isSet;
 
     public DefaultGlob(GlobType type) {
         super(type);

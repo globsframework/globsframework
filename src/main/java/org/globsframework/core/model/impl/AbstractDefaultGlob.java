@@ -17,7 +17,10 @@ import java.util.List;
 
 public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, Key {
     private final GlobType type;
-    private final Object[] values;
+    // public, not private : a generated caller (globs-generate's AsmCallerGenerator.forDefaultGlob)
+    // GETFIELDs the values array straight out of another package, to walk the fields of a Glob without a
+    // Field object, a getIndex() or a virtual call. Treat it as read-only from the outside.
+    public final Object[] values;
     private int hashCode;
 
     protected AbstractDefaultGlob(GlobType type) {

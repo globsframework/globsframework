@@ -23,16 +23,29 @@ public interface GenerateCaller {
     }
 
     /**
-     * The caller of any type, generated or not : the generated one when the type's factory can build it, a
-     * {@link DefaultFunctionCaller} otherwise. Callers get the same behaviour either way and never have to
-     * carry a second code path — only the speed differs.
-     * <p>
+     * The caller of any type, generated or not. Callers get the same behaviour whichever comes out and never
+     * have to carry a second code path — only the speed differs. Three sources, in order:
+     * <ol>
+     * <li>the type's own factory, when it is a {@link GlobGenerateFactory} : it knows its Glob's layout, so
+     * nothing can do better;</li>
+     * <li>the {@link GenerateCallerService} installed through {@code -Dglobs.caller}, which is how a generator
+     * offers a caller over a Glob it did not build — core's DefaultGlob;</li>
+     * <li>{@link DefaultFunctionCaller}, the loop, which works for anything.</li>
+     * </ol>
      * A type has no generated factory when no generating GlobFactoryService is installed at all, and, in
      * globs-generate, when the type asks for {@code mode none} or has more than 64 fields.
      */
     static <D, E> GeneratedFunctionCaller<D, E> callerFor(GlobType type, GetFieldValueFunction<D, E> getFieldValueFunction) {
-        return type.getGlobFactory() instanceof GlobGenerateFactory generate
-                ? generate.create(getFieldValueFunction)
-                : new DefaultFunctionCaller<>(type, getFieldValueFunction);
+        if (type.getGlobFactory() instanceof GlobGenerateFactory generate) {
+            return generate.create(getFieldValueFunction);
+        }
+        GenerateCallerService service = GenerateCallerService.Builder.getService();
+        if (service != null) {
+            GenerateCaller generator = service.getGenerateCaller(type);
+            if (generator != null) {
+                return generator.create(getFieldValueFunction);
+            }
+        }
+        return new DefaultFunctionCaller<>(type, getFieldValueFunction);
     }
 }
