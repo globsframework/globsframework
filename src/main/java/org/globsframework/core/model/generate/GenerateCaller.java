@@ -36,6 +36,21 @@ public interface GenerateCaller {
      * globs-generate, when the type asks for {@code mode none} or has more than 64 fields.
      */
     static <D, E> GeneratedFunctionCaller<D, E> callerFor(GlobType type, GetFieldValueFunction<D, E> getFieldValueFunction) {
+        GeneratedFunctionCaller<D, E> generated = generatedCallerFor(type, getFieldValueFunction);
+        return generated != null ? generated : new DefaultFunctionCaller<>(type, getFieldValueFunction);
+    }
+
+    /**
+     * The first two sources of {@link #callerFor}, without the third : **null** when nothing can generate a
+     * caller for this type.
+     * <p>
+     * For a caller that already has something better than {@link DefaultFunctionCaller} to fall back on —
+     * a codec holding a table of per-field closures over typed accessors, say, which its own loop walks
+     * faster than the loop here does through {@code Glob.getValue}. Going through this rather than testing
+     * {@link GlobGenerateFactory} by hand is what makes {@code -Dglobs.caller} reach it.
+     */
+    static <D, E> GeneratedFunctionCaller<D, E> generatedCallerFor(GlobType type,
+                                                                   GetFieldValueFunction<D, E> getFieldValueFunction) {
         if (type.getGlobFactory() instanceof GlobGenerateFactory generate) {
             return generate.create(getFieldValueFunction);
         }
@@ -46,6 +61,6 @@ public interface GenerateCaller {
                 return generator.create(getFieldValueFunction);
             }
         }
-        return new DefaultFunctionCaller<>(type, getFieldValueFunction);
+        return null;
     }
 }

@@ -85,6 +85,25 @@ public class DefaultFunctionCallerTest {
         assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
     }
 
+    /**
+     * generatedCallerFor is the same resolution without the loop at the end : null means "nobody can generate
+     * this", which is what a codec with a better fallback of its own needs to hear.
+     */
+    @Test
+    public void generatedCallerForSaysNullRatherThanAnsweringTheLoop() {
+        assertNull(GenerateCaller.generatedCallerFor(DummyObject.TYPE, recorder()));
+
+        System.setProperty("globs.caller", StandInService.class.getName());
+        GenerateCallerService.Builder.reset();
+        try {
+            assertInstanceOf(StandInCaller.class,
+                    GenerateCaller.generatedCallerFor(DummyObject.TYPE, recorder()));
+        } finally {
+            System.clearProperty("globs.caller");
+            GenerateCallerService.Builder.reset();
+        }
+    }
+
     /** "not mine" is a null, and the loop takes over — it is not an error to report. */
     @Test
     public void aServiceThatDoesNotKnowTheTypeFallsBackToTheLoop() {
