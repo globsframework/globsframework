@@ -56,7 +56,7 @@ The bridge is `typeBuilder.register(GlobCreateFromAnnotation.class, annotation -
 
 `GlobRepository` (`model/repository/`) is an in-memory store keyed by `Key`, with index support (`metamodel/index/`, `model/indexing/`), links (`metamodel/links/`), and change tracking: mutations produce a `ChangeSet` of `DeltaGlob`s (`model/delta/`) delivered to `ChangeSetListener`s. `LocalGlobRepository` gives a transactional local view over another repository.
 
-**`model/generate/`** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
+**`model/generate/read/`** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
 implementation of it. `GlobGenerateFactory` (`GlobFactory` + `GenerateCaller`) lets a factory build a
 `GeneratedFunctionCaller`, which applies one `FieldValueFunction` per field to a Glob — a codec's answer to
 the megamorphic dispatch a loop over the fields costs, since a generated caller gives one monomorphic call
@@ -83,6 +83,6 @@ throws, since it was asked for explicitly. `isNull` there means
 
 - Assertions (`assert`) guard field/type consistency in hot paths so checks vanish in production; keep new checks in that style rather than adding unconditional branches.
 - `-Dglobs.builder=<class>` swaps in an alternative `GlobFactoryService` (that is how the ASM-based `globs-generate` plugs in bytecode-generated Globs). Any change to `GlobFactory`/`GlobType` must remain implementable by an external factory.
-- `-Dglobs.caller=<class>` installs a `GenerateCallerService` the same way, for callers over the Globs core builds itself (`model/generate/`). Both are read once and cached; a test that changes one must call the matching `Builder.reset()`.
+- `-Dglobs.caller=<class>` installs a `GenerateCallerService` the same way, for callers over the Globs core builds itself (`model/generate/read/`). Both are read once and cached; a test that changes one must call the matching `Builder.reset()`.
 - Tests build their model types as `Dummy*` classes in `src/test/java/org/globsframework/core/metamodel/`; reuse those instead of defining new one-off types. `GlobChecker`, `GlobRepositoryChecker`, `TestUtils` are the shared assertion helpers.
 - `src/test/java/org/globsframework/core/xml/` holds test-only XML parsing/writing (the real XML component is a separate repo).

@@ -1,4 +1,4 @@
-package org.globsframework.core.model.generate;
+package org.globsframework.core.model.generate.read;
 
 import org.globsframework.core.model.GlobFactory;
 

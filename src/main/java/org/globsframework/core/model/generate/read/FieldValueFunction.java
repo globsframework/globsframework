@@ -1,4 +1,4 @@
-package org.globsframework.core.model.generate;
+package org.globsframework.core.model.generate.read;
 
 /**
  * What a {@link GeneratedFunctionCaller} calls for one field of one GlobType.
