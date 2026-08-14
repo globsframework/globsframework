@@ -71,6 +71,22 @@ throws, since it was asked for explicitly. `isNull` there means
 "`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
 `DefaultFunctionCallerTest` is what a generated implementation has to agree with.
 
+**`model/generate/write/`** — the other direction, and the same bet: a parser filling a `MutableGlob`.
+`GeneratedFunctionCallerWrite` builds the two shapes a format needs — `GeneratedCallerWrite`, the loop a
+`CallAtWrite` drives (it answers the key of the `MutableFunctionWrite` to call next, or the `endLoop` value
+that ends the pass, an unknown key going to the fallback), and `GeneratedCallerWriteAll`, every function once
+in array order. A generating implementation emits a switch and an unrolled loop over `static final`
+functions, so each entry gets its own monomorphic call site. Unlike the read side nothing in the emitted code
+reads a Glob's layout: the functions write through `MutableGlob`, so a write caller works over any Glob and
+needs no `GlobType` at all. `GeneratedFunctionCallerWrite.get()` is the entry point — the
+`GenerateCallerWriteService` installed through **`-Dglobs.callerWrite=<class>`**
+(`globs-generate`'s `AsmCallerWriteGeneratorService`), else `DefaultFunctionCallerWrite`, the plain loop —
+and `getGenerated()` is the same without the loop at the end, for a parser with a better fallback of its own.
+Two sources rather than three, since there is no per-type factory to ask. The refusals are statics on the
+interface so that both implementations say the same thing: `unknownKey` (a key with no function and no
+fallback, at run time) and `checked` (a missing function, when the caller is built).
+`DefaultFunctionCallerWriteTest` is what a generated implementation has to agree with.
+
 `functional/` — `FunctionalKey` is a key over an arbitrary field subset (not the type's key fields), used for joins/lookups. Its hash intentionally uses `GlobType.getName()` rather than the type's identity hash, so hashes stay stable across JVMs.
 
 **`utils/serialization/`** — hand-rolled binary format. `SerializedInput`/`SerializedOutput` with `Default*` (streams), `ByteBuffer*` / `NByteBuffer*` (ByteBuffer-backed), `Compressed*`, and `*Checker` decorators; `GlobSerializer`/`GlobDeSerializer` do the Glob-level encoding. These classes are `final` and written for throughput — changes here need the serialization tests to pass round-trip in both directions.
@@ -83,6 +99,6 @@ throws, since it was asked for explicitly. `isNull` there means
 
 - Assertions (`assert`) guard field/type consistency in hot paths so checks vanish in production; keep new checks in that style rather than adding unconditional branches.
 - `-Dglobs.builder=<class>` swaps in an alternative `GlobFactoryService` (that is how the ASM-based `globs-generate` plugs in bytecode-generated Globs). Any change to `GlobFactory`/`GlobType` must remain implementable by an external factory.
-- `-Dglobs.caller=<class>` installs a `GenerateCallerService` the same way, for callers over the Globs core builds itself (`model/generate/read/`). Both are read once and cached; a test that changes one must call the matching `Builder.reset()`.
+- `-Dglobs.caller=<class>` installs a `GenerateCallerService` the same way, for callers over the Globs core builds itself (`model/generate/read/`), and `-Dglobs.callerWrite=<class>` a `GenerateCallerWriteService`, for the callers a parser fills a `MutableGlob` with (`model/generate/write/`). All three are read once and cached; a test that changes one must call the matching `Builder.reset()`.
 - Tests build their model types as `Dummy*` classes in `src/test/java/org/globsframework/core/metamodel/`; reuse those instead of defining new one-off types. `GlobChecker`, `GlobRepositoryChecker`, `TestUtils` are the shared assertion helpers.
 - `src/test/java/org/globsframework/core/xml/` holds test-only XML parsing/writing (the real XML component is a separate repo).
