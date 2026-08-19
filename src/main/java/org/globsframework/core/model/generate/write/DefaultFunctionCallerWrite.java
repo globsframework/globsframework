@@ -1,6 +1,7 @@
 package org.globsframework.core.model.generate.write;
 
 import org.globsframework.core.model.MutableGlob;
+import org.globsframework.core.model.generate.CallerName;
 
 import java.util.Arrays;
 import java.util.SortedMap;
@@ -13,6 +14,8 @@ import java.util.SortedMap;
  * key, the same {@code endLoop} tested before the dispatch and the same refusals. What it does not give is the
  * point of generating: one call site for the whole loop, seeing every function it is ever handed, i.e. exactly
  * the megamorphic dispatch a generated caller exists to remove. It is the fallback, not an alternative.
+ * <p>
+ * It has no class to name, so the {@code name} of a caller is only checked here, never used.
  */
 public class DefaultFunctionCallerWrite implements GeneratedFunctionCallerWrite {
     /** Stateless : the callers hold everything, so one instance serves the whole process. */
@@ -20,8 +23,9 @@ public class DefaultFunctionCallerWrite implements GeneratedFunctionCallerWrite 
 
     @SuppressWarnings("unchecked")
     public <Ctx1, Ctx2, Ctx3> GeneratedCallerWrite<Ctx1, Ctx2, Ctx3> create(
-            SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
+            String name, SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
             MutableFunctionWrite fallback, int endLoop) {
+        CallerName.check(name);
         // sorted here rather than trusted : the lookup is a binary search, and the map may have been built
         // with a comparator of its own
         int[] keys = functions.keySet().stream().mapToInt(Integer::intValue).sorted().toArray();
@@ -34,7 +38,8 @@ public class DefaultFunctionCallerWrite implements GeneratedFunctionCallerWrite 
 
     @SuppressWarnings("unchecked")
     public <Ctx1, Ctx2, Ctx3> GeneratedCallerWriteAll<Ctx1, Ctx2, Ctx3> create(
-            MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions) {
+            String name, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions) {
+        CallerName.check(name);
         MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] copy = new MutableFunctionWrite[functions.length];
         for (int i = 0; i < functions.length; i++) {
             copy[i] = GeneratedFunctionCallerWrite.checked(functions[i], "index " + i);

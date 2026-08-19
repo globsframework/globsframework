@@ -35,7 +35,7 @@ public class DefaultFunctionCallerTest {
 
     private List<Seen> call(MutableGlob glob) {
         List<Seen> seen = new ArrayList<>();
-        GenerateCaller.callerFor(glob.getType(), recorder()).call(glob, seen, "ctx2");
+        GenerateCaller.callerFor("test", glob.getType(), recorder()).call(glob, seen, "ctx2");
         return seen;
     }
 
@@ -64,7 +64,7 @@ public class DefaultFunctionCallerTest {
     public void aTypeWithNoGeneratingFactoryFallsBackToTheLoopedCaller() {
         assertFalse(DummyObject.TYPE.getGlobFactory() instanceof GlobGenerateFactory);
         assertInstanceOf(DefaultFunctionCaller.class,
-                GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+                GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
     }
 
     /**
@@ -77,12 +77,12 @@ public class DefaultFunctionCallerTest {
         System.setProperty("globs.caller", StandInService.class.getName());
         GenerateCallerService.Builder.reset();
         try {
-            assertInstanceOf(StandInCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+            assertInstanceOf(StandInCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
         } finally {
             System.clearProperty("globs.caller");
             GenerateCallerService.Builder.reset();
         }
-        assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+        assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
     }
 
     /**
@@ -91,13 +91,13 @@ public class DefaultFunctionCallerTest {
      */
     @Test
     public void generatedCallerForSaysNullRatherThanAnsweringTheLoop() {
-        assertNull(GenerateCaller.generatedCallerFor(DummyObject.TYPE, recorder()));
+        assertNull(GenerateCaller.generatedCallerFor("test", DummyObject.TYPE, recorder()));
 
         System.setProperty("globs.caller", StandInService.class.getName());
         GenerateCallerService.Builder.reset();
         try {
             assertInstanceOf(StandInCaller.class,
-                    GenerateCaller.generatedCallerFor(DummyObject.TYPE, recorder()));
+                    GenerateCaller.generatedCallerFor("test", DummyObject.TYPE, recorder()));
         } finally {
             System.clearProperty("globs.caller");
             GenerateCallerService.Builder.reset();
@@ -110,7 +110,7 @@ public class DefaultFunctionCallerTest {
         System.setProperty("globs.caller", AbstainingService.class.getName());
         GenerateCallerService.Builder.reset();
         try {
-            assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor(DummyObject.TYPE, recorder()));
+            assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
         } finally {
             System.clearProperty("globs.caller");
             GenerateCallerService.Builder.reset();
@@ -132,7 +132,7 @@ public class DefaultFunctionCallerTest {
     public static class StandInService implements GenerateCallerService {
         public GenerateCaller getGenerateCaller(GlobType type) {
             return new GenerateCaller() {
-                public <D, E> GeneratedFunctionCaller<D, E> create(GetFieldValueFunction<D, E> functions) {
+                public <D, E> GeneratedFunctionCaller<D, E> create(String name, GetFieldValueFunction<D, E> functions) {
                     return new StandInCaller<>();
                 }
             };
@@ -158,6 +158,21 @@ public class DefaultFunctionCallerTest {
                         return null;
                     }
                 }));
+    }
+
+    /**
+     * The name is what a generating implementation names its emitted class after, so that the class is the
+     * same one from one run to the next. Refused here as well as there, so that a JVM with nothing installed
+     * to generate does not let through a name that a JVM which generates would need.
+     */
+    @Test
+    public void aCallerWithoutANameIsRefusedEvenThoughTheLoopWouldNotUseIt() {
+        assertThrows(IllegalArgumentException.class,
+                () -> GenerateCaller.callerFor(null, DummyObject.TYPE, recorder()));
+        assertThrows(IllegalArgumentException.class,
+                () -> GenerateCaller.callerFor("  ", DummyObject.TYPE, recorder()));
+        assertThrows(IllegalArgumentException.class,
+                () -> GenerateCaller.generatedCallerFor(null, DummyObject.TYPE, recorder()));
     }
 
     private Seen of(List<Seen> seen, String field) {

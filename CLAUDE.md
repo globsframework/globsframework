@@ -61,7 +61,7 @@ implementation of it. `GlobGenerateFactory` (`GlobFactory` + `GenerateCaller`) l
 `GeneratedFunctionCaller`, which applies one `FieldValueFunction` per field to a Glob — a codec's answer to
 the megamorphic dispatch a loop over the fields costs, since a generated caller gives one monomorphic call
 site per field. It lives here, not in `globs-generate`, so that a serialization library can be written
-against it without depending on the module that does the generating. `GenerateCaller.callerFor(type, fns)`
+against it without depending on the module that does the generating. `GenerateCaller.callerFor(name, type, fns)`
 is the entry point, and answers from three sources in order: the type's factory when it is a
 `GlobGenerateFactory`; then the `GenerateCallerService` installed through **`-Dglobs.caller=<class>`** (the
 same idiom as `globs.builder`, and how a generator offers a caller over a Glob it did not build — core's own
@@ -70,6 +70,14 @@ never carry a second code path. A service answers null for "not mine"; a `globs.
 throws, since it was asked for explicitly. `isNull` there means
 "`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
 `DefaultFunctionCallerTest` is what a generated implementation has to agree with.
+
+The `name` both entry points now take is the **identity** of the caller, and `CallerName` (in
+`model/generate/`) is where it is documented and checked. A generating implementation emits a class per
+`create` and names it after that, so a name constant in the source is what makes the emitted class the same
+class from one run to the next — which is what an AOT cache matches on, and what a per-run counter destroyed.
+What the codec supplies is only the *purpose* (`"binser.write"`); the type and the shape are the generator's
+half. The check is in core, and refuses a null or blank name even where nothing generates, so a name cannot
+be missing on one deployment and required on another.
 
 **`model/generate/write/`** — the other direction, and the same bet: a parser filling a `MutableGlob`.
 `GeneratedFunctionCallerWrite` builds the two shapes a format needs — `GeneratedCallerWrite`, the loop a
@@ -85,7 +93,10 @@ and `getGenerated()` is the same without the loop at the end, for a parser with 
 Two sources rather than three, since there is no per-type factory to ask. The refusals are statics on the
 interface so that both implementations say the same thing: `unknownKey` (a key with no function and no
 fallback, at run time) and `checked` (a missing function, when the caller is built).
-`DefaultFunctionCallerWriteTest` is what a generated implementation has to agree with.
+`DefaultFunctionCallerWriteTest` is what a generated implementation has to agree with. Both `create`
+overloads take the same identifying `name` as the read side (`CallerName`); with no `GlobType` in sight it is
+the whole of what a generated class is named after, so a parser building one caller per type has to say which
+type in it.
 
 `functional/` — `FunctionalKey` is a key over an arbitrary field subset (not the type's key fields), used for joins/lookups. Its hash intentionally uses `GlobType.getName()` rather than the type's identity hash, so hashes stay stable across JVMs.
 

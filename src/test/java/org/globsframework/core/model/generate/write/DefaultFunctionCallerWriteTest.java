@@ -52,7 +52,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void callsWhatTheCallAtAsksForInOrder() {
         GeneratedCallerWrite<List<String>, String, String> caller = DefaultFunctionCallerWrite.INSTANCE
-                .create(functions(-3, 0, 1, 100000), record("fallback"), -1);
+                .create("test", functions(-3, 0, 1, 100000), record("fallback"), -1);
 
         assertEquals(List.of("fn1/c2/c3", "fn-3/c2/c3", "fn100000/c2/c3", "fn1/c2/c3", "fn0/c2/c3"),
                 call(caller, script(-1, 1, -3, 100000, 1, 0)));
@@ -67,7 +67,7 @@ public class DefaultFunctionCallerWriteTest {
             functions.put(key, record("fn" + key));
         }
         GeneratedCallerWrite<List<String>, String, String> caller =
-                DefaultFunctionCallerWrite.INSTANCE.create(functions, record("fallback"), -1);
+                DefaultFunctionCallerWrite.INSTANCE.create("test", functions, record("fallback"), -1);
 
         assertEquals(List.of("fn9/c2/c3", "fn1/c2/c3", "fn12/c2/c3", "fn5/c2/c3"),
                 call(caller, script(-1, 9, 1, 12, 5)));
@@ -76,7 +76,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void anUnknownKeyGoesToTheFallback() {
         GeneratedCallerWrite<List<String>, String, String> caller =
-                DefaultFunctionCallerWrite.INSTANCE.create(functions(1, 2), record("fallback"), -1);
+                DefaultFunctionCallerWrite.INSTANCE.create("test", functions(1, 2), record("fallback"), -1);
 
         assertEquals(List.of("fallback/c2/c3", "fn1/c2/c3", "fallback/c2/c3"),
                 call(caller, script(-1, 17, 1, -2)));
@@ -85,7 +85,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void anUnknownKeyWithoutAFallbackThrowsAndSaysWhich() {
         GeneratedCallerWrite<List<String>, String, String> caller =
-                DefaultFunctionCallerWrite.INSTANCE.create(functions(1, 2), null, -1);
+                DefaultFunctionCallerWrite.INSTANCE.create("test", functions(1, 2), null, -1);
 
         assertEquals(List.of("fn2/c2/c3"), call(caller, script(-1, 2)));
         IllegalStateException exception = assertThrows(IllegalStateException.class,
@@ -97,7 +97,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void anEndLoopOfItsOwnShadowsTheKeyItEquals() {
         GeneratedCallerWrite<List<String>, String, String> caller =
-                DefaultFunctionCallerWrite.INSTANCE.create(functions(1, 2, 3), record("fallback"), 3);
+                DefaultFunctionCallerWrite.INSTANCE.create("test", functions(1, 2, 3), record("fallback"), 3);
 
         assertEquals(List.of("fn1/c2/c3", "fn2/c2/c3"), call(caller, script(3, 1, 2, 3, 1)));
     }
@@ -105,7 +105,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void noFunctionAtAllIsALoopThatOnlyWaitsForTheEnd() {
         GeneratedCallerWrite<List<String>, String, String> caller = DefaultFunctionCallerWrite.INSTANCE
-                .create(Collections.emptySortedMap(), record("fallback"), 0);
+                .create("test", Collections.emptySortedMap(), record("fallback"), 0);
 
         assertEquals(List.of("fallback/c2/c3", "fallback/c2/c3"), call(caller, script(0, 4, 9)));
     }
@@ -117,7 +117,7 @@ public class DefaultFunctionCallerWriteTest {
         functions.put(0, (glob, trace, ctx2, ctx3) -> glob.set(DummyObject.NAME, "a name"));
         functions.put(1, (glob, trace, ctx2, ctx3) -> glob.set(DummyObject.COUNT, 12));
         GeneratedCallerWrite<List<String>, String, String> caller =
-                DefaultFunctionCallerWrite.INSTANCE.create(functions, null, -1);
+                DefaultFunctionCallerWrite.INSTANCE.create("test", functions, null, -1);
 
         MutableGlob glob = DummyObject.TYPE.instantiate();
         caller.call(script(-1, 1, 0), glob, new ArrayList<>(), "c2", "c3");
@@ -130,7 +130,7 @@ public class DefaultFunctionCallerWriteTest {
     @Test
     public void writeAllCallsEveryFunctionOnceInOrder() {
         GeneratedCallerWriteAll<List<String>, String, String> caller = DefaultFunctionCallerWrite.INSTANCE
-                .create(new MutableFunctionWrite[]{record("a"), record("b"), record("c")});
+                .create("test", new MutableFunctionWrite[]{record("a"), record("b"), record("c")});
 
         List<String> trace = new ArrayList<>();
         caller.call(DummyObject.TYPE.instantiate(), trace, "c2", "c3");
@@ -144,9 +144,24 @@ public class DefaultFunctionCallerWriteTest {
         SortedMap<Integer, MutableFunctionWrite<List<String>, String, String>> functions = functions(1, 2);
         functions.put(3, null);
         assertThrows(IllegalArgumentException.class,
-                () -> DefaultFunctionCallerWrite.INSTANCE.create(functions, null, -1));
+                () -> DefaultFunctionCallerWrite.INSTANCE.create("test", functions, null, -1));
         assertThrows(IllegalArgumentException.class, () -> DefaultFunctionCallerWrite.INSTANCE
-                .create(new MutableFunctionWrite[]{record("a"), null}));
+                .create("test", new MutableFunctionWrite[]{record("a"), null}));
+    }
+
+    /**
+     * The name is what a generating implementation names its emitted class after, so that the class is the
+     * same one from one run to the next. Refused here as well as there : the loop has no class to name, but
+     * a parser must not be able to get away with a name on one JVM and not on another.
+     */
+    @Test
+    public void aCallerWithoutANameIsRefusedEvenThoughTheLoopWouldNotUseIt() {
+        assertThrows(IllegalArgumentException.class,
+                () -> DefaultFunctionCallerWrite.INSTANCE.create(null, functions(1, 2), null, -1));
+        assertThrows(IllegalArgumentException.class,
+                () -> DefaultFunctionCallerWrite.INSTANCE.create("  ", functions(1, 2), null, -1));
+        assertThrows(IllegalArgumentException.class, () -> DefaultFunctionCallerWrite.INSTANCE
+                .create(null, new MutableFunctionWrite[]{record("a")}));
     }
 
     /** Nothing installed : the loop, and a parser that never has to know. */
@@ -215,13 +230,13 @@ public class DefaultFunctionCallerWriteTest {
 
     public static class StandIn implements GeneratedFunctionCallerWrite {
         public <Ctx1, Ctx2, Ctx3> GeneratedCallerWrite<Ctx1, Ctx2, Ctx3> create(
-                SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
+                String name, SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
                 MutableFunctionWrite fallback, int endLoop) {
             throw new UnsupportedOperationException();
         }
 
         public <Ctx1, Ctx2, Ctx3> GeneratedCallerWriteAll<Ctx1, Ctx2, Ctx3> create(
-                MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions) {
+                String name, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions) {
             throw new UnsupportedOperationException();
         }
     }

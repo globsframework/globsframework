@@ -1,5 +1,7 @@
 package org.globsframework.core.model.generate.write;
 
+import org.globsframework.core.model.generate.CallerName;
+
 import java.util.SortedMap;
 
 /**
@@ -9,22 +11,32 @@ import java.util.SortedMap;
  * <p>
  * A generating implementation is free to emit a class per call, holding <em>these</em> functions in its static
  * finals — that is what makes each call site monomorphic, and it is why this belongs to the setup phase of a
- * parser, not to its hot path.
+ * parser, not to its hot path. That emitted class is named after the {@code name} given here : see
+ * {@link CallerName} for what to pass and why it is not optional.
  */
 public interface GeneratedFunctionCallerWrite {
 
     /**
      * The dispatching caller : {@code functions} keyed by whatever the {@link CallAtWrite} answers.
      *
+     * @param name     what builds this caller, constant in the source — see {@link CallerName}. Nothing here
+     *                 depends on a GlobType, so this is the whole of what a generated class is named after :
+     *                 a parser that builds one caller per type has to say which type in it.
      * @param fallback what an unknown key goes to. null means there is none, and an unknown key then throws.
      * @param endLoop  the value that ends the pass. It is tested before the dispatch, so it may be a key of
      *                 the map — it is simply shadowed.
      */
-    <Ctx1, Ctx2, Ctx3> GeneratedCallerWrite<Ctx1, Ctx2, Ctx3> create(SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
+    <Ctx1, Ctx2, Ctx3> GeneratedCallerWrite<Ctx1, Ctx2, Ctx3> create(String name,
+                                                                     SortedMap<Integer, MutableFunctionWrite<Ctx1, Ctx2, Ctx3>> functions,
                                                                      MutableFunctionWrite fallback, int endLoop);
 
-    /** The unrolled caller : every function called once, in the order of the array. */
-    <Ctx1, Ctx2, Ctx3> GeneratedCallerWriteAll<Ctx1, Ctx2, Ctx3> create(MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions);
+    /**
+     * The unrolled caller : every function called once, in the order of the array.
+     *
+     * @param name what builds this caller — see {@link #create(String, SortedMap, MutableFunctionWrite, int)}.
+     */
+    <Ctx1, Ctx2, Ctx3> GeneratedCallerWriteAll<Ctx1, Ctx2, Ctx3> create(String name,
+                                                                        MutableFunctionWrite<Ctx1, Ctx2, Ctx3>[] functions);
 
     /**
      * What a parser builds its callers with : the {@link GenerateCallerWriteService} installed through

@@ -12,7 +12,7 @@ import org.globsframework.core.model.GlobFactory;
  * <pre>
  * GeneratedFunctionCaller&lt;Out, Void&gt; caller =
  *     type.getGlobFactory() instanceof GlobGenerateFactory generate
- *         ? generate.create(field -&gt; functionFor(field))
+ *         ? generate.create("mycodec.write", field -&gt; functionFor(field))
  *         : null;   // not generated
  * </pre>
  */
