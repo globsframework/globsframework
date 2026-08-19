@@ -3,3 +3,10 @@ target
 out
 tmp
 *.iml
+
+# maven-release-plugin leftovers : written into the working tree by a release run and cleaned up on
+# success, so what is left here is what a failed or interrupted one left behind. Not source.
+release.properties
+pom.xml.releaseBackup
+pom.xml.next
+pom.xml.tag
