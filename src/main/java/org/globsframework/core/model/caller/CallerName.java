@@ -1,11 +1,8 @@
-package org.globsframework.core.model.generate;
-
-import org.globsframework.core.model.generate.read.GenerateCaller;
-import org.globsframework.core.model.generate.write.GeneratedFunctionCallerWrite;
+package org.globsframework.core.model.caller;
 
 /**
  * The identity a codec gives to a caller it asks for, on both sides
- * ({@link GenerateCaller#callerFor} and {@link GeneratedFunctionCallerWrite#create}).
+ * ({@link FromGlobCallerFactory#callerFor} and {@link ToGlobCallerFactory#create}).
  * <p>
  * It exists for the generating implementations : they emit a class per call, and that class needs a name
  * that is the same from one run of the application to the next, so that the JVM can recognise it — an AOT

@@ -56,45 +56,45 @@ The bridge is `typeBuilder.register(GlobCreateFromAnnotation.class, annotation -
 
 `GlobRepository` (`model/repository/`) is an in-memory store keyed by `Key`, with index support (`metamodel/index/`, `model/indexing/`), links (`metamodel/links/`), and change tracking: mutations produce a `ChangeSet` of `DeltaGlob`s (`model/delta/`) delivered to `ChangeSetListener`s. `LocalGlobRepository` gives a transactional local view over another repository.
 
-**`model/generate/read/`** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
-implementation of it. `GlobGenerateFactory` (`GlobFactory` + `GenerateCaller`) lets a factory build a
-`GeneratedFunctionCaller`, which applies one `FieldValueFunction` per field to a Glob — a codec's answer to
+**`model/caller/`, the from-Glob side** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
+implementation of it. `CallerGlobFactory` (`GlobFactory` + `FromGlobCallerFactory`) lets a factory build a
+`FromGlobCaller`, which applies one `FromGlobFunction` per field to a Glob — a codec's answer to
 the megamorphic dispatch a loop over the fields costs, since a generated caller gives one monomorphic call
 site per field. It lives here, not in `globs-generate`, so that a serialization library can be written
-against it without depending on the module that does the generating. `GenerateCaller.callerFor(name, type, fns)`
+against it without depending on the module that does the generating. `FromGlobCallerFactory.callerFor(name, type, fns)`
 is the entry point, and answers from three sources in order: the type's factory when it is a
-`GlobGenerateFactory`; then the `GenerateCallerService` installed through **`-Dglobs.caller=<class>`** (the
+`CallerGlobFactory`; then the `FromGlobCallerService` installed through **`-Dglobs.caller.fromGlob=<class>`** (the
 same idiom as `globs.builder`, and how a generator offers a caller over a Glob it did not build — core's own
-`DefaultGlob`); then `DefaultFunctionCaller`, the plain loop. Same behaviour whichever comes out, so callers
-never carry a second code path. A service answers null for "not mine"; a `globs.caller` that cannot be loaded
+`DefaultGlob`); then `LoopFromGlobCaller`, the plain loop. Same behaviour whichever comes out, so callers
+never carry a second code path. A service answers null for "not mine"; a `globs.caller.fromGlob` that cannot be loaded
 throws, since it was asked for explicitly. `isNull` there means
 "`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
-`DefaultFunctionCallerTest` is what a generated implementation has to agree with.
+`LoopFromGlobCallerTest` is what a generated implementation has to agree with.
 
 The `name` both entry points now take is the **identity** of the caller, and `CallerName` (in
-`model/generate/`) is where it is documented and checked. A generating implementation emits a class per
+`model/caller/`) is where it is documented and checked. A generating implementation emits a class per
 `create` and names it after that, so a name constant in the source is what makes the emitted class the same
 class from one run to the next — which is what an AOT cache matches on, and what a per-run counter destroyed.
 What the codec supplies is only the *purpose* (`"binser.write"`); the type and the shape are the generator's
 half. The check is in core, and refuses a null or blank name even where nothing generates, so a name cannot
 be missing on one deployment and required on another.
 
-**`model/generate/write/`** — the other direction, and the same bet: a parser filling a `MutableGlob`.
-`GeneratedFunctionCallerWrite` builds the two shapes a format needs — `GeneratedCallerWrite`, the loop a
-`CallAtWrite` drives (it answers the key of the `MutableFunctionWrite` to call next, or the `endLoop` value
-that ends the pass, an unknown key going to the fallback), and `GeneratedCallerWriteAll`, every function once
+**`model/caller/`, the to-Glob side** — the other direction, and the same bet: a parser filling a `MutableGlob`.
+`ToGlobCallerFactory` builds the two shapes a format needs — `ToGlobCaller`, the loop a
+`KeySource` drives (it answers the key of the `ToGlobFunction` to call next, or the `endLoop` value
+that ends the pass, an unknown key going to the fallback), and `ToGlobCallerAll`, every function once
 in array order. A generating implementation emits a switch and an unrolled loop over `static final`
-functions, so each entry gets its own monomorphic call site. Unlike the read side nothing in the emitted code
-reads a Glob's layout: the functions write through `MutableGlob`, so a write caller works over any Glob and
-needs no `GlobType` at all. `GeneratedFunctionCallerWrite.get()` is the entry point — the
-`GenerateCallerWriteService` installed through **`-Dglobs.callerWrite=<class>`**
-(`globs-generate`'s `AsmCallerWriteGeneratorService`), else `DefaultFunctionCallerWrite`, the plain loop —
-and `getGenerated()` is the same without the loop at the end, for a parser with a better fallback of its own.
+functions, so each entry gets its own monomorphic call site. Unlike the from-Glob side nothing in the emitted code
+reads a Glob's layout: the functions write through `MutableGlob`, so a to-Glob caller works over any Glob and
+needs no `GlobType` at all. `ToGlobCallerFactory.get()` is the entry point — the
+`ToGlobCallerService` installed through **`-Dglobs.caller.toGlob=<class>`**
+(`globs-generate`'s `AsmCallerWriteGeneratorService`), else `LoopToGlobCallerFactory`, the plain loop —
+and `generated()` is the same without the loop at the end, for a parser with a better fallback of its own.
 Two sources rather than three, since there is no per-type factory to ask. The refusals are statics on the
 interface so that both implementations say the same thing: `unknownKey` (a key with no function and no
 fallback, at run time) and `checked` (a missing function, when the caller is built).
-`DefaultFunctionCallerWriteTest` is what a generated implementation has to agree with. Both `create`
-overloads take the same identifying `name` as the read side (`CallerName`); with no `GlobType` in sight it is
+`LoopToGlobCallerFactoryTest` is what a generated implementation has to agree with. Both `create`
+overloads take the same identifying `name` as the from-Glob side (`CallerName`); with no `GlobType` in sight it is
 the whole of what a generated class is named after, so a parser building one caller per type has to say which
 type in it.
 
@@ -110,6 +110,6 @@ type in it.
 
 - Assertions (`assert`) guard field/type consistency in hot paths so checks vanish in production; keep new checks in that style rather than adding unconditional branches.
 - `-Dglobs.builder=<class>` swaps in an alternative `GlobFactoryService` (that is how the ASM-based `globs-generate` plugs in bytecode-generated Globs). Any change to `GlobFactory`/`GlobType` must remain implementable by an external factory.
-- `-Dglobs.caller=<class>` installs a `GenerateCallerService` the same way, for callers over the Globs core builds itself (`model/generate/read/`), and `-Dglobs.callerWrite=<class>` a `GenerateCallerWriteService`, for the callers a parser fills a `MutableGlob` with (`model/generate/write/`). All three are read once and cached; a test that changes one must call the matching `Builder.reset()`.
+- `-Dglobs.caller.fromGlob=<class>` installs a `FromGlobCallerService` the same way, for callers over the Globs core builds itself (`model/caller/`), and `-Dglobs.caller.toGlob=<class>` a `ToGlobCallerService`, for the callers a parser fills a `MutableGlob` with (`model/caller/`). All three are read once and cached; a test that changes one must call the matching `Builder.reset()`.
 - Tests build their model types as `Dummy*` classes in `src/test/java/org/globsframework/core/metamodel/`; reuse those instead of defining new one-off types. `GlobChecker`, `GlobRepositoryChecker`, `TestUtils` are the shared assertion helpers.
 - `src/test/java/org/globsframework/core/xml/` holds test-only XML parsing/writing (the real XML component is a separate repo).

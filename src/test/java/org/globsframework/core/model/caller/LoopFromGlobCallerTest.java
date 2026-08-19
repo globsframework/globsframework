@@ -1,4 +1,4 @@
-package org.globsframework.core.model.generate.read;
+package org.globsframework.core.model.caller;
 
 import org.globsframework.core.metamodel.DummyObject;
 import org.globsframework.core.metamodel.GlobType;
@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * with isSet from the Glob and isNull meaning "getValue answers null" — so an untouched field comes out
  * not set, null, and with no value, while an explicit null is set and null.
  */
-public class DefaultFunctionCallerTest {
+public class LoopFromGlobCallerTest {
 
     private record Seen(String field, boolean isSet, boolean isNull, Object value, Object ctx2) {
     }
 
-    private static GenerateCaller.GetFieldValueFunction<List<Seen>, String> recorder() {
-        return new GenerateCaller.GetFieldValueFunction<>() {
-            public <T> FieldValueFunction<T, List<Seen>, String> create(Field field) {
+    private static FromGlobCallerFactory.Functions<List<Seen>, String> recorder() {
+        return new FromGlobCallerFactory.Functions<>() {
+            public <T> FromGlobFunction<T, List<Seen>, String> forField(Field field) {
                 String name = field.getName();
                 return (isSet, isNull, value, ctx1, ctx2) -> ctx1.add(new Seen(name, isSet, isNull, value, ctx2));
             }
@@ -35,7 +35,7 @@ public class DefaultFunctionCallerTest {
 
     private List<Seen> call(MutableGlob glob) {
         List<Seen> seen = new ArrayList<>();
-        GenerateCaller.callerFor("test", glob.getType(), recorder()).call(glob, seen, "ctx2");
+        FromGlobCallerFactory.callerFor("test", glob.getType(), recorder()).call(glob, seen, "ctx2");
         return seen;
     }
 
@@ -62,27 +62,27 @@ public class DefaultFunctionCallerTest {
 
     @Test
     public void aTypeWithNoGeneratingFactoryFallsBackToTheLoopedCaller() {
-        assertFalse(DummyObject.TYPE.getGlobFactory() instanceof GlobGenerateFactory);
-        assertInstanceOf(DefaultFunctionCaller.class,
-                GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
+        assertFalse(DummyObject.TYPE.getGlobFactory() instanceof CallerGlobFactory);
+        assertInstanceOf(LoopFromGlobCaller.class,
+                FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
     }
 
     /**
-     * The extension point : with a GenerateCallerService installed, callerFor stops answering the loop for a
+     * The extension point : with a FromGlobCallerService installed, callerFor stops answering the loop for a
      * type core builds itself. Core has no implementation of its own — globs-generate's is the one that
      * generates over a DefaultGlob — so the test installs a stand-in and only checks the wiring.
      */
     @Test
     public void anInstalledServiceIsPreferredToTheLoop() {
-        System.setProperty("globs.caller", StandInService.class.getName());
-        GenerateCallerService.Builder.reset();
+        System.setProperty("globs.caller.fromGlob", StandInService.class.getName());
+        FromGlobCallerService.Builder.reset();
         try {
-            assertInstanceOf(StandInCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
+            assertInstanceOf(StandInCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
         } finally {
-            System.clearProperty("globs.caller");
-            GenerateCallerService.Builder.reset();
+            System.clearProperty("globs.caller.fromGlob");
+            FromGlobCallerService.Builder.reset();
         }
-        assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
+        assertInstanceOf(LoopFromGlobCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
     }
 
     /**
@@ -91,70 +91,70 @@ public class DefaultFunctionCallerTest {
      */
     @Test
     public void generatedCallerForSaysNullRatherThanAnsweringTheLoop() {
-        assertNull(GenerateCaller.generatedCallerFor("test", DummyObject.TYPE, recorder()));
+        assertNull(FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder()));
 
-        System.setProperty("globs.caller", StandInService.class.getName());
-        GenerateCallerService.Builder.reset();
+        System.setProperty("globs.caller.fromGlob", StandInService.class.getName());
+        FromGlobCallerService.Builder.reset();
         try {
             assertInstanceOf(StandInCaller.class,
-                    GenerateCaller.generatedCallerFor("test", DummyObject.TYPE, recorder()));
+                    FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder()));
         } finally {
-            System.clearProperty("globs.caller");
-            GenerateCallerService.Builder.reset();
+            System.clearProperty("globs.caller.fromGlob");
+            FromGlobCallerService.Builder.reset();
         }
     }
 
     /** "not mine" is a null, and the loop takes over — it is not an error to report. */
     @Test
     public void aServiceThatDoesNotKnowTheTypeFallsBackToTheLoop() {
-        System.setProperty("globs.caller", AbstainingService.class.getName());
-        GenerateCallerService.Builder.reset();
+        System.setProperty("globs.caller.fromGlob", AbstainingService.class.getName());
+        FromGlobCallerService.Builder.reset();
         try {
-            assertInstanceOf(DefaultFunctionCaller.class, GenerateCaller.callerFor("test", DummyObject.TYPE, recorder()));
+            assertInstanceOf(LoopFromGlobCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
         } finally {
-            System.clearProperty("globs.caller");
-            GenerateCallerService.Builder.reset();
+            System.clearProperty("globs.caller.fromGlob");
+            FromGlobCallerService.Builder.reset();
         }
     }
 
     /** an explicitly asked for service that cannot be loaded is a misconfiguration, not a slow path */
     @Test
     public void anUnloadableServiceThrowsRatherThanDegradingSilently() {
-        System.setProperty("globs.caller", "not.a.Class");
+        System.setProperty("globs.caller.fromGlob", "not.a.Class");
         try {
-            assertThrows(RuntimeException.class, GenerateCallerService.Builder::reset);
+            assertThrows(RuntimeException.class, FromGlobCallerService.Builder::reset);
         } finally {
-            System.clearProperty("globs.caller");
-            GenerateCallerService.Builder.reset();
+            System.clearProperty("globs.caller.fromGlob");
+            FromGlobCallerService.Builder.reset();
         }
     }
 
-    public static class StandInService implements GenerateCallerService {
-        public GenerateCaller getGenerateCaller(GlobType type) {
-            return new GenerateCaller() {
-                public <D, E> GeneratedFunctionCaller<D, E> create(String name, GetFieldValueFunction<D, E> functions) {
+    public static class StandInService implements FromGlobCallerService {
+        public FromGlobCallerFactory factoryFor(GlobType type) {
+            return new FromGlobCallerFactory() {
+                public <C1, C2> FromGlobCaller<C1, C2> create(String name, Functions<C1, C2> functions) {
                     return new StandInCaller<>();
                 }
             };
         }
     }
 
-    public static class AbstainingService implements GenerateCallerService {
-        public GenerateCaller getGenerateCaller(GlobType type) {
+    public static class AbstainingService implements FromGlobCallerService {
+        public FromGlobCallerFactory factoryFor(GlobType type) {
             return null;
         }
     }
 
-    static class StandInCaller<D, E> implements GeneratedFunctionCaller<D, E> {
-        public void call(Glob data, D ctx1, E ctx2) {
+    static class StandInCaller<C1, C2> implements FromGlobCaller<C1, C2> {
+        public void call(Glob data, C1 ctx1, C2 ctx2) {
         }
     }
 
     @Test
     public void aMissingFunctionIsRefusedAtBuildTimeRatherThanNPEingPerGlob() {
-        assertThrows(IllegalArgumentException.class, () -> new DefaultFunctionCaller<>(DummyObject.TYPE,
-                new GenerateCaller.GetFieldValueFunction<Object, Object>() {
-                    public <T> FieldValueFunction<T, Object, Object> create(Field field) {
+        assertThrows(IllegalArgumentException.class, () -> new LoopFromGlobCaller<>(DummyObject.TYPE,
+                new FromGlobCallerFactory.Functions<Object, Object>() {
+                    public <T> FromGlobFunction<T, Object, Object> forField(Field field) {
                         return null;
                     }
                 }));
@@ -168,11 +168,11 @@ public class DefaultFunctionCallerTest {
     @Test
     public void aCallerWithoutANameIsRefusedEvenThoughTheLoopWouldNotUseIt() {
         assertThrows(IllegalArgumentException.class,
-                () -> GenerateCaller.callerFor(null, DummyObject.TYPE, recorder()));
+                () -> FromGlobCallerFactory.callerFor(null, DummyObject.TYPE, recorder()));
         assertThrows(IllegalArgumentException.class,
-                () -> GenerateCaller.callerFor("  ", DummyObject.TYPE, recorder()));
+                () -> FromGlobCallerFactory.callerFor("  ", DummyObject.TYPE, recorder()));
         assertThrows(IllegalArgumentException.class,
-                () -> GenerateCaller.generatedCallerFor(null, DummyObject.TYPE, recorder()));
+                () -> FromGlobCallerFactory.generatedCallerFor(null, DummyObject.TYPE, recorder()));
     }
 
     private Seen of(List<Seen> seen, String field) {

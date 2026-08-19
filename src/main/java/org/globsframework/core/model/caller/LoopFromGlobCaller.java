@@ -1,11 +1,11 @@
-package org.globsframework.core.model.generate.read;
+package org.globsframework.core.model.caller;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.model.Glob;
 
 /**
- * The {@link GeneratedFunctionCaller} of a type whose factory generates nothing : the plain loop over a
+ * The {@link FromGlobCaller} of a type whose factory generates nothing : the plain loop over a
  * table of functions indexed by {@code Field.getIndex()}.
  * <p>
  * Behaviourally identical to a generated one — same functions, same order, and the same isSet / isNull /
@@ -15,22 +15,22 @@ import org.globsframework.core.model.Glob;
  * <p>
  * Unlike a generated caller it accepts any Glob of the type, whoever built it.
  */
-public class DefaultFunctionCaller<D, E> implements GeneratedFunctionCaller<D, E> {
+public class LoopFromGlobCaller<C1, C2> implements FromGlobCaller<C1, C2> {
     private final GlobType type;
     private final Field[] fields;
-    private final FieldValueFunction<Object, D, E>[] functions;
+    private final FromGlobFunction<Object, C1, C2>[] functions;
 
     @SuppressWarnings("unchecked")
-    public DefaultFunctionCaller(GlobType type, GenerateCaller.GetFieldValueFunction<D, E> getFieldValueFunction) {
+    public LoopFromGlobCaller(GlobType type, FromGlobCallerFactory.Functions<C1, C2> source) {
         this.type = type;
         Field[] typeFields = type.getFields();
         fields = new Field[typeFields.length];
-        functions = new FieldValueFunction[typeFields.length];
+        functions = new FromGlobFunction[typeFields.length];
         for (Field field : typeFields) {
-            FieldValueFunction<Object, D, E> function =
-                    (FieldValueFunction<Object, D, E>) getFieldValueFunction.create(field);
+            FromGlobFunction<Object, C1, C2> function =
+                    (FromGlobFunction<Object, C1, C2>) source.forField(field);
             if (function == null) {
-                throw new IllegalArgumentException("No FieldValueFunction for " + field.getName()
+                throw new IllegalArgumentException("No FromGlobFunction for " + field.getName()
                                                    + " of " + type.getName());
             }
             fields[field.getIndex()] = field;
@@ -38,7 +38,7 @@ public class DefaultFunctionCaller<D, E> implements GeneratedFunctionCaller<D, E
         }
     }
 
-    public void call(Glob data, D ctx1, E ctx2) {
+    public void call(Glob data, C1 ctx1, C2 ctx2) {
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
             Object value = data.getValue(field);
