@@ -71,6 +71,18 @@ throws, since it was asked for explicitly. `isNull` there means
 "`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
 `LoopFromGlobCallerTest` is what a generated implementation has to agree with.
 
+**The order.** A caller walks every field of the type in index order unless it is given a `Field[] order`,
+which is *what* to call and *in which order* — the last argument of `create`, `callerFor` and
+`generatedCallerFor`, all of which keep a shorter form that passes null for "every field, index order". A
+format whose layout is not the type's declaration order has no other way : a caller writes as it walks, so
+reordering afterwards is not something a codec can do. The array may name **fewer** fields than the type
+has, and the ones left out are never asked of `Functions.forField` and never called — a codec that binds
+part of a type says so here rather than handing out a do-nothing function per unbound field.
+`FromGlobCallerFactory.fieldsToCall(type, order)` is the shared validation (a field of another type, the
+same field twice, a null — refused when the caller is built) and returns the array the caller keeps, always
+a copy. A generating implementation must digest the order into the emitted class's name: two orders are two
+classes, never one name with two sets of bytes.
+
 The `name` both entry points now take is the **identity** of the caller, and `CallerName` (in
 `model/caller/`) is where it is documented and checked. A generating implementation emits a class per
 `create` and names it after that, so a name constant in the source is what makes the emitted class the same
