@@ -2,7 +2,6 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.*;
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.metamodel.links.Link;
@@ -66,26 +65,26 @@ public class ChangeSetSequencerTest {
     @Test
     public void testSingleType() throws Exception {
         checkSequence("<changes>"
-                        + "  <delete type='objectWithCompositeKey' id1='0' id2='3'/>"
-                        + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
-                        + "  <update type='objectWithCompositeKey' id1='0' id2='2' name='newName'/>"
-                        + "</changes>",
+                      + "  <delete type='objectWithCompositeKey' id1='0' id2='3'/>"
+                      + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
+                      + "  <update type='objectWithCompositeKey' id1='0' id2='2' name='newName'/>"
+                      + "</changes>",
                 "<changes>"
-                        + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
-                        + "  <update type='objectWithCompositeKey' id1='0' id2='2' name='newName' _name='(null)'/>"
-                        + "  <delete type='objectWithCompositeKey' id1='0' id2='3'/>"
-                        + "</changes>");
+                + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
+                + "  <update type='objectWithCompositeKey' id1='0' id2='2' name='newName' _name='(null)'/>"
+                + "  <delete type='objectWithCompositeKey' id1='0' id2='3'/>"
+                + "</changes>");
     }
 
     @Test
     public void testSingleTypeWithUpdateOnCreate() throws Exception {
         checkSequence("<changes>"
-                        + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
-                        + "  <update type='objectWithCompositeKey' id1='0' id2='1' name='newName'/>"
-                        + "</changes>",
+                      + "  <create type='objectWithCompositeKey' id1='0' id2='1'/>"
+                      + "  <update type='objectWithCompositeKey' id1='0' id2='1' name='newName'/>"
+                      + "</changes>",
                 "<changes>"
-                        + "  <create type='objectWithCompositeKey' id1='0' id2='1' name='newName'/>"
-                        + "</changes>");
+                + "  <create type='objectWithCompositeKey' id1='0' id2='1' name='newName'/>"
+                + "</changes>");
     }
 
     public static class ObjectWithSelfReference {
@@ -113,27 +112,27 @@ public class ChangeSetSequencerTest {
     public void testObjectWithSelfReference() throws Exception {
         try {
             checkSequence("<changes>"
-                            + "  <create type='objectWithSelfReference' id='0' linkId='1'/>"
-                            + "  <create type='objectWithSelfReference' id='1' linkId='0'/>"
-                            + "</changes>",
+                          + "  <create type='objectWithSelfReference' id='0' linkId='1'/>"
+                          + "  <create type='objectWithSelfReference' id='1' linkId='0'/>"
+                          + "</changes>",
                     "<changes>"
-                            + "  <create type='objectWithSelfReference' id='1'/>"
-                            + "  <create type='objectWithSelfReference' id='0'/>"
-                            + "  <update type='objectWithSelfReference' id='1' linkId='0' _linkId='(null)'/>"
-                            + "  <update type='objectWithSelfReference' id='0' linkId='1' _linkId='(null)'/>"
-                            + "</changes>");
+                    + "  <create type='objectWithSelfReference' id='1'/>"
+                    + "  <create type='objectWithSelfReference' id='0'/>"
+                    + "  <update type='objectWithSelfReference' id='1' linkId='0' _linkId='(null)'/>"
+                    + "  <update type='objectWithSelfReference' id='0' linkId='1' _linkId='(null)'/>"
+                    + "</changes>");
         } catch (AssertionFailedError e) {
             // the order withing the create and update sequences may vary
             checkSequence("<changes>"
-                            + "  <create type='objectWithSelfReference' id='0' linkId='1'/>"
-                            + "  <create type='objectWithSelfReference' id='1' linkId='0'/>"
-                            + "</changes>",
+                          + "  <create type='objectWithSelfReference' id='0' linkId='1'/>"
+                          + "  <create type='objectWithSelfReference' id='1' linkId='0'/>"
+                          + "</changes>",
                     "<changes>"
-                            + "  <create type='objectWithSelfReference' id='0'/>"
-                            + "  <create type='objectWithSelfReference' id='1'/>"
-                            + "  <update type='objectWithSelfReference' id='0' linkId='1' _linkId='(null)'/>"
-                            + "  <update type='objectWithSelfReference' id='1' linkId='0' _linkId='(null)'/>"
-                            + "</changes>");
+                    + "  <create type='objectWithSelfReference' id='0'/>"
+                    + "  <create type='objectWithSelfReference' id='1'/>"
+                    + "  <update type='objectWithSelfReference' id='0' linkId='1' _linkId='(null)'/>"
+                    + "  <update type='objectWithSelfReference' id='1' linkId='0' _linkId='(null)'/>"
+                    + "</changes>");
         }
     }
 
@@ -144,10 +143,8 @@ public class ChangeSetSequencerTest {
 
         public static IntegerField ID2;
 
-        @Target(ObjectWithCompositeKey.class)
         public static IntegerField LINK1;
 
-        @Target(ObjectWithCompositeKey.class)
         public static IntegerField LINK2;
 
         public static Link LINK;
@@ -173,10 +170,8 @@ public class ChangeSetSequencerTest {
 
         public static IntegerField ID2;
 
-        @Target(ObjectWithCompositeKey.class)
         public static IntegerField LINK1;
 
-        @Target(ObjectWithCompositeKey.class)
         public static IntegerField LINK2;
 
         public static Link LINK;
@@ -198,40 +193,40 @@ public class ChangeSetSequencerTest {
     @Test
     public void testLink() throws Exception {
         checkSequence("<changes>"
-                        + "  <create type='linkedToObjectWithCompositeKey' id='0' link1='1' link2='2'/>"
-                        + "  <delete type='linkedToObjectWithCompositeKey' id='1' _link1='3' _link2='4'/>"
-                        + "  <update type='linkedToObjectWithCompositeKey' id='2' link1='2' link2='3'/>"
-                        + "  <delete type='objectWithCompositeKey' id1='3' id2='4'/>"
-                        + "  <update type='objectWithCompositeKey' id1='2' id2='3' name='newName'/>"
-                        + "  <create type='objectWithCompositeKey' id1='1' id2='2'/>"
-                        + "</changes>",
+                      + "  <create type='linkedToObjectWithCompositeKey' id='0' link1='1' link2='2'/>"
+                      + "  <delete type='linkedToObjectWithCompositeKey' id='1' _link1='3' _link2='4'/>"
+                      + "  <update type='linkedToObjectWithCompositeKey' id='2' link1='2' link2='3'/>"
+                      + "  <delete type='objectWithCompositeKey' id1='3' id2='4'/>"
+                      + "  <update type='objectWithCompositeKey' id1='2' id2='3' name='newName'/>"
+                      + "  <create type='objectWithCompositeKey' id1='1' id2='2'/>"
+                      + "</changes>",
                 "<changes>"
-                        + "  <create type='objectWithCompositeKey' id1='1' id2='2'/>"
-                        + "  <create type='linkedToObjectWithCompositeKey' id='0' link1='1' link2='2'/>"
-                        + "  <update type='objectWithCompositeKey' id1='2' id2='3'"
-                        + "          name='newName' _name='(null)'/>"
-                        + "  <update type='linkedToObjectWithCompositeKey' id='2'"
-                        + "          link1='2' _link1='(null)' "
-                        + "          link2='3' _link2='(null)'/>"
-                        + "  <delete type='linkedToObjectWithCompositeKey' id='1' _link1='3' _link2='4'/>"
-                        + "  <delete type='objectWithCompositeKey' id1='3' id2='4'/>"
-                        + "</changes>");
+                + "  <create type='objectWithCompositeKey' id1='1' id2='2'/>"
+                + "  <create type='linkedToObjectWithCompositeKey' id='0' link1='1' link2='2'/>"
+                + "  <update type='objectWithCompositeKey' id1='2' id2='3'"
+                + "          name='newName' _name='(null)'/>"
+                + "  <update type='linkedToObjectWithCompositeKey' id='2'"
+                + "          link1='2' _link1='(null)' "
+                + "          link2='3' _link2='(null)'/>"
+                + "  <delete type='linkedToObjectWithCompositeKey' id='1' _link1='3' _link2='4'/>"
+                + "  <delete type='objectWithCompositeKey' id1='3' id2='4'/>"
+                + "</changes>");
     }
 
     @Test
     public void testLinkCycle() throws Exception {
         checkSequence("<changes>"
-                        + "  <create type='linkCycle1' id1='0' id2='2' link1='1' link2='2'/>"
-                        + "  <create type='linkCycle2' id1='1' id2='2' link1='1' link2='2'/>"
-                        + "</changes>",
+                      + "  <create type='linkCycle1' id1='0' id2='2' link1='1' link2='2'/>"
+                      + "  <create type='linkCycle2' id1='1' id2='2' link1='1' link2='2'/>"
+                      + "</changes>",
                 "<changes>"
-                        + "  <create type='linkCycle2' id1='1' id2='2'/>"
-                        + "  <create type='linkCycle1' id1='0' id2='2'" +
-                        "            link1='1' link2='2'/>"
-                        + "  <update type='linkCycle2' id1='1' id2='2' " +
-                        "            link1='1' _link1='(null)' " +
-                        "            link2='2' _link2='(null)'/>"
-                        + "</changes>");
+                + "  <create type='linkCycle2' id1='1' id2='2'/>"
+                + "  <create type='linkCycle1' id1='0' id2='2'" +
+                "            link1='1' link2='2'/>"
+                + "  <update type='linkCycle2' id1='1' id2='2' " +
+                "            link1='1' _link1='(null)' " +
+                "            link2='2' _link2='(null)'/>"
+                + "</changes>");
     }
 
     public static class LargeLinkCycle1 {
@@ -283,7 +278,6 @@ public class ChangeSetSequencerTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycle1.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -303,16 +297,16 @@ public class ChangeSetSequencerTest {
     @Test
     public void testLargeLinkCycle() throws Exception {
         checkSequence("<changes>"
-                        + "  <create type='largeLinkCycle1' id='1' linkId='2'/>"
-                        + "  <create type='largeLinkCycle2' id='2' linkId='3'/>"
-                        + "  <create type='largeLinkCycle3' id='3' linkId='1'/>"
-                        + "</changes>",
+                      + "  <create type='largeLinkCycle1' id='1' linkId='2'/>"
+                      + "  <create type='largeLinkCycle2' id='2' linkId='3'/>"
+                      + "  <create type='largeLinkCycle3' id='3' linkId='1'/>"
+                      + "</changes>",
                 "<changes>"
-                        + "  <create type='largeLinkCycle3' id='3'/>"
-                        + "  <create type='largeLinkCycle2' id='2' linkId='3'/>"
-                        + "  <create type='largeLinkCycle1' id='1' linkId='2'/>"
-                        + "  <update type='largeLinkCycle3' id='3' linkId='1' _linkId='(null)'/>"
-                        + "</changes>");
+                + "  <create type='largeLinkCycle3' id='3'/>"
+                + "  <create type='largeLinkCycle2' id='2' linkId='3'/>"
+                + "  <create type='largeLinkCycle1' id='1' linkId='2'/>"
+                + "  <update type='largeLinkCycle3' id='3' linkId='1' _linkId='(null)'/>"
+                + "</changes>");
     }
 
     private void checkSequence(String input, String expected) throws Exception {

@@ -15,8 +15,6 @@ public class StringFieldType {
 
     public static final StringField name;
 
-    @Targets({KeyField.class, IsTarget.class, MaxSize.class, MultiLineText.class, Required.class,
-            NamingField.class, FieldName.class, EnumAnnotation.class})
     public static final GlobArrayUnionField annotations;
 
     public static MutableGlob create(String name) {

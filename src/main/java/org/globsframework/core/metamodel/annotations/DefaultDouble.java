@@ -13,7 +13,6 @@ public class DefaultDouble {
 
     public static final DoubleField VALUE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
     public static Glob create(double value) {
@@ -23,7 +22,6 @@ public class DefaultDouble {
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultDouble");
         VALUE = typeBuilder.declareDoubleField("VALUE");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultDouble_) annotation).value()));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
     }

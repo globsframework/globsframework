@@ -10,15 +10,12 @@ import org.globsframework.core.model.KeyBuilder;
 public class IsTarget {
     public static final GlobType TYPE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
-    @InitUniqueGlob
     public static final Glob INSTANCE;
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("IsTarget");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getInstance());
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         INSTANCE = TYPE.instantiate();

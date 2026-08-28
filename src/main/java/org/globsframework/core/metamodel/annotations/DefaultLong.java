@@ -13,21 +13,15 @@ public class DefaultLong {
 
     public static final LongField VALUE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
     public static Glob create(long value) {
         return TYPE.instantiate().set(VALUE, value);
     }
 
-    public static Glob create(DefaultLong_ defaultLong) {
-        return TYPE.instantiate().set(VALUE, defaultLong.value());
-    }
-
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultLong");
         VALUE = typeBuilder.declareLongField("value");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultLong_) annotation));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
     }

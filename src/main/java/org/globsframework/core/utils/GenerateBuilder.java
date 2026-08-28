@@ -1,7 +1,6 @@
 package org.globsframework.core.utils;
 
 import org.globsframework.core.metamodel.GlobType;
-import org.globsframework.core.metamodel.annotations.GlobCreateFromAnnotation;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.index.*;
 import org.globsframework.core.model.Glob;
@@ -23,8 +22,6 @@ import java.util.stream.Collectors;
  * metamodel. It is found back by introspection, in that order :
  * <ol>
  *     <li>an explicit mapping given through {@link #declare(GlobType, Class)},</li>
- *     <li>the class that registered the {@link GlobCreateFromAnnotation} lambda (a lambda class name keeps
- *     the name of its declaring class),</li>
  *     <li>a lookup of {@code <package>.<GlobType name>} over the registered packages then over every
  *     package already loaded in the class loader (the holder class is necessarily loaded, since its static
  *     block is what created the GlobType we are looking at).</li>
@@ -569,26 +566,11 @@ public class GenerateBuilder {
         if (holders.containsKey(globType)) {
             return holders.get(globType);
         }
-        Class<?> found = fromRegisteredLambda(globType);
-        if (found == null) {
-            found = fromPackages(globType);
-        }
+        Class<?> found = fromPackages(globType);
         holders.put(globType, found);
         return found;
     }
 
-    private Class<?> fromRegisteredLambda(GlobType globType) {
-        GlobCreateFromAnnotation registered = globType.getRegistered(GlobCreateFromAnnotation.class, null);
-        if (registered == null) {
-            return null;
-        }
-        String name = registered.getClass().getName();
-        int lambda = name.indexOf("$$Lambda");
-        if (lambda == -1) {
-            return null;
-        }
-        return load(name.substring(0, lambda), globType);
-    }
 
     private Class<?> fromPackages(GlobType globType) {
         List<String> names = new ArrayList<>();

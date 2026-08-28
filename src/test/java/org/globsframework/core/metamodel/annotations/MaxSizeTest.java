@@ -6,9 +6,10 @@ import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.globsframework.core.metamodel.fields.GlobField;
 import org.globsframework.core.metamodel.fields.StringField;
 import org.globsframework.core.model.MutableGlob;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MaxSizeTest {
 
@@ -68,7 +69,6 @@ public class MaxSizeTest {
 
         public static StringField VALUE_3;
 
-        @Target(Dummy_Level1.class)
         public static GlobField<Dummy_Level1> UNDER;
 
         static {

@@ -4,7 +4,6 @@ import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.GlobTypeBuilderFactory;
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.Target;
 import org.globsframework.core.metamodel.fields.GlobArrayField;
 import org.globsframework.core.metamodel.fields.GlobField;
 import org.globsframework.core.metamodel.fields.IntegerField;
@@ -89,10 +88,8 @@ public class InDepthChangeSetTest {
 
         public static StringField NAME;
 
-        @Target(SubType.class)
         public static GlobField<SubType> SUB_ELEMENT;
 
-        @Target(SubTypeWWithoutKey.class)
         public static GlobArrayField<SubTypeWWithoutKey> COUNTS;
 
         static {

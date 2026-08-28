@@ -13,12 +13,7 @@ public class DoublePrecision {
 
     public static final IntegerField PRECISION;
 
-    @InitUniqueKey
     public static final Key UNIQUE_KEY;
-
-    public static Glob create(DoublePrecision_ precision) {
-        return create(precision.value());
-    }
 
     public static Glob create(int value) {
         return TYPE.instantiate().set(PRECISION, value);
@@ -27,7 +22,6 @@ public class DoublePrecision {
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DoublePrecision");
         PRECISION = typeBuilder.declareIntegerField("precision");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DoublePrecision_) annotation));
         TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
     }

@@ -12,20 +12,15 @@ import org.globsframework.core.model.MutableGlob;
 public class ReName {
     public static final GlobType TYPE;
 
-    @KeyField_
     public static final StringField NAMESPACE;
 
     public static final StringField NAME;
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("ReName");
-        NAMESPACE = typeBuilder.declareStringField("namespace");
+        NAMESPACE = typeBuilder.declareStringField("namespace", KeyField.ZERO);
         NAME = typeBuilder.declareStringField("name");
         TYPE = typeBuilder.build();
-    }
-
-    public static Glob create(ReName_ reName) {
-        return create(reName.name(), reName.value());
     }
 
     public static MutableGlob create(String name, String value) {

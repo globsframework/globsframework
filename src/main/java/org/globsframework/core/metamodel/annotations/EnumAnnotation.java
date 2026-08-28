@@ -17,7 +17,6 @@ public class EnumAnnotation {
 
     public static final StringArrayField NAME;
 
-    @InitUniqueKey
     public static final Key UNIQUE_KEY;
 
     static {
@@ -27,9 +26,6 @@ public class EnumAnnotation {
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
     }
 
-    public static Glob create(EnumAnnotation_ nameAnnotation) {
-        return create(nameAnnotation.value());
-    }
 
     public static MutableGlob create(String[] value) {
         return TYPE.instantiate().set(NAME, value);

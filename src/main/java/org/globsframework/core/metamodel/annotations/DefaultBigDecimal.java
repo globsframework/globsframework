@@ -16,7 +16,6 @@ public class DefaultBigDecimal {
 
     public static final BigDecimalField VALUE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
     public static Glob create(BigDecimal defaultBigDecimal) {
@@ -30,12 +29,7 @@ public class DefaultBigDecimal {
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultBigDecimal");
         VALUE = typeBuilder.declareBigDecimalField("VALUE");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultBigDecimal_) annotation).value()));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
-
-//        GlobTypeLoader loader = GlobTypeLoaderFactory.create(DefaultBigDecimal.class, "DefaultBigDecimal");
-//        loader.register(GlobCreateFromAnnotation.class, annotation -> create(((DefaultBigDecimal_) annotation).value()))
-//                .load();
     }
 }

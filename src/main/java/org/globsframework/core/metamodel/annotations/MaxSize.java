@@ -18,7 +18,6 @@ public class MaxSize {
 
     static public final StringField CHARSET;
 
-    @InitUniqueKey
     static public final Key KEY;
 
     static {
@@ -26,7 +25,6 @@ public class MaxSize {
         VALUE = typeBuilder.declareIntegerField("value");
         ALLOW_TRUNCATE = typeBuilder.declareBooleanField("allow_truncate");
         CHARSET = typeBuilder.declareStringField("charSet");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((MaxSize_) annotation));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
     }
@@ -66,10 +64,6 @@ public class MaxSize {
             }
         }
         return true;
-    }
-
-    public static Glob create(MaxSize_ size) {
-        return create(size.value(), size.allow_truncate(), size.charSet());
     }
 
     public static MutableGlob create(int maxSize, boolean truncate, String charset) {

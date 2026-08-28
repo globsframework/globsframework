@@ -1,7 +1,8 @@
 package org.globsframework.core.metamodel.utils;
 
 import org.globsframework.core.metamodel.*;
-import org.globsframework.core.metamodel.annotations.*;
+import org.globsframework.core.metamodel.annotations.KeyField;
+import org.globsframework.core.metamodel.annotations.Required;
 import org.globsframework.core.metamodel.fields.IntegerField;
 import org.globsframework.core.metamodel.impl.DefaultGlobModel;
 import org.globsframework.core.metamodel.links.Link;
@@ -31,7 +32,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycle2.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -54,7 +54,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycle3.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -78,7 +77,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycle1.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -137,7 +135,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycleWithRequiredFieldError2.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -160,7 +157,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycleWithRequiredFieldError3.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -184,7 +180,6 @@ public class DefaultGlobModelTest {
 
         public static IntegerField ID;
 
-        @Target(LargeLinkCycleWithRequiredFieldError1.class)
         public static IntegerField LINK_ID;
 
         public static Link LINK;
@@ -211,10 +206,10 @@ public class DefaultGlobModelTest {
             fail();
         } catch (InvalidData e) {
             assertEquals("Cycles found with required fields:" + Strings.LINE_SEPARATOR
-                            + "'largeLinkCycleWithRequiredFieldError1' = 'largeLinkCycleWithRequiredFieldError1.linkId'"
-                            + Strings.LINE_SEPARATOR
-                            + "'largeLinkCycleWithRequiredFieldError2' = 'largeLinkCycleWithRequiredFieldError2.linkId'"
-                            + Strings.LINE_SEPARATOR
+                         + "'largeLinkCycleWithRequiredFieldError1' = 'largeLinkCycleWithRequiredFieldError1.linkId'"
+                         + Strings.LINE_SEPARATOR
+                         + "'largeLinkCycleWithRequiredFieldError2' = 'largeLinkCycleWithRequiredFieldError2.linkId'"
+                         + Strings.LINE_SEPARATOR
                     , e.getMessage());
         }
     }

@@ -1,8 +1,6 @@
 package org.globsframework.core.metamodel;
 
 import org.globsframework.core.metamodel.annotations.KeyField;
-import org.globsframework.core.metamodel.annotations.Target;
-import org.globsframework.core.metamodel.annotations.Targets;
 import org.globsframework.core.metamodel.fields.*;
 
 import java.util.function.Supplier;
@@ -15,15 +13,12 @@ public class DummyObjectWithInner {
 
     public static final BytesField byteArrayData;
 
-    @Target(DummyObjectInner.class)
     public static final GlobField<DummyObjectInner> VALUE;
 
     public static final GlobArrayField<DummyObjectInner> VALUES;
 
-    @Targets({DummyObjectInner.class, DummyObject.class})
     public static final GlobUnionField VALUE_UNION;
 
-    @Targets({DummyObjectInner.class, DummyObject.class})
     public static final GlobArrayUnionField VALUES_UNION;
 
     public static final StringArrayField STRS;

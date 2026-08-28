@@ -17,9 +17,6 @@ public class FieldName {
 
     public static final Key UNIQUE_KEY;
 
-    public static Glob create(FieldName_ nameAnnotation) {
-        return create(nameAnnotation.value());
-    }
 
     public static MutableGlob create(String value) {
         return TYPE.instantiate().set(NAME, value);
@@ -28,7 +25,6 @@ public class FieldName {
     static {
         GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("FieldName");
         NAME = globTypeBuilder.declareStringField("name");
-        globTypeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((FieldName_) annotation));
         TYPE = globTypeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
     }

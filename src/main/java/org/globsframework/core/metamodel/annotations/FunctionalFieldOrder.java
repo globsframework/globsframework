@@ -16,7 +16,6 @@ public class FunctionalFieldOrder {
 
     public static final IntegerField ORDER;
 
-    @InitUniqueKey
     public static final Key KEY;
 
     static {
@@ -24,14 +23,8 @@ public class FunctionalFieldOrder {
 
         NAME = typeBuilder.declareStringField("name");
         ORDER = typeBuilder.declareIntegerField("order");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((FunctionalFieldOrder_) annotation));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
     }
 
-    private static MutableGlob create(FunctionalFieldOrder_ annotation) {
-        return TYPE.instantiate()
-                .set(ORDER, annotation.value())
-                .set(NAME, annotation.name());
-    }
 }

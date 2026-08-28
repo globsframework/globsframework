@@ -12,15 +12,12 @@ import org.globsframework.core.model.KeyBuilder;
 public class IsDateTime {
     public static final GlobType TYPE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
-    @InitUniqueGlob
     public static final Glob UNIQUE;
 
     static {
         GlobTypeBuilder typeBuilder = new DefaultGlobTypeBuilder("IsDateTime");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> getUnique());
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
         UNIQUE = TYPE.instantiate();

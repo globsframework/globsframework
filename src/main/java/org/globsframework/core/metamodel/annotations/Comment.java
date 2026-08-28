@@ -13,17 +13,15 @@ public class Comment {
 
     public static final StringField VALUE;
 
-    @InitUniqueKey
     public static final Key UNIQUE_KEY;
 
-    public static Glob create(Comment_ comment) {
-        return TYPE.instantiate().set(VALUE, comment.value());
+    public static Glob create(String comment) {
+        return TYPE.instantiate().set(VALUE, comment);
     }
 
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("Comment");
         VALUE = typeBuilder.declareStringField("VALUE");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((Comment_) annotation));
         TYPE = typeBuilder.build();
         UNIQUE_KEY = KeyBuilder.newEmptyKey(TYPE);
     }

@@ -13,21 +13,15 @@ public class DefaultInteger {
 
     public static final IntegerField VALUE;
 
-    @InitUniqueKey
     public static final Key KEY;
 
     public static Glob create(int value) {
         return TYPE.instantiate().set(VALUE, value);
     }
 
-    public static Glob create(DefaultInteger_ defaultDouble) {
-        return TYPE.instantiate().set(VALUE, defaultDouble.value());
-    }
-
     static {
         GlobTypeBuilder typeBuilder = GlobTypeBuilderFactory.create("DefaultInteger");
         VALUE = typeBuilder.declareIntegerField("VALUE");
-        typeBuilder.register(GlobCreateFromAnnotation.class, annotation -> create((DefaultInteger_) annotation));
         TYPE = typeBuilder.build();
         KEY = KeyBuilder.newEmptyKey(TYPE);
     }

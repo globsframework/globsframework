@@ -1,6 +1,8 @@
 package org.globsframework.core.metamodel;
 
-import org.globsframework.core.metamodel.annotations.*;
+import org.globsframework.core.metamodel.annotations.AutoIncrement;
+import org.globsframework.core.metamodel.annotations.KeyField;
+import org.globsframework.core.metamodel.annotations.NamingField;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.index.NotUniqueIndex;
 import org.globsframework.core.metamodel.links.DirectLink;
@@ -22,13 +24,13 @@ public class DummyObject {
 
     public static DirectLink LINK;
 
-    @Target(DummyObject2.class)
     public static final IntegerField LINK2_ID;
 
     public static DirectLink LINK2;
 
     //  public static UniqueIndex NAME_INDEX;
     public static NotUniqueIndex DATE_INDEX;
+
     static {
         final GlobTypeBuilder globTypeBuilder = GlobTypeBuilderFactory.create("dummyObject");
         ID = globTypeBuilder.declareIntegerField("id", KeyField.ZERO, AutoIncrement.INSTANCE);

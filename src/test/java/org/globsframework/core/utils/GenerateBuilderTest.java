@@ -94,12 +94,12 @@ public class GenerateBuilderTest {
         assertTrue(source.contains("DefaultString.create(\"a default\")"), source);
         assertTrue(source.contains("EnumAnnotation.create(new String[]{\"a\", \"b\"})"), source);
         // no factory : generic instantiation
-        assertTrue(source.contains("Comment.TYPE.instantiate().set(Comment.VALUE, \"a comment\")"), source);
+        assertTrue(source.contains("Comment.create(\"a comment\")"), source);
         // and the imports that go with them
         assertTrue(source.contains("import org.globsframework.core.metamodel.annotations.MaxSize;"), source);
         assertTrue(source.contains("import org.globsframework.core.metamodel.annotations.Comment;"), source);
         // the type level annotation
-        assertTrue(source.contains("typeBuilder.addAnnotation(Comment.TYPE.instantiate().set(Comment.VALUE, \"the type\"))"),
+        assertTrue(source.contains("typeBuilder.addAnnotation(Comment.create(\"the type\"))"),
                 source);
     }
 
