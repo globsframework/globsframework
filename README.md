@@ -30,6 +30,20 @@ albeit with closed source code.
 The main drawback of GlobsFramework is its limited compatibility with beans. However, its advantages include being
 open-source, lightweight, dependency-free (except for slf4j for logging), and easy to maintain.
 
+## Requirements and installation
+
+Java 21. No runtime dependency but `slf4j-api`.
+
+```xml
+<dependency>
+    <groupId>org.globsframework</groupId>
+    <artifactId>globs</artifactId>
+    <version>5.12.0</version>
+</dependency>
+```
+
+The artifact is `globs`; the repository is `globsframework`.
+
 ## history
 
 The inspiration for GlobsFramework stems from the telecom industry's reliance on
@@ -56,25 +70,26 @@ sqlConnection.getQueryBuilder(DummyObject.TYPE,
 
 To view an example you can do a  ```git clone --recursive  https://github.com/globsframework/globs-allInOne.git``` and run code simplest/src/main/java/org/globsframework/sample/graphql/Example2.java
 
-Today's Globs components :
+Today's Globs components — the directory name is given when it differs from the artifact:
 
-* To access a database : https://github.com/globsframework/globs-db
-* To read/write json : https://github.com/globsframework/globs-gson (depend on google gson)
-* to read/write xml : https://github.com/globsframework/globs-xml (depends on https://github.com/globsframework/saxstack)
-* to parse command line arguments : https://github.com/globsframework/globs-commandline
-* to read/write csv or similar format : https://github.com/globsframework/csvExport (depend on apache csv)
-* a binary serializer (a kind of TLV (Type Length Value) like protocol
-  buffer) : https://github.com/globsframework/globs-bin-serialisation
-* for http request using glob for params url, body, header (generate an openApi json)  with
-  globs : https://github.com/globsframework/globs-http (depends on apache http components)
-* to produce a view based on breakdown and output using data inside a glob or any where in it's
-  child : https://github.com/globsframework/globs-view
-* to implement a graphql api : https://github.com/globsframework/globs-graphql (no dependency except antlr graphql.g4, do not
-  response to query on schema : I use graphql-java for that.)
-* Glob can also be generated directly in bytecode via ASM https://github.com/globsframework/globs-generate
-* a Protobuf serialization : 
-* an offHeap api to tree (read-only) and hash (read-write) container
-* a service using etcd but with globs : https://github.com/globsframework/globs-http (depends on jetcd)
+| Repository | Artifact | What it does |
+| --- | --- | --- |
+| [globs-db](https://github.com/globsframework/globs-db) | `globs-sql` | access a relational database from a `GlobType` |
+| [globs-gson](https://github.com/globsframework/globs-gson) | `globs-gson` | read/write JSON, and `GlobType` ⇄ JSON (depends on google gson) |
+| [globs-xml](https://github.com/globsframework/globs-xml) | `globs-xml` | read/write XML, over [saxstack](https://github.com/globsframework/saxstack) |
+| [globs-csv](https://github.com/globsframework/globs-csv) | `globs-csv` | CSV, Excel and fixed-width files (depends on apache commons-csv and poi) |
+| [globs-commandline](https://github.com/globsframework/globs-commandline) | `globs-commandline` | command-line arguments and environment variables as a Glob |
+| [globs-bin-serialisation](https://github.com/globsframework/globs-bin-serialisation) | `globs-bin-serialisation` | a binary TLV serializer, protobuf-like, backward compatible |
+| [globs-grpc](https://github.com/globsframework/globs-protobuf) | `globs-protobuf` | the protobuf wire format itself, without protobuf-java |
+| [globs-http](https://github.com/globsframework/globs-http) | `globs-http` | an HTTP API whose url params, body and headers are Globs, with the OpenAPI document generated |
+| [globs-graphql](https://github.com/globsframework/globs-graphql) | `globs-graphql` | a GraphQL engine (no dependency but the antlr grammar; schema introspection is left to graphql-java) |
+| [globs-view](https://github.com/globsframework/globs-view) | `globs-view` | breakdown/output views over the data in a Glob or anywhere in its children |
+| [globs-fix](https://github.com/globsframework/globs-fix) | `globs-fix` | a FIX 4.4 engine whose messages are Globs |
+| [globs-network](https://github.com/globsframework/globs-rpc-direct) | `globs-rpc-direct` | RPC and streaming exchange over blocking sockets |
+| [globs-etcd](https://github.com/globsframework/globs-etcd) | `globs-etcd` | publish and watch configuration in etcd (depends on jetcd) |
+| [globs-shared](https://github.com/globsframework/globs-off-heap) | `globs-off-heap` | off-heap tree (read-only) and hash (read-write) containers |
+| [globs-generate](https://github.com/globsframework/globs-generate) | `globs-generate` | Glob implementations and codec traversals generated in bytecode with ASM |
+| [globs-mcp](https://github.com/globsframework/globs-mcp) | `globs-mcp` | `GlobType` → JSON Schema, and Model Context Protocol tools |
 
 A GlobType interface:
 
@@ -224,3 +239,24 @@ String title = g.get(ProductType.title)
 assertEquals("XPhone", title);
 ```
 
+
+## Building
+
+```bash
+mvn test
+mvn test -Dtest=GlobTypeBuilderTest          # one class
+mvn test -Dtest=GlobTypeBuilderTest#test     # one method
+mvn package                                  # also builds the test-jar the other globs-* repos depend on
+```
+
+Tests are JUnit 5. Surefire runs `*Test.java` / `*Tests.java` and skips `*TestCase.java`, which are shared
+base classes.
+
+## License
+
+Apache License 2.0 — see <https://www.apache.org/licenses/LICENSE-2.0.txt>.
+
+## Links
+
+- [globsframework.org](https://globsframework.org)
+- [GitHub organization](https://github.com/globsframework)
