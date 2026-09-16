@@ -231,12 +231,17 @@ public class LoopToGlobCallerFactoryTest {
     public static class StandIn implements ToGlobCallerFactory {
         public <C1, C2, C3> ToGlobCaller<C1, C2, C3> create(
                 String name, SortedMap<Integer, ToGlobFunction<C1, C2, C3>> functions,
-                ToGlobFunction fallback, int endLoop) {
+                ToGlobFunction<C1, C2, C3> fallback, int endLoop) {
             throw new UnsupportedOperationException();
         }
 
         public <C1, C2, C3> ToGlobCallerAll<C1, C2, C3> create(
                 String name, ToGlobFunction<C1, C2, C3>[] functions) {
+            throw new UnsupportedOperationException();
+        }
+
+        public <T, D> T create(String name, D[] functions, Class<T> tClass, Class<D> dClass,
+                               Class<?>... argument) {
             throw new UnsupportedOperationException();
         }
     }
