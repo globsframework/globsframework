@@ -1,10 +1,6 @@
 package org.globsframework.core.model.caller;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.SortedMap;
 
 /**
@@ -37,8 +33,9 @@ import java.util.SortedMap;
  * </pre>
  * The method to emit and the method to call are found by their parameter types, not by their names — the two
  * interfaces are written independently and have no reason to agree on a name. Each of the two types must
- * hold <b>exactly one</b> method taking {@code argument}, returning void : see {@link #methodMatching},
- * which is where this, the loop and the generating implementations all get it from.
+ * hold <b>exactly one</b> method taking {@code argument}, returning void : see
+ * {@link CallerShape#methodMatching}, which is where this, the loop and the generating implementations all
+ * get it from.
  */
 public interface ToGlobCallerFactory {
 
@@ -111,22 +108,6 @@ public interface ToGlobCallerFactory {
         return new IllegalStateException("No function for " + nextToCall + " and no fallback was given.");
     }
 
-    /** The other shared refusal : a missing function is refused when the caller is built, not when it runs. */
-    static <D> D checked(D function, String at) {
-        if (function == null) {
-            throw new IllegalArgumentException("No function for " + at);
-        }
-        return function;
-    }
-
-    /** Shared too : what is implemented has to be an interface, whichever shape is asked for. */
-    static void checkInterface(Class<?> tClass) {
-        if (!tClass.isInterface()) {
-            throw new IllegalArgumentException(tClass.getName() + " is not an interface : there would be "
-                                               + "nothing to implement.");
-        }
-    }
-
     /**
      * Which argument the dispatching shape drives its loop with : the one {@link KeySource} among them.
      * <p>
@@ -156,40 +137,4 @@ public interface ToGlobCallerFactory {
         return found;
     }
 
-    /**
-     * The one method of {@code type} taking exactly {@code argument} — how both shapes find the method to
-     * emit and the method to call, in one place so that the loop and a generator can never disagree on what
-     * a caller's shape is.
-     * <p>
-     * Matching is on the parameter types and on nothing else : the two interfaces are written independently,
-     * so the names are not expected to agree. It has to be unambiguous, hence exactly one — an overload
-     * taking the same types cannot exist, but a type holding two methods of different names over the same
-     * parameters can, and that is refused here rather than resolved by a rule nobody would remember.
-     * <p>
-     * Void only, and for a reason that is not laziness : these shapes call every function once, so a return
-     * value would be N values and one of them would have to win. A shape that folds a value through the calls
-     * is a different contract, not a relaxation of this one.
-     */
-    static Method methodMatching(Class<?> type, Class<?>... argument) {
-        List<Method> found = new ArrayList<>();
-        for (Method method : type.getMethods()) {
-            if (!Modifier.isStatic(method.getModifiers())
-                && Arrays.equals(method.getParameterTypes(), argument)) {
-                found.add(method);
-            }
-        }
-        if (found.size() != 1) {
-            throw new IllegalArgumentException(
-                    (found.isEmpty() ? "No method of " : "More than one method of ") + type.getName()
-                    + " takes " + Arrays.toString(argument)
-                    + (found.isEmpty() ? "" : " : " + found));
-        }
-        Method method = found.get(0);
-        if (method.getReturnType() != void.class) {
-            throw new IllegalArgumentException(method + " returns " + method.getReturnType().getName()
-                                               + " : a caller calling every function once has no value to "
-                                               + "answer, so this shape is void only.");
-        }
-        return method;
-    }
 }

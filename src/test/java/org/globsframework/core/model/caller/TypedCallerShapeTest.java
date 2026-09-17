@@ -74,9 +74,9 @@ public class TypedCallerShapeTest {
 
     @Test
     public void theMethodIsFoundByItsParametersWhateverItIsCalled() {
-        Method caller = ToGlobCallerFactory.methodMatching(RecordReader.class, MutableGlob.class, long.class,
+        Method caller = CallerShape.methodMatching(RecordReader.class, MutableGlob.class, long.class,
                 List.class);
-        Method function = ToGlobCallerFactory.methodMatching(FieldRead.class, MutableGlob.class, long.class,
+        Method function = CallerShape.methodMatching(FieldRead.class, MutableGlob.class, long.class,
                 List.class);
 
         assertEquals("read", caller.getName());
@@ -87,7 +87,7 @@ public class TypedCallerShapeTest {
     @Test
     public void aBoxedParameterIsNotThePrimitiveOne() {
         assertThrows(IllegalArgumentException.class,
-                () -> ToGlobCallerFactory.methodMatching(FieldRead.class, MutableGlob.class, Long.class,
+                () -> CallerShape.methodMatching(FieldRead.class, MutableGlob.class, Long.class,
                         List.class));
     }
 
@@ -104,11 +104,11 @@ public class TypedCallerShapeTest {
     @Test
     public void anAmbiguousOrValuedShapeIsRefused() {
         assertThrows(IllegalArgumentException.class,
-                () -> ToGlobCallerFactory.methodMatching(TwoMatches.class, long.class));
+                () -> CallerShape.methodMatching(TwoMatches.class, long.class));
         assertThrows(IllegalArgumentException.class,
-                () -> ToGlobCallerFactory.methodMatching(NotVoid.class, long.class));
+                () -> CallerShape.methodMatching(NotVoid.class, long.class));
         assertThrows(IllegalArgumentException.class,
-                () -> ToGlobCallerFactory.methodMatching(RecordReader.class, long.class));
+                () -> CallerShape.methodMatching(RecordReader.class, long.class));
     }
 
     @Test

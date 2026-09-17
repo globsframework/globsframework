@@ -6,13 +6,15 @@ import org.globsframework.core.model.GlobFactory;
  * The GlobFactory of a type whose implementation is generated, which can also generate callers for it.
  * <p>
  * Nothing in core implements this : it is what a module like globs-generate puts on its factories, and what
- * a codec tests for. Most callers should not test it by hand and should ask {@link FromGlobCallerFactory#callerFor},
- * which falls back to a {@link LoopFromGlobCaller} for a type that has no generated factory instead of
- * leaving them with a second code path.
+ * a codec tests for. Most codecs should not test it by hand and should ask
+ * {@link FromGlobCallerFactory#callerFor}, which falls back to a {@link LoopFromGlobCallerFactory} for a type
+ * that has no generated factory instead of leaving them with a second code path — or
+ * {@link FromGlobCallerFactory#generatedCallerFor} when they have a better fallback of their own.
  * <pre>
- * FromGlobCaller&lt;Out, Void&gt; caller =
+ * GlobWriter caller =
  *     type.getGlobFactory() instanceof CallerGlobFactory generate
- *         ? generate.create("mycodec.write", field -&gt; functionFor(field))
+ *         ? generate.create("mycodec.write", field -&gt; functionFor(field), null,
+ *                           GlobWriter.class, FieldWriter.class, Out.class)
  *         : null;   // not generated
  * </pre>
  */

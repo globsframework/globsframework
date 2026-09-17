@@ -58,22 +58,40 @@ An annotation takes effect **only** when its Glob is passed to `declareXxxField`
 
 **`model/caller/`, the from-Glob side** — the SPI a bytecode-generating `GlobFactory` implements, and nothing else: core has no
 implementation of it. `CallerGlobFactory` (`GlobFactory` + `FromGlobCallerFactory`) lets a factory build a
-`FromGlobCaller`, which applies one `FromGlobFunction` per field to a Glob — a codec's answer to
-the megamorphic dispatch a loop over the fields costs, since a generated caller gives one monomorphic call
-site per field. It lives here, not in `globs-generate`, so that a serialization library can be written
-against it without depending on the module that does the generating. `FromGlobCallerFactory.callerFor(name, type, fns)`
-is the entry point, and answers from three sources in order: the type's factory when it is a
-`CallerGlobFactory`; then the `FromGlobCallerService` installed through **`-Dglobs.caller.fromGlob=<class>`** (the
-same idiom as `globs.builder`, and how a generator offers a caller over a Glob it did not build — core's own
-`DefaultGlob`); then `LoopFromGlobCaller`, the plain loop. Same behaviour whichever comes out, so callers
-never carry a second code path. A service answers null for "not mine"; a `globs.caller.fromGlob` that cannot be loaded
-throws, since it was asked for explicitly. `isNull` there means
-"`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
+caller that applies one function per field to a Glob — a codec's answer to the megamorphic dispatch a loop
+over the fields costs, since a generated caller gives one monomorphic call site per field. It lives here, not
+in `globs-generate`, so that a serialization library can be written against it without depending on the
+module that does the generating.
+
+A caller is built over **the codec's own two interfaces** — `tClass`, what the emitted class implements, and
+`dClass`, what it calls. Core fixes only the head of each method and `argument` is what the pass carries:
+
+```
+tClass :  void <anything>(Glob data, argument...)
+dClass :  void <anything>(boolean isSet, boolean isNull, Object value, argument...)
+```
+
+found by their parameter types rather than their names (`CallerShape.methodMatching`, shared with the to-Glob
+side). There is no generic `FromGlobCaller`/`FromGlobFunction` pair any more: the two `Object` contexts it
+carried meant a box per primitive context and an adapter in front of every function of another shape. **The
+value stays an `Object`** — it is the one argument whose type changes from one field to the next, so there is
+nothing for a codec to declare it as.
+
+`FromGlobCallerFactory.callerFor(name, type, fns, order, tClass, dClass, argument…)` is the entry point, and
+answers from three sources in order: the type's factory when it is a `CallerGlobFactory`; then the
+`FromGlobCallerService` installed through **`-Dglobs.caller.fromGlob=<class>`** (the same idiom as
+`globs.builder`, and how a generator offers a caller over a Glob it did not build — core's own
+`DefaultGlob`); then `LoopFromGlobCallerFactory`, the plain loop. Same behaviour whichever comes out, so
+callers never carry a second code path — but the loop can only answer a `tClass` through a reflective
+`Proxy`, which boxes every primitive argument, so a codec with something better of its own asks
+`generatedCallerFor` and keeps its own path on null (binser, grpc and fix all do). A service answers null for
+"not mine"; a `globs.caller.fromGlob` that cannot be loaded throws, since it was asked for explicitly.
+`isNull` there means "`getValue` answers null", so an unset field is `isSet false, isNull true, value null` —
 `LoopFromGlobCallerTest` is what a generated implementation has to agree with.
 
 **The order.** A caller walks every field of the type in index order unless it is given a `Field[] order`,
-which is *what* to call and *in which order* — the last argument of `create`, `callerFor` and
-`generatedCallerFor`, all of which keep a shorter form that passes null for "every field, index order". A
+which is *what* to call and *in which order* — an argument of `create`, `callerFor` and
+`generatedCallerFor`, null meaning "every field, index order". A
 format whose layout is not the type's declaration order has no other way : a caller writes as it walks, so
 reordering afterwards is not something a codec can do. The array may name **fewer** fields than the type
 has, and the ones left out are never asked of `Functions.forField` and never called — a codec that binds

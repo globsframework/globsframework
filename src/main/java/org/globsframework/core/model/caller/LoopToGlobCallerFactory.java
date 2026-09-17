@@ -36,16 +36,16 @@ public class LoopToGlobCallerFactory implements ToGlobCallerFactory {
     public <T, D> T create(String name, SortedMap<Integer, D> functions, D fallback, int endLoop,
                            Class<T> tClass, Class<D> dClass, Class<?>... argument) {
         CallerName.check(name);
-        ToGlobCallerFactory.checkInterface(tClass);
+        CallerShape.checkInterface(tClass);
         int keySourceAt = ToGlobCallerFactory.keySourceIndex(argument);
-        Method callerMethod = ToGlobCallerFactory.methodMatching(tClass, argument);
-        Method functionMethod = ToGlobCallerFactory.methodMatching(dClass, argument);
+        Method callerMethod = CallerShape.methodMatching(tClass, argument);
+        Method functionMethod = CallerShape.methodMatching(dClass, argument);
         // sorted here rather than trusted : the lookup is a binary search, and the map may have been built
         // with a comparator of its own
         int[] keys = functions.keySet().stream().mapToInt(Integer::intValue).sorted().toArray();
         Object[] ordered = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            ordered[i] = ToGlobCallerFactory.checked(functions.get(keys[i]), "key " + keys[i]);
+            ordered[i] = CallerShape.checked(functions.get(keys[i]), "key " + keys[i]);
         }
         functionMethod.setAccessible(true);
         return proxy(tClass, dClass, callerMethod, ordered.length, (proxy, args) -> {
@@ -66,12 +66,12 @@ public class LoopToGlobCallerFactory implements ToGlobCallerFactory {
     public <T, D> T create(String name, D[] functions, Class<T> tClass, Class<D> dClass,
                            Class<?>... argument) {
         CallerName.check(name);
-        ToGlobCallerFactory.checkInterface(tClass);
-        Method callerMethod = ToGlobCallerFactory.methodMatching(tClass, argument);
-        Method functionMethod = ToGlobCallerFactory.methodMatching(dClass, argument);
+        CallerShape.checkInterface(tClass);
+        Method callerMethod = CallerShape.methodMatching(tClass, argument);
+        Method functionMethod = CallerShape.methodMatching(dClass, argument);
         D[] copy = functions.clone();
         for (int i = 0; i < copy.length; i++) {
-            ToGlobCallerFactory.checked(copy[i], "index " + i);
+            CallerShape.checked(copy[i], "index " + i);
         }
         functionMethod.setAccessible(true);
         return proxy(tClass, dClass, callerMethod, copy.length, (proxy, args) -> {

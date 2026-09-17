@@ -8,6 +8,7 @@ import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.MutableGlob;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,19 +20,38 @@ import static org.junit.jupiter.api.Assertions.*;
  * The fallback caller, and what a generated one has to agree with : every field is called, in index order,
  * with isSet from the Glob and isNull meaning "getValue answers null" — so an untouched field comes out
  * not set, null, and with no value, while an explicit null is set and null.
+ * <p>
+ * Everything is over the test's own two interfaces, which is the only shape there is : core supplies the
+ * fixed head of each method — the Glob for the caller, isSet / isNull / the value for the functions — and
+ * the codec supplies the rest.
  */
 public class LoopFromGlobCallerTest {
 
     private record Seen(String field, boolean isSet, boolean isNull, Object value, Object ctx2) {
     }
 
-    private static FromGlobCallerFactory.Functions<List<Seen>, String> recorder() {
-        return new FromGlobCallerFactory.Functions<>() {
-            public <T> FromGlobFunction<T, List<Seen>, String> forField(Field field) {
-                String name = field.getName();
-                return (isSet, isNull, value, ctx1, ctx2) -> ctx1.add(new Seen(name, isSet, isNull, value, ctx2));
-            }
+    /** The codec's caller : the Glob first, then whatever the pass carries. */
+    public interface GlobWalk {
+        void walk(Glob data, List<Seen> seen, String ctx2);
+    }
+
+    /** The codec's function, written independently — isSet, isNull, the value, then the same pass. */
+    public interface FieldWalk {
+        void onField(boolean isSet, boolean isNull, Object value, List<Seen> seen, String ctx2);
+    }
+
+    private static final Class<?>[] ARGS = {List.class, String.class};
+
+    private static FromGlobCallerFactory.Functions<FieldWalk> recorder() {
+        return field -> {
+            String name = field.getName();
+            return (isSet, isNull, value, seen, ctx2) -> seen.add(new Seen(name, isSet, isNull, value, ctx2));
         };
+    }
+
+    private static GlobWalk caller(GlobType type, Field[] order) {
+        return FromGlobCallerFactory.callerFor("test", type, recorder(), order, GlobWalk.class,
+                FieldWalk.class, ARGS);
     }
 
     private List<Seen> call(MutableGlob glob) {
@@ -40,12 +60,17 @@ public class LoopFromGlobCallerTest {
 
     private List<Seen> call(MutableGlob glob, Field[] order) {
         List<Seen> seen = new ArrayList<>();
-        FromGlobCallerFactory.callerFor("test", glob.getType(), recorder(), order).call(glob, seen, "ctx2");
+        caller(glob.getType(), order).walk(glob, seen, "ctx2");
         return seen;
     }
 
     private static List<String> names(List<Seen> seen) {
         return seen.stream().map(Seen::field).collect(Collectors.toList());
+    }
+
+    /** What "this one is the loop" means now : a Proxy, core having no class to emit. */
+    private static boolean looped(Object caller) {
+        return Proxy.isProxyClass(caller.getClass());
     }
 
     @Test
@@ -54,7 +79,7 @@ public class LoopFromGlobCallerTest {
         List<Seen> seen = call(glob);
         assertEquals(
                 Arrays.stream(DummyObject.TYPE.getFields()).map(Field::getName).collect(Collectors.toList()),
-                seen.stream().map(Seen::field).collect(Collectors.toList()));
+                names(seen));
     }
 
     @Test
@@ -90,16 +115,14 @@ public class LoopFromGlobCallerTest {
     public void aFieldLeftOutOfTheOrderIsNotCalledAtAll() {
         MutableGlob glob = DummyObject.TYPE.instantiate();
         List<String> asked = new ArrayList<>();
-        FromGlobCallerFactory.Functions<List<Seen>, String> functions = new FromGlobCallerFactory.Functions<>() {
-            public <T> FromGlobFunction<T, List<Seen>, String> forField(Field field) {
-                asked.add(field.getName());
-                String name = field.getName();
-                return (isSet, isNull, value, ctx1, ctx2) -> ctx1.add(new Seen(name, isSet, isNull, value, ctx2));
-            }
+        FromGlobCallerFactory.Functions<FieldWalk> functions = field -> {
+            asked.add(field.getName());
+            String name = field.getName();
+            return (isSet, isNull, value, seen, ctx2) -> seen.add(new Seen(name, isSet, isNull, value, ctx2));
         };
         List<Seen> seen = new ArrayList<>();
-        FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, functions,
-                new Field[]{DummyObject.NAME}).call(glob, seen, "ctx2");
+        FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, functions, new Field[]{DummyObject.NAME},
+                GlobWalk.class, FieldWalk.class, ARGS).walk(glob, seen, "ctx2");
 
         assertEquals(List.of("name"), names(seen));
         assertEquals(List.of("name"), asked);
@@ -133,11 +156,25 @@ public class LoopFromGlobCallerTest {
         assertSame(DummyObject.NAME, fields[0]);
     }
 
+    /**
+     * The two methods are found by their parameters, whatever they are named — core only fixes the head of
+     * each list, the Glob on one side and isSet / isNull / the value on the other.
+     */
+    @Test
+    public void theMethodsAreFoundByTheirParametersWhateverTheyAreCalled() {
+        assertEquals("walk", FromGlobCallerFactory.callerMethod(GlobWalk.class, ARGS).getName());
+        assertEquals("onField", FromGlobCallerFactory.functionMethod(FieldWalk.class, ARGS).getName());
+        // the pass this caller carries is not the one these interfaces declare
+        assertThrows(IllegalArgumentException.class,
+                () -> FromGlobCallerFactory.callerMethod(GlobWalk.class, List.class));
+        assertThrows(IllegalArgumentException.class,
+                () -> FromGlobCallerFactory.callerMethod(String.class, ARGS));
+    }
+
     @Test
     public void aTypeWithNoGeneratingFactoryFallsBackToTheLoopedCaller() {
         assertFalse(DummyObject.TYPE.getGlobFactory() instanceof CallerGlobFactory);
-        assertInstanceOf(LoopFromGlobCaller.class,
-                FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
+        assertTrue(looped(caller(DummyObject.TYPE, null)));
     }
 
     /**
@@ -150,12 +187,12 @@ public class LoopFromGlobCallerTest {
         System.setProperty("globs.caller.fromGlob", StandInService.class.getName());
         FromGlobCallerService.Builder.reset();
         try {
-            assertInstanceOf(StandInCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
+            assertInstanceOf(StandInCaller.class, caller(DummyObject.TYPE, null));
         } finally {
             System.clearProperty("globs.caller.fromGlob");
             FromGlobCallerService.Builder.reset();
         }
-        assertInstanceOf(LoopFromGlobCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
+        assertTrue(looped(caller(DummyObject.TYPE, null)));
     }
 
     /**
@@ -164,13 +201,15 @@ public class LoopFromGlobCallerTest {
      */
     @Test
     public void generatedCallerForSaysNullRatherThanAnsweringTheLoop() {
-        assertNull(FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder()));
+        assertNull(FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder(), null,
+                GlobWalk.class, FieldWalk.class, ARGS));
 
         System.setProperty("globs.caller.fromGlob", StandInService.class.getName());
         FromGlobCallerService.Builder.reset();
         try {
             assertInstanceOf(StandInCaller.class,
-                    FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder()));
+                    FromGlobCallerFactory.generatedCallerFor("test", DummyObject.TYPE, recorder(), null,
+                            GlobWalk.class, FieldWalk.class, ARGS));
         } finally {
             System.clearProperty("globs.caller.fromGlob");
             FromGlobCallerService.Builder.reset();
@@ -183,7 +222,7 @@ public class LoopFromGlobCallerTest {
         System.setProperty("globs.caller.fromGlob", AbstainingService.class.getName());
         FromGlobCallerService.Builder.reset();
         try {
-            assertInstanceOf(LoopFromGlobCaller.class, FromGlobCallerFactory.callerFor("test", DummyObject.TYPE, recorder()));
+            assertTrue(looped(caller(DummyObject.TYPE, null)));
         } finally {
             System.clearProperty("globs.caller.fromGlob");
             FromGlobCallerService.Builder.reset();
@@ -205,9 +244,10 @@ public class LoopFromGlobCallerTest {
     public static class StandInService implements FromGlobCallerService {
         public FromGlobCallerFactory factoryFor(GlobType type) {
             return new FromGlobCallerFactory() {
-                public <C1, C2> FromGlobCaller<C1, C2> create(String name, Functions<C1, C2> functions,
-                                                             Field[] order) {
-                    return new StandInCaller<>();
+                @SuppressWarnings("unchecked")
+                public <T, D> T create(String name, Functions<D> functions, Field[] order,
+                                       Class<T> tClass, Class<D> dClass, Class<?>... argument) {
+                    return (T) new StandInCaller();
                 }
             };
         }
@@ -219,19 +259,16 @@ public class LoopFromGlobCallerTest {
         }
     }
 
-    static class StandInCaller<C1, C2> implements FromGlobCaller<C1, C2> {
-        public void call(Glob data, C1 ctx1, C2 ctx2) {
+    static class StandInCaller implements GlobWalk {
+        public void walk(Glob data, List<Seen> seen, String ctx2) {
         }
     }
 
     @Test
     public void aMissingFunctionIsRefusedAtBuildTimeRatherThanNPEingPerGlob() {
-        assertThrows(IllegalArgumentException.class, () -> new LoopFromGlobCaller<>(DummyObject.TYPE,
-                new FromGlobCallerFactory.Functions<Object, Object>() {
-                    public <T> FromGlobFunction<T, Object, Object> forField(Field field) {
-                        return null;
-                    }
-                }));
+        assertThrows(IllegalArgumentException.class,
+                () -> new LoopFromGlobCallerFactory(DummyObject.TYPE).create("test", field -> null, null,
+                        GlobWalk.class, FieldWalk.class, ARGS));
     }
 
     /**
@@ -241,12 +278,16 @@ public class LoopFromGlobCallerTest {
      */
     @Test
     public void aCallerWithoutANameIsRefusedEvenThoughTheLoopWouldNotUseIt() {
+        assertThrows(IllegalArgumentException.class, () -> caller0(null));
+        assertThrows(IllegalArgumentException.class, () -> caller0("  "));
         assertThrows(IllegalArgumentException.class,
-                () -> FromGlobCallerFactory.callerFor(null, DummyObject.TYPE, recorder()));
-        assertThrows(IllegalArgumentException.class,
-                () -> FromGlobCallerFactory.callerFor("  ", DummyObject.TYPE, recorder()));
-        assertThrows(IllegalArgumentException.class,
-                () -> FromGlobCallerFactory.generatedCallerFor(null, DummyObject.TYPE, recorder()));
+                () -> FromGlobCallerFactory.generatedCallerFor(null, DummyObject.TYPE, recorder(), null,
+                        GlobWalk.class, FieldWalk.class, ARGS));
+    }
+
+    private static GlobWalk caller0(String name) {
+        return FromGlobCallerFactory.callerFor(name, DummyObject.TYPE, recorder(), null, GlobWalk.class,
+                FieldWalk.class, ARGS);
     }
 
     private Seen of(List<Seen> seen, String field) {
