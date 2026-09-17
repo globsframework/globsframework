@@ -92,19 +92,33 @@ half. The check is in core, and refuses a null or blank name even where nothing 
 be missing on one deployment and required on another.
 
 **`model/caller/`, the to-Glob side** — the other direction, and the same bet: a parser filling a `MutableGlob`.
-`ToGlobCallerFactory` builds the two shapes a format needs — `ToGlobCaller`, the loop a
-`KeySource` drives (it answers the key of the `ToGlobFunction` to call next, or the `endLoop` value
-that ends the pass, an unknown key going to the fallback), and `ToGlobCallerAll`, every function once
-in array order. A generating implementation emits a switch and an unrolled loop over `static final`
-functions, so each entry gets its own monomorphic call site. Unlike the from-Glob side nothing in the emitted code
-reads a Glob's layout: the functions write through `MutableGlob`, so a to-Glob caller works over any Glob and
-needs no `GlobType` at all. `ToGlobCallerFactory.get()` is the entry point — the
-`ToGlobCallerService` installed through **`-Dglobs.caller.toGlob=<class>`**
-(`globs-generate`'s `AsmCallerWriteGeneratorService`), else `LoopToGlobCallerFactory`, the plain loop —
-and `generated()` is the same without the loop at the end, for a parser with a better fallback of its own.
-Two sources rather than three, since there is no per-type factory to ask. The refusals are statics on the
-interface so that both implementations say the same thing: `unknownKey` (a key with no function and no
-fallback, at run time) and `checked` (a missing function, when the caller is built).
+`ToGlobCallerFactory` builds the two shapes a format needs — the **dispatching** one, a loop a `KeySource`
+drives (it answers the key of the function to call next, or the `endLoop` value that ends the pass, an
+unknown key going to the fallback), and the **unrolled** one, every function once in array order. A
+generating implementation emits a switch and an unrolled loop over `static final` functions, so each entry
+gets its own monomorphic call site. Unlike the from-Glob side nothing in the emitted code reads a Glob's
+layout: the functions write through `MutableGlob`, so a to-Glob caller works over any Glob and needs no
+`GlobType` at all.
+
+Both shapes are built over **the caller's own two interfaces** — `tClass`, what the emitted class
+implements, and `dClass`, what it calls, matched to each other by their parameter types through
+`methodMatching` (exactly one method taking those types, returning void, whatever it is named). Core names
+`KeySource` and nothing else: there is no generic `ToGlobCaller`/`ToGlobFunction` pair any more, because
+carrying three `Object` contexts meant a box per primitive, a bridge in front of every function of another
+shape and one call level more — measured in globs-off-heap at four times what generating the dispatch earns
+back. On the dispatching shape the key source is **one of the arguments** (exactly one of them has to be a
+`KeySource`, `keySourceIndex` refusing none and refusing two): a parser's input is normally both what says
+what comes next and what the functions read from.
+
+`ToGlobCallerFactory.get()` is the entry point — the `ToGlobCallerService` installed through
+**`-Dglobs.caller.toGlob=<class>`** (`globs-generate`'s `AsmCallerWriteGeneratorService`), else
+`LoopToGlobCallerFactory`, the plain loop — and `generated()` is the same without the loop at the end, for a
+parser with a better fallback of its own. Two sources rather than three, since there is no per-type factory
+to ask. Note what the loop costs on this side: its callers are reflective `Proxy` instances, which box every
+primitive argument — behaviourally identical, but a parser that cares should ask `generated()` and keep its
+own path when that answers null. The refusals are statics on the interface so that both implementations say
+the same thing: `unknownKey` (a key with no function and no fallback, at run time), `checked` (a missing
+function, when the caller is built) and `checkInterface` (what is implemented has to be one).
 `LoopToGlobCallerFactoryTest` is what a generated implementation has to agree with. Both `create`
 overloads take the same identifying `name` as the from-Glob side (`CallerName`); with no `GlobType` in sight it is
 the whole of what a generated class is named after, so a parser building one caller per type has to say which

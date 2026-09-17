@@ -1,7 +1,5 @@
 package org.globsframework.core.model.caller;
 
-import org.globsframework.core.model.MutableGlob;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,12 +9,19 @@ import java.util.SortedMap;
 
 /**
  * The {@link ToGlobCallerFactory} of a JVM where nothing generates : the plain loop over a table of
- * functions.
+ * functions, behind a {@link Proxy} implementing the caller's own interface.
  * <p>
  * Behaviourally identical to a generated one — same functions, same order, the same fallback for an unknown
- * key, the same {@code endLoop} tested before the dispatch and the same refusals. What it does not give is the
- * point of generating: one call site for the whole loop, seeing every function it is ever handed, i.e. exactly
- * the megamorphic dispatch a generated caller exists to remove. It is the fallback, not an alternative.
+ * key, the same {@code endLoop} tested before the dispatch and the same refusals. What it does not give is
+ * the point of generating: one call site for the whole loop, seeing every function it is ever handed, i.e.
+ * exactly the megamorphic dispatch a generated caller exists to remove.
+ * <p>
+ * And it gives it back twice over, because the caller's interfaces are the caller's own : a Proxy reaches its
+ * functions reflectively, so every primitive argument is boxed on every call and every call goes through an
+ * {@code Object[]}. That is precisely what the typed shape exists to avoid. It is a fallback so that a parser
+ * can keep one code path, not an alternative — a parser that cares should ask
+ * {@link ToGlobCallerFactory#generated()} and keep its own hand-written path when that answers null, the way
+ * globs-off-heap keeps its partitioned reader.
  * <p>
  * It has no class to name, so the {@code name} of a caller is only checked here, never used.
  */
@@ -24,72 +29,84 @@ public class LoopToGlobCallerFactory implements ToGlobCallerFactory {
     /** Stateless : the callers hold everything, so one instance serves the whole process. */
     public static final LoopToGlobCallerFactory INSTANCE = new LoopToGlobCallerFactory();
 
-    @SuppressWarnings("unchecked")
-    public <C1, C2, C3> ToGlobCaller<C1, C2, C3> create(
-            String name, SortedMap<Integer, ToGlobFunction<C1, C2, C3>> functions,
-            ToGlobFunction<C1, C2, C3> fallback, int endLoop) {
+    /**
+     * The lookupswitch a generated caller emits, by hand : the keys sorted, and a binary search per turn.
+     * The key source is the {@code argument} that is one, read out of the call's own arguments.
+     */
+    public <T, D> T create(String name, SortedMap<Integer, D> functions, D fallback, int endLoop,
+                           Class<T> tClass, Class<D> dClass, Class<?>... argument) {
         CallerName.check(name);
+        ToGlobCallerFactory.checkInterface(tClass);
+        int keySourceAt = ToGlobCallerFactory.keySourceIndex(argument);
+        Method callerMethod = ToGlobCallerFactory.methodMatching(tClass, argument);
+        Method functionMethod = ToGlobCallerFactory.methodMatching(dClass, argument);
         // sorted here rather than trusted : the lookup is a binary search, and the map may have been built
         // with a comparator of its own
         int[] keys = functions.keySet().stream().mapToInt(Integer::intValue).sorted().toArray();
-        ToGlobFunction<C1, C2, C3>[] ordered = new ToGlobFunction[keys.length];
+        Object[] ordered = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
             ordered[i] = ToGlobCallerFactory.checked(functions.get(keys[i]), "key " + keys[i]);
         }
-        return new LoopToGlobCaller<>(keys, ordered, fallback, endLoop);
+        functionMethod.setAccessible(true);
+        return proxy(tClass, dClass, callerMethod, ordered.length, (proxy, args) -> {
+            KeySource keySource = (KeySource) args[keySourceAt];
+            int nextToCall;
+            while ((nextToCall = keySource.nextKey()) != endLoop) {
+                int at = Arrays.binarySearch(keys, nextToCall);
+                Object function = at >= 0 ? ordered[at] : fallback;
+                if (function == null) {
+                    throw ToGlobCallerFactory.unknownKey(nextToCall);
+                }
+                invoke(functionMethod, function, args);
+            }
+        });
     }
 
-    @SuppressWarnings("unchecked")
-    public <C1, C2, C3> ToGlobCallerAll<C1, C2, C3> create(
-            String name, ToGlobFunction<C1, C2, C3>[] functions) {
-        CallerName.check(name);
-        ToGlobFunction<C1, C2, C3>[] copy = new ToGlobFunction[functions.length];
-        for (int i = 0; i < functions.length; i++) {
-            copy[i] = ToGlobCallerFactory.checked(functions[i], "index " + i);
-        }
-        return new LoopToGlobCallerAll<>(copy);
-    }
-
-    /**
-     * The typed shape without a generator : a {@link Proxy} implementing {@code tClass}, looping over the
-     * functions and calling {@code dClass}'s method reflectively.
-     * <p>
-     * Same behaviour, same refusals, same order — and no pretence about the speed. This one boxes every
-     * primitive argument on every call, which is exactly what the typed shape exists to avoid, so it is a
-     * fallback for a JVM where nothing generates and not an alternative. A caller that cares should ask
-     * {@link ToGlobCallerFactory#generated()} and keep its own path when that answers null, the way
-     * globs-off-heap keeps its hand-written reader.
-     */
-    @SuppressWarnings("unchecked")
+    /** The same table with no input to follow : every function once, in the order of the array. */
     public <T, D> T create(String name, D[] functions, Class<T> tClass, Class<D> dClass,
                            Class<?>... argument) {
         CallerName.check(name);
-        if (!tClass.isInterface()) {
-            throw new IllegalArgumentException(tClass.getName() + " is not an interface : there would be "
-                                               + "nothing to implement.");
-        }
+        ToGlobCallerFactory.checkInterface(tClass);
         Method callerMethod = ToGlobCallerFactory.methodMatching(tClass, argument);
         Method functionMethod = ToGlobCallerFactory.methodMatching(dClass, argument);
         D[] copy = functions.clone();
         for (int i = 0; i < copy.length; i++) {
-            if (copy[i] == null) {
-                throw new IllegalArgumentException("No " + dClass.getName() + " for index " + i);
-            }
+            ToGlobCallerFactory.checked(copy[i], "index " + i);
         }
         functionMethod.setAccessible(true);
+        return proxy(tClass, dClass, callerMethod, copy.length, (proxy, args) -> {
+            for (D function : copy) {
+                invoke(functionMethod, function, args);
+            }
+        });
+    }
+
+    /** What the function throws is what the caller throws — no InvocationTargetException in the way. */
+    private static void invoke(Method functionMethod, Object function, Object[] args) throws Throwable {
+        try {
+            functionMethod.invoke(function, args);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
+    }
+
+    /** What the caller's one method does; everything else is Object's, plus a refusal. */
+    private interface Body {
+        void run(Object proxy, Object[] args) throws Throwable;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T proxy(Class<T> tClass, Class<?> dClass, Method callerMethod, int count, Body body) {
         InvocationHandler handler = (proxy, method, args) -> {
-            if (method.equals(callerMethod)) {
-                for (D function : copy) {
-                    try {
-                        functionMethod.invoke(function, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    }
-                }
+            // by shape rather than by identity : a Proxy hands back the Method of the interface the call
+            // came through, which is not always the one getMethods() found it in
+            if (method.getName().equals(callerMethod.getName())
+                && Arrays.equals(method.getParameterTypes(), callerMethod.getParameterTypes())) {
+                body.run(proxy, args);
                 return null;
             }
             return switch (method.getName()) {
-                case "toString" -> tClass.getName() + " over " + copy.length + " " + dClass.getName();
+                case "toString" -> tClass.getName() + " over " + count + " " + dClass.getName();
                 case "hashCode" -> System.identityHashCode(proxy);
                 case "equals" -> proxy == args[0];
                 default -> throw new UnsupportedOperationException(
@@ -97,47 +114,5 @@ public class LoopToGlobCallerFactory implements ToGlobCallerFactory {
             };
         };
         return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class<?>[]{tClass}, handler);
-    }
-
-    /** The lookupswitch a generated caller emits, by hand : the keys sorted, and a binary search per turn. */
-    private static class LoopToGlobCaller<C1, C2, C3> implements ToGlobCaller<C1, C2, C3> {
-        private final int[] keys;
-        private final ToGlobFunction<C1, C2, C3>[] functions;
-        private final ToGlobFunction<C1, C2, C3> fallback;
-        private final int endLoop;
-
-        LoopToGlobCaller(int[] keys, ToGlobFunction<C1, C2, C3>[] functions,
-                        ToGlobFunction<C1, C2, C3> fallback, int endLoop) {
-            this.keys = keys;
-            this.functions = functions;
-            this.fallback = fallback;
-            this.endLoop = endLoop;
-        }
-
-        public void call(KeySource keySource, MutableGlob data, C1 ctx1, C2 ctx2, C3 ctx3) {
-            int nextToCall;
-            while ((nextToCall = keySource.nextKey()) != endLoop) {
-                int at = Arrays.binarySearch(keys, nextToCall);
-                ToGlobFunction<C1, C2, C3> function = at >= 0 ? functions[at] : fallback;
-                if (function == null) {
-                    throw ToGlobCallerFactory.unknownKey(nextToCall);
-                }
-                function.call(data, ctx1, ctx2, ctx3);
-            }
-        }
-    }
-
-    private static class LoopToGlobCallerAll<C1, C2, C3> implements ToGlobCallerAll<C1, C2, C3> {
-        private final ToGlobFunction<C1, C2, C3>[] functions;
-
-        LoopToGlobCallerAll(ToGlobFunction<C1, C2, C3>[] functions) {
-            this.functions = functions;
-        }
-
-        public void call(MutableGlob data, C1 ctx1, C2 ctx2, C3 ctx3) {
-            for (ToGlobFunction<C1, C2, C3> function : functions) {
-                function.call(data, ctx1, ctx2, ctx3);
-            }
-        }
     }
 }

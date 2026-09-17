@@ -14,139 +14,170 @@ import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The fallback to-Glob callers, and what a generated one has to agree with : the CallAt drives the loop, the
- * endLoop value is tested before the dispatch, an unknown key goes to the fallback and, without one, throws.
+ * The fallback to-Glob callers, and what a generated one has to agree with : the key source drives the loop,
+ * the endLoop value is tested before the dispatch, an unknown key goes to the fallback and, without one,
+ * throws.
+ * <p>
+ * Everything here is written over the test's own two interfaces, which is the whole shape of this side now :
+ * core names {@link KeySource} and nothing else.
  */
 public class LoopToGlobCallerFactoryTest {
 
-    /** ctx1 is the trace, so what it collects is the proof the three contexts were forwarded. */
-    private ToGlobFunction<List<String>, String, String> record(String label) {
-        return (glob, trace, ctx2, ctx3) -> trace.add(label + "/" + ctx2 + "/" + ctx3);
+    /** The input : both what says the next key and what the functions read from, as a parser's is. */
+    public static class Script implements KeySource {
+        private final int endLoop;
+        private final int[] calls;
+        final List<String> trace = new ArrayList<>();
+        private int next;
+
+        /** Answers the script, then {@code endLoop} for ever — a parser that ran out of input. */
+        Script(int endLoop, int... calls) {
+            this.endLoop = endLoop;
+            this.calls = calls;
+        }
+
+        public int nextKey() {
+            return next < calls.length ? calls[next++] : endLoop;
+        }
     }
 
-    /** Answers the script, then {@code endLoop} for ever — a parser that ran out of input. */
-    private KeySource script(int endLoop, int... calls) {
-        return new KeySource() {
-            int next = 0;
-
-            public int nextKey() {
-                return next < calls.length ? calls[next++] : endLoop;
-            }
-        };
+    /** The caller's interface : what the code holding the loop wants to call. */
+    public interface GlobReader {
+        void read(MutableGlob data, Script input, String ctx);
     }
 
-    private SortedMap<Integer, ToGlobFunction<List<String>, String, String>> functions(int... keys) {
-        SortedMap<Integer, ToGlobFunction<List<String>, String, String>> functions = new TreeMap<>();
+    /** The function's, written independently — note the method is not named like the caller's. */
+    public interface FieldReader {
+        void readField(MutableGlob data, Script input, String ctx);
+    }
+
+    private static final Class<?>[] ARGS = {MutableGlob.class, Script.class, String.class};
+
+    private FieldReader record(String label) {
+        return (glob, input, ctx) -> input.trace.add(label + "/" + ctx);
+    }
+
+    private SortedMap<Integer, FieldReader> functions(int... keys) {
+        SortedMap<Integer, FieldReader> functions = new TreeMap<>();
         for (int key : keys) {
             functions.put(key, record("fn" + key));
         }
         return functions;
     }
 
-    private List<String> call(ToGlobCaller<List<String>, String, String> caller, KeySource keySource) {
-        List<String> trace = new ArrayList<>();
-        caller.call(keySource, DummyObject.TYPE.instantiate(), trace, "c2", "c3");
-        return trace;
+    private GlobReader caller(SortedMap<Integer, FieldReader> functions, FieldReader fallback, int endLoop) {
+        return LoopToGlobCallerFactory.INSTANCE.create("test", functions, fallback, endLoop,
+                GlobReader.class, FieldReader.class, ARGS);
+    }
+
+    private List<String> call(GlobReader caller, Script input) {
+        caller.read(DummyObject.TYPE.instantiate(), input, "ctx");
+        return input.trace;
     }
 
     @Test
-    public void callsWhatTheCallAtAsksForInOrder() {
-        ToGlobCaller<List<String>, String, String> caller = LoopToGlobCallerFactory.INSTANCE
-                .create("test", functions(-3, 0, 1, 100000), record("fallback"), -1);
+    public void callsWhatTheKeySourceAsksForInOrder() {
+        GlobReader caller = caller(functions(-3, 0, 1, 100000), record("fallback"), -1);
 
-        assertEquals(List.of("fn1/c2/c3", "fn-3/c2/c3", "fn100000/c2/c3", "fn1/c2/c3", "fn0/c2/c3"),
-                call(caller, script(-1, 1, -3, 100000, 1, 0)));
+        assertEquals(List.of("fn1/ctx", "fn-3/ctx", "fn100000/ctx", "fn1/ctx", "fn0/ctx"),
+                call(caller, new Script(-1, 1, -3, 100000, 1, 0)));
     }
 
     /** The keys are sorted by the caller, not taken as the map iterates them. */
     @Test
     public void aMapWithItsOwnComparatorIsStillReadRight() {
-        SortedMap<Integer, ToGlobFunction<List<String>, String, String>> functions =
-                new TreeMap<>(Comparator.reverseOrder());
+        SortedMap<Integer, FieldReader> functions = new TreeMap<>(Comparator.reverseOrder());
         for (int key : new int[]{1, 5, 9, 12}) {
             functions.put(key, record("fn" + key));
         }
-        ToGlobCaller<List<String>, String, String> caller =
-                LoopToGlobCallerFactory.INSTANCE.create("test", functions, record("fallback"), -1);
 
-        assertEquals(List.of("fn9/c2/c3", "fn1/c2/c3", "fn12/c2/c3", "fn5/c2/c3"),
-                call(caller, script(-1, 9, 1, 12, 5)));
+        assertEquals(List.of("fn9/ctx", "fn1/ctx", "fn12/ctx", "fn5/ctx"),
+                call(caller(functions, record("fallback"), -1), new Script(-1, 9, 1, 12, 5)));
     }
 
     @Test
     public void anUnknownKeyGoesToTheFallback() {
-        ToGlobCaller<List<String>, String, String> caller =
-                LoopToGlobCallerFactory.INSTANCE.create("test", functions(1, 2), record("fallback"), -1);
-
-        assertEquals(List.of("fallback/c2/c3", "fn1/c2/c3", "fallback/c2/c3"),
-                call(caller, script(-1, 17, 1, -2)));
+        assertEquals(List.of("fallback/ctx", "fn1/ctx", "fallback/ctx"),
+                call(caller(functions(1, 2), record("fallback"), -1), new Script(-1, 17, 1, -2)));
     }
 
     @Test
     public void anUnknownKeyWithoutAFallbackThrowsAndSaysWhich() {
-        ToGlobCaller<List<String>, String, String> caller =
-                LoopToGlobCallerFactory.INSTANCE.create("test", functions(1, 2), null, -1);
+        GlobReader caller = caller(functions(1, 2), null, -1);
 
-        assertEquals(List.of("fn2/c2/c3"), call(caller, script(-1, 2)));
+        assertEquals(List.of("fn2/ctx"), call(caller, new Script(-1, 2)));
         IllegalStateException exception = assertThrows(IllegalStateException.class,
-                () -> call(caller, script(-1, 2, 17)));
+                () -> call(caller, new Script(-1, 2, 17)));
         assertTrue(exception.getMessage().contains("17"), exception.getMessage());
     }
 
     /** endLoop is tested before the dispatch : it ends the pass even when it is also a key. */
     @Test
     public void anEndLoopOfItsOwnShadowsTheKeyItEquals() {
-        ToGlobCaller<List<String>, String, String> caller =
-                LoopToGlobCallerFactory.INSTANCE.create("test", functions(1, 2, 3), record("fallback"), 3);
-
-        assertEquals(List.of("fn1/c2/c3", "fn2/c2/c3"), call(caller, script(3, 1, 2, 3, 1)));
+        assertEquals(List.of("fn1/ctx", "fn2/ctx"),
+                call(caller(functions(1, 2, 3), record("fallback"), 3), new Script(3, 1, 2, 3, 1)));
     }
 
     @Test
     public void noFunctionAtAllIsALoopThatOnlyWaitsForTheEnd() {
-        ToGlobCaller<List<String>, String, String> caller = LoopToGlobCallerFactory.INSTANCE
-                .create("test", Collections.emptySortedMap(), record("fallback"), 0);
-
-        assertEquals(List.of("fallback/c2/c3", "fallback/c2/c3"), call(caller, script(0, 4, 9)));
+        assertEquals(List.of("fallback/ctx", "fallback/ctx"),
+                call(caller(Collections.emptySortedMap(), record("fallback"), 0), new Script(0, 4, 9)));
     }
 
     /** The functions get the Glob and write into it — the point of the whole thing. */
     @Test
     public void theFunctionsWriteIntoTheGlobTheyAreHanded() {
-        SortedMap<Integer, ToGlobFunction<List<String>, String, String>> functions = new TreeMap<>();
-        functions.put(0, (glob, trace, ctx2, ctx3) -> glob.set(DummyObject.NAME, "a name"));
-        functions.put(1, (glob, trace, ctx2, ctx3) -> glob.set(DummyObject.COUNT, 12));
-        ToGlobCaller<List<String>, String, String> caller =
-                LoopToGlobCallerFactory.INSTANCE.create("test", functions, null, -1);
+        SortedMap<Integer, FieldReader> functions = new TreeMap<>();
+        functions.put(0, (glob, input, ctx) -> glob.set(DummyObject.NAME, "a name"));
+        functions.put(1, (glob, input, ctx) -> glob.set(DummyObject.COUNT, 12));
 
         MutableGlob glob = DummyObject.TYPE.instantiate();
-        caller.call(script(-1, 1, 0), glob, new ArrayList<>(), "c2", "c3");
+        caller(functions, null, -1).read(glob, new Script(-1, 1, 0), "ctx");
 
         assertEquals("a name", glob.get(DummyObject.NAME));
         assertEquals(12, glob.get(DummyObject.COUNT).intValue());
     }
 
-    @SuppressWarnings("unchecked")
+    /** What the functions throw is what the caller throws — no InvocationTargetException in the way. */
     @Test
-    public void writeAllCallsEveryFunctionOnceInOrder() {
-        ToGlobCallerAll<List<String>, String, String> caller = LoopToGlobCallerFactory.INSTANCE
-                .create("test", new ToGlobFunction[]{record("a"), record("b"), record("c")});
+    public void whatAFunctionThrowsComesOutAsItIs() {
+        SortedMap<Integer, FieldReader> functions = new TreeMap<>();
+        functions.put(1, (glob, input, ctx) -> {
+            throw new IllegalStateException("boom");
+        });
+        IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                () -> call(caller(functions, null, -1), new Script(-1, 1)));
 
-        List<String> trace = new ArrayList<>();
-        caller.call(DummyObject.TYPE.instantiate(), trace, "c2", "c3");
-
-        assertEquals(List.of("a/c2/c3", "b/c2/c3", "c/c2/c3"), trace);
+        assertEquals("boom", thrown.getMessage());
     }
 
-    @SuppressWarnings("unchecked")
+    @Test
+    public void readAllCallsEveryFunctionOnceInOrder() {
+        GlobReader caller = LoopToGlobCallerFactory.INSTANCE.create("test",
+                new FieldReader[]{record("a"), record("b"), record("c")},
+                GlobReader.class, FieldReader.class, ARGS);
+
+        assertEquals(List.of("a/ctx", "b/ctx", "c/ctx"), call(caller, new Script(-1)));
+    }
+
     @Test
     public void aMissingFunctionIsRefusedWhenTheCallerIsBuilt() {
-        SortedMap<Integer, ToGlobFunction<List<String>, String, String>> functions = functions(1, 2);
+        SortedMap<Integer, FieldReader> functions = functions(1, 2);
         functions.put(3, null);
-        assertThrows(IllegalArgumentException.class,
-                () -> LoopToGlobCallerFactory.INSTANCE.create("test", functions, null, -1));
+        assertThrows(IllegalArgumentException.class, () -> caller(functions, null, -1));
         assertThrows(IllegalArgumentException.class, () -> LoopToGlobCallerFactory.INSTANCE
-                .create("test", new ToGlobFunction[]{record("a"), null}));
+                .create("test", new FieldReader[]{record("a"), null}, GlobReader.class, FieldReader.class,
+                        ARGS));
+    }
+
+    /** The loop drives its pass with the one argument that is a KeySource, and refuses to guess. */
+    @Test
+    public void theDispatchingShapeNeedsExactlyOneKeySourceAmongItsArguments() {
+        assertThrows(IllegalArgumentException.class,
+                () -> ToGlobCallerFactory.keySourceIndex(MutableGlob.class, String.class));
+        assertThrows(IllegalArgumentException.class,
+                () -> ToGlobCallerFactory.keySourceIndex(Script.class, Script.class));
+        assertEquals(1, ToGlobCallerFactory.keySourceIndex(MutableGlob.class, Script.class, String.class));
     }
 
     /**
@@ -157,11 +188,13 @@ public class LoopToGlobCallerFactoryTest {
     @Test
     public void aCallerWithoutANameIsRefusedEvenThoughTheLoopWouldNotUseIt() {
         assertThrows(IllegalArgumentException.class,
-                () -> LoopToGlobCallerFactory.INSTANCE.create(null, functions(1, 2), null, -1));
+                () -> LoopToGlobCallerFactory.INSTANCE.create(null, functions(1, 2), null, -1,
+                        GlobReader.class, FieldReader.class, ARGS));
         assertThrows(IllegalArgumentException.class,
-                () -> LoopToGlobCallerFactory.INSTANCE.create("  ", functions(1, 2), null, -1));
+                () -> LoopToGlobCallerFactory.INSTANCE.create("  ", functions(1, 2), null, -1,
+                        GlobReader.class, FieldReader.class, ARGS));
         assertThrows(IllegalArgumentException.class, () -> LoopToGlobCallerFactory.INSTANCE
-                .create(null, new ToGlobFunction[]{record("a")}));
+                .create(null, new FieldReader[]{record("a")}, GlobReader.class, FieldReader.class, ARGS));
     }
 
     /** Nothing installed : the loop, and a parser that never has to know. */
@@ -229,14 +262,8 @@ public class LoopToGlobCallerFactoryTest {
     }
 
     public static class StandIn implements ToGlobCallerFactory {
-        public <C1, C2, C3> ToGlobCaller<C1, C2, C3> create(
-                String name, SortedMap<Integer, ToGlobFunction<C1, C2, C3>> functions,
-                ToGlobFunction<C1, C2, C3> fallback, int endLoop) {
-            throw new UnsupportedOperationException();
-        }
-
-        public <C1, C2, C3> ToGlobCallerAll<C1, C2, C3> create(
-                String name, ToGlobFunction<C1, C2, C3>[] functions) {
+        public <T, D> T create(String name, SortedMap<Integer, D> functions, D fallback, int endLoop,
+                               Class<T> tClass, Class<D> dClass, Class<?>... argument) {
             throw new UnsupportedOperationException();
         }
 

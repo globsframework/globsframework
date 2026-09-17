@@ -16,61 +16,62 @@ import java.util.SortedMap;
  * finals — that is what makes each call site monomorphic, and it is why this belongs to the setup phase of a
  * parser, not to its hot path. That emitted class is named after the {@code name} given here : see
  * {@link CallerName} for what to pass and why it is not optional.
+ *
+ * <h2>The caller's own interfaces</h2>
+ * Both shapes are built over two types the <em>caller</em> owns : {@code tClass}, the interface the emitted
+ * class implements, and {@code dClass}, what the functions are called through. Core names neither, and there
+ * is no generic {@code ToGlobCaller}/{@code ToGlobFunction} pair any more — there used to be, carrying three
+ * {@code Object} contexts, and it cost exactly what it was built to save : a {@code long} boxed on every
+ * call, a bridge method in front of every function whose real signature was something else, and one call
+ * level more. Measured in globs-off-heap on a walk reading a record field by field, <b>four times</b> what
+ * generating the dispatch earns back.
+ * <p>
+ * So the arguments are whatever the parser's own code passes around, primitives included, and the emitted
+ * class <em>is</em> the parser's interface rather than something it holds :
+ * <pre>
+ * interface RecordReader { void read(MutableGlob data, MemorySegment segment, long offset, Ctx ctx); }
+ * // HandleAccess already has readAtOffset(MutableGlob, MemorySegment, long, Ctx)
+ * RecordReader reader = factory.create("offheap.readAll." + type.getName(), handleAccesses,
+ *         RecordReader.class, HandleAccess.class,
+ *         MutableGlob.class, MemorySegment.class, long.class, Ctx.class);
+ * </pre>
+ * The method to emit and the method to call are found by their parameter types, not by their names — the two
+ * interfaces are written independently and have no reason to agree on a name. Each of the two types must
+ * hold <b>exactly one</b> method taking {@code argument}, returning void : see {@link #methodMatching},
+ * which is where this, the loop and the generating implementations all get it from.
  */
 public interface ToGlobCallerFactory {
 
     /**
-     * The dispatching caller : {@code functions} keyed by whatever the {@link KeySource} answers.
-     *
-     * @param name     what builds this caller, constant in the source — see {@link CallerName}. Nothing here
-     *                 depends on a GlobType, so this is the whole of what a generated class is named after :
-     *                 a parser that builds one caller per type has to say which type in it.
-     * @param fallback what an unknown key goes to. null means there is none, and an unknown key then throws.
-     * @param endLoop  the value that ends the pass. It is tested before the dispatch, so it may be a key of
-     *                 the map — it is simply shadowed.
-     */
-    <C1, C2, C3> ToGlobCaller<C1, C2, C3> create(String name,
-                                                 SortedMap<Integer, ToGlobFunction<C1, C2, C3>> functions,
-                                                 ToGlobFunction<C1, C2, C3> fallback, int endLoop);
-
-//    <T, D> T create(String name, SortedMap<Integer, D> functions, D fallback, int endLoop);
-
-    /**
-     * The unrolled caller : every function called once, in the order of the array.
-     *
-     * @param name what builds this caller — see {@link #create(String, SortedMap, ToGlobFunction, int)}.
-     */
-    <C1, C2, C3> ToGlobCallerAll<C1, C2, C3> create(String name,
-                                                    ToGlobFunction<C1, C2, C3>[] functions);
-
-    /**
-     * The unrolled caller again, but over <em>the caller's own</em> interfaces instead of
-     * {@link ToGlobCallerAll} and {@link ToGlobFunction} — which is what lets the arguments be whatever they
-     * are, primitives included.
+     * The dispatching caller : {@code functions} keyed by whatever the {@link KeySource} answers, looping
+     * until it answers {@code endLoop}.
      * <p>
-     * The two generic interfaces carry objects only : a {@code long} has to be boxed, and a function whose
-     * real signature is something else needs an adapter object in front of it. Both were measured in
-     * globs-off-heap, on a walk reading a record field by field, and they cost <b>four times</b> what
-     * generating the dispatch saves — one call level more, the bridge's casts, an unboxing per element. Here
-     * the emitted class implements {@code tClass} directly and calls {@code dClass} directly, so there is
-     * nothing to adapt : no wrapper, no bridge, no box.
-     * <pre>
-     * interface RecordReader { void read(MutableGlob data, MemorySegment segment, long offset, Ctx ctx); }
-     * // HandleAccess already has readAtOffset(MutableGlob, MemorySegment, long, Ctx)
-     * RecordReader reader = factory.create("offheap.readAll." + type.getName(), handleAccesses,
-     *         RecordReader.class, HandleAccess.class,
-     *         MutableGlob.class, MemorySegment.class, long.class, Ctx.class);
-     * </pre>
-     * The method to emit and the method to call are found by their parameter types, not by their names — the
-     * two interfaces are written independently and have no reason to agree on a name. Each of the two types
-     * must hold <b>exactly one</b> method taking {@code argument}, returning void : see
-     * {@link #methodMatching}, which is where both this and the generating implementations get it from.
+     * The key source is <b>one of the arguments</b> — exactly one of {@code argument} has to be a
+     * {@link KeySource}, and that is the one the loop asks. A parser's input is normally both the thing that
+     * says what comes next and the thing the functions read from, so it is passed once and used twice rather
+     * than being a parameter of its own that every call site would have to repeat.
      *
-     * @param name      what builds this caller, constant in the source — see {@link CallerName}.
-     * @param functions called once each, in the order of the array, with the arguments the caller was given.
+     * @param name      what builds this caller, constant in the source — see {@link CallerName}. Nothing here
+     *                  depends on a GlobType, so this is the whole of what a generated class is named after :
+     *                  a parser that builds one caller per type has to say which type in it.
+     * @param functions keyed by what the key source answers for them.
+     * @param fallback  what an unknown key goes to. null means there is none, and an unknown key then throws.
+     * @param endLoop   the value that ends the pass. It is tested before the dispatch, so it may be a key of
+     *                  the map — it is simply shadowed.
      * @param tClass    the interface to implement. An interface, because that is what there is to implement.
-     * @param dClass    what the elements of {@code functions} are called through. May be a class.
+     * @param dClass    what the functions are called through. May be a class.
      * @param argument  the parameter types, in order, of the one method of each.
+     */
+    <T, D> T create(String name, SortedMap<Integer, D> functions, D fallback, int endLoop,
+                    Class<T> tClass, Class<D> dClass, Class<?>... argument);
+
+    /**
+     * The unrolled caller : every function called once, in the order of the array — a format whose entries
+     * are all there and always in the same order, so there is no input to follow and no key source among the
+     * arguments.
+     *
+     * @param name what builds this caller, constant in the source — see {@link CallerName}.
+     * @see #create(String, SortedMap, Object, int, Class, Class, Class[]) for the arguments it shares
      */
     <T, D> T create(String name, D[] functions, Class<T> tClass, Class<D> dClass, Class<?>... argument);
 
@@ -82,6 +83,10 @@ public interface ToGlobCallerFactory {
      * code path and only the speed changes. This is the to-Glob side's answer to
      * {@code FromGlobCallerFactory.callerFor}, without the GlobType: nothing here depends on the type,
      * since the functions do their own writing through {@code MutableGlob}.
+     * <p>
+     * Note what the loop costs on this side, though : its callers are reflective {@link java.lang.reflect.Proxy}
+     * instances, which box every primitive argument on every call. A parser with something better of its own
+     * to fall back on should ask {@link #generated()} instead.
      */
     static ToGlobCallerFactory get() {
         ToGlobCallerFactory generated = generated();
@@ -103,29 +108,65 @@ public interface ToGlobCallerFactory {
      * the loop say the same thing.
      */
     static RuntimeException unknownKey(int nextToCall) {
-        return new IllegalStateException("No ToGlobFunction for " + nextToCall
-                                         + " and no fallback was given.");
+        return new IllegalStateException("No function for " + nextToCall + " and no fallback was given.");
     }
 
     /** The other shared refusal : a missing function is refused when the caller is built, not when it runs. */
-    static ToGlobFunction checked(ToGlobFunction function, String at) {
+    static <D> D checked(D function, String at) {
         if (function == null) {
-            throw new IllegalArgumentException("No ToGlobFunction for " + at);
+            throw new IllegalArgumentException("No function for " + at);
         }
         return function;
     }
 
+    /** Shared too : what is implemented has to be an interface, whichever shape is asked for. */
+    static void checkInterface(Class<?> tClass) {
+        if (!tClass.isInterface()) {
+            throw new IllegalArgumentException(tClass.getName() + " is not an interface : there would be "
+                                               + "nothing to implement.");
+        }
+    }
+
     /**
-     * The one method of {@code type} taking exactly {@code argument} — how
-     * {@link #create(String, Object[], Class, Class, Class...)} finds both the method to emit and the method
-     * to call, in one place so that the loop and a generator can never disagree on what a caller's shape is.
+     * Which argument the dispatching shape drives its loop with : the one {@link KeySource} among them.
+     * <p>
+     * Exactly one, refused otherwise and refused here rather than in each implementation. None means there
+     * is nothing to ask what comes next — the unrolled shape is what a caller without a key source wants.
+     * Two means a choice nobody would remember, and one of the two would be read as input by the functions
+     * while the other drove the loop, which is a bug waiting rather than a shape to support.
+     */
+    static int keySourceIndex(Class<?>... argument) {
+        int found = -1;
+        for (int i = 0; i < argument.length; i++) {
+            if (KeySource.class.isAssignableFrom(argument[i])) {
+                if (found != -1) {
+                    throw new IllegalArgumentException(
+                            "Both " + argument[found].getName() + " and " + argument[i].getName()
+                            + " are a KeySource : the dispatching caller would not know which one drives "
+                            + "its loop.");
+                }
+                found = i;
+            }
+        }
+        if (found == -1) {
+            throw new IllegalArgumentException(
+                    "None of " + Arrays.toString(argument) + " is a KeySource : the dispatching caller has "
+                    + "nothing to ask what comes next.");
+        }
+        return found;
+    }
+
+    /**
+     * The one method of {@code type} taking exactly {@code argument} — how both shapes find the method to
+     * emit and the method to call, in one place so that the loop and a generator can never disagree on what
+     * a caller's shape is.
      * <p>
      * Matching is on the parameter types and on nothing else : the two interfaces are written independently,
      * so the names are not expected to agree. It has to be unambiguous, hence exactly one — an overload
      * taking the same types cannot exist, but a type holding two methods of different names over the same
      * parameters can, and that is refused here rather than resolved by a rule nobody would remember.
      * <p>
-     * Void only, and for a reason that is not laziness : this shape calls every function once, so a return
+     * Void only, and for a reason that is not laziness : these shapes call every function once, so a return
      * value would be N values and one of them would have to win. A shape that folds a value through the calls
      * is a different contract, not a relaxation of this one.
      */
