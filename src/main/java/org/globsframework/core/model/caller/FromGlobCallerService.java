@@ -13,8 +13,6 @@ import org.globsframework.core.metamodel.GlobType;
  * <pre>
  * -Dglobs.caller.fromGlob=org.globsframework.model.generator.AsmCallerGeneratorService
  * </pre>
- * Unset — the default — means {@code callerFor} keeps answering a {@link LoopFromGlobCaller}. A name that
- * cannot be loaded throws rather than falling back silently : it was asked for explicitly.
  */
 public interface FromGlobCallerService {
 
