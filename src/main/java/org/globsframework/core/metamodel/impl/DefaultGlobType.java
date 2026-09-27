@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class DefaultGlobType implements GlobType {
+    private static final Object NULL_PROP = new Object();
     public static final String[] EMPTY_SCOPE = new String[0];
     public static final Object[] EMPTY_PROP = new Object[0];
     private static final Field[] EMPTY_FIELDS = new Field[0];
@@ -32,7 +33,7 @@ public final class DefaultGlobType implements GlobType {
     private final Map<Class<?>, Object> registered;
     private final HashContainer<Key, Glob> annotations;
     // use stable value
-    private Object[] properties = EMPTY_PROP;
+    private volatile Object[] properties = EMPTY_PROP;
 
     public DefaultGlobType(String name, Map<String, Field> fieldsByName, Map<Class<?>, Object> registered,
                            List<Glob> annotations, Map<String, Index> indices, int keyIndex) {
@@ -250,16 +251,35 @@ public final class DefaultGlobType implements GlobType {
         }
     }
 
-    synchronized public <T> T get(Property<T> property) {
+    public <T> T get(Property<T> property) {
         int index = property.getIndex();
-        if (properties.length <= index) {
-            properties = Arrays.copyOf(properties, index + 2);
+        Object[] properties = this.properties;
+        if (index < properties.length) {
+            Object p = properties[index];
+            if (p != NULL_PROP) {
+                return (T) p;
+            }
         }
-        final Object p = properties[index];
-        if (p == null) {
-            return (T) (properties[index] = property.build(this));
+        return slowGet(property, index);
+    }
+
+    private synchronized <T> T slowGet(Property<T> property, int index) {
+        Object[] properties = this.properties;
+        if (index < properties.length && properties[index] != NULL_PROP) {
+            return (T) properties[index];
         }
-        return (T) p;
+        T value = property.build(this);
+        // build may have called get() and published a new array
+        properties = this.properties;
+        if (index < properties.length && properties[index] != NULL_PROP) {
+            return (T) properties[index];
+        }
+        int len = properties.length;
+        Object[] copy = Arrays.copyOf(properties, Math.max(len, index + 1));
+        Arrays.fill(copy, len, copy.length, NULL_PROP);
+        copy[index] = value;
+        this.properties = copy;
+        return value;
     }
 
     public Stream<Glob> streamAnnotations() {

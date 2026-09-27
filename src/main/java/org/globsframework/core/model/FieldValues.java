@@ -9,6 +9,28 @@ import java.time.ZonedDateTime;
 
 public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
 
+    boolean contains(Field field);
+
+    int size();
+
+    default FieldValues withoutKeyField() {
+        return new FieldValuesButKey(this);
+    }
+
+    FieldValue[] toArray();
+
+    interface Functor {
+        void process(Field field, Object value) throws Exception;
+
+        default Functor withoutKeyField() {
+            return (field, v) -> {
+                if (!field.isKeyField()) {
+                    Functor.this.process(field, v);
+                }
+            };
+        }
+    }
+
     FieldValues EMPTY = new FieldValues() {
 
         public static final FieldValue[] EMPTY_VALUES = new FieldValue[0];
@@ -155,27 +177,5 @@ public interface FieldValues extends FieldValuesAccessor, FieldsValueScanner {
         }
 
     };
-
-    boolean contains(Field field);
-
-    int size();
-
-    default FieldValues withoutKeyField() {
-        return new FieldValuesButKey(this);
-    }
-
-    FieldValue[] toArray();
-
-    interface Functor {
-        void process(Field field, Object value) throws Exception;
-
-        default Functor withoutKeyField() {
-            return (field, v) -> {
-                if (!field.isKeyField()) {
-                    Functor.this.process(field, v);
-                }
-            };
-        }
-    }
 
 }
