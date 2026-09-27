@@ -105,16 +105,28 @@ public interface GlobType extends Annotations {
 
     Comparator<Key> sameKeyComparator();
 
-    abstract class Property<T> {
-        static AtomicInteger at = new AtomicInteger(0);
-        private final int index = at.getAndIncrement();
+    // use with caution: call to next should always initialize a static final field to prevent to big value
+    // it allocate an array in the implementation
 
-        public int getIndex() {
-            return index;
-        }
+     record Property<T>(int index) {
+         private final static AtomicInteger count = new AtomicInteger();
 
-        public abstract T build(GlobType globType);
+         public Property() {
+             this(next());
+         }
+
+         public static int next() {
+             return count.incrementAndGet();
+         }
     }
 
-    <T> T get(Property<T> property);
+    interface Build<T> {
+        T create(GlobType globType);
+    }
+
+    <T> T get(Property<T> property, Build<T> build);
+
+    <T> void unset(Property<T> property);
+
+    <T> void init(Property<T> property, T value);
 }

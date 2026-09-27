@@ -251,8 +251,22 @@ public final class DefaultGlobType implements GlobType {
         }
     }
 
-    public <T> T get(Property<T> property) {
-        int index = property.getIndex();
+    @Override
+    synchronized public <T> void unset(Property<T> property) {
+        Object[] properties = this.properties;
+        int index = property.index();
+        if (index < properties.length && properties[index] != NULL_PROP) {
+            publish(index, NULL_PROP);
+        }
+    }
+
+    @Override
+    synchronized public <T> void init(Property<T> property, T value) {
+        publish(property.index(), value);
+    }
+
+    public <T> T get(Property<T> property, Build<T> build) {
+        int index = property.index();
         Object[] properties = this.properties;
         if (index < properties.length) {
             Object p = properties[index];
@@ -260,26 +274,33 @@ public final class DefaultGlobType implements GlobType {
                 return (T) p;
             }
         }
-        return slowGet(property, index);
+        return slowGet(index, build);
     }
 
-    private synchronized <T> T slowGet(Property<T> property, int index) {
+    private synchronized <T> T slowGet(int index, Build<T> build) {
         Object[] properties = this.properties;
         if (index < properties.length && properties[index] != NULL_PROP) {
             return (T) properties[index];
         }
-        T value = property.build(this);
-        // build may have called get() and published a new array
+        T value = build.create(this);
+        // build may have called get() or init() and published a new array
         properties = this.properties;
         if (index < properties.length && properties[index] != NULL_PROP) {
             return (T) properties[index];
         }
+        publish(index, value);
+        return value;
+    }
+
+    // copy-on-write, called under the lock: a published array is never modified, a new one is published
+    // through the volatile field, so a reader without the lock sees the value fully built
+    private void publish(int index, Object value) {
+        Object[] properties = this.properties;
         int len = properties.length;
         Object[] copy = Arrays.copyOf(properties, Math.max(len, index + 1));
         Arrays.fill(copy, len, copy.length, NULL_PROP);
         copy[index] = value;
         this.properties = copy;
-        return value;
     }
 
     public Stream<Glob> streamAnnotations() {

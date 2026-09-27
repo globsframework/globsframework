@@ -77,7 +77,6 @@ public interface FieldValuesAccessor {
 
     Glob get(GlobField<?> field) throws ItemNotFound;
 
-    // experimental
     default <T>
     TGlob<T> getT(GlobField<T> field) throws ItemNotFound{
         return TGlob.of(get(field));
@@ -85,7 +84,6 @@ public interface FieldValuesAccessor {
 
     Glob[] get(GlobArrayField<?> field) throws ItemNotFound;
 
-    // experimental
     default <T>
     TGlobArray<T> getT(GlobArrayField<T> field) throws ItemNotFound{
         return TGlobArray.of(get(field));
