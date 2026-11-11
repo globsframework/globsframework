@@ -46,7 +46,17 @@ public interface FieldSetter<T extends FieldSetter<?>> {
 
     T set(GlobField<?> field, Glob value) throws ItemNotFound;
 
+    default <D>
+    T set(GlobField<D> field, TGlob<D> value) throws ItemNotFound{
+        return set(field, value.data());
+    }
+
     T set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound;
+
+    default <D>
+    T set(GlobArrayField<D> field, TGlobArray<D> values) throws ItemNotFound{
+        return set(field, values.data());
+    }
 
     T set(GlobUnionField field, Glob value) throws ItemNotFound;
 

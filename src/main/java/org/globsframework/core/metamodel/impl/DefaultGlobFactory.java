@@ -256,878 +256,728 @@ public class DefaultGlobFactory implements GlobFactory {
         }
     }
 
-    private final static class DefaultGlobGetIntAccessor implements GlobGetIntAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetIntAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Integer get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Integer) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetIntArrayAccessor implements GlobGetIntArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetIntArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public int[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (int[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetDoubleAccessor implements GlobGetDoubleAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetDoubleAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Double get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Double) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetDoubleArrayAccessor implements GlobGetDoubleArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetDoubleArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public double[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (double[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetBigDecimalAccessor implements GlobGetBigDecimalAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetBigDecimalAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public BigDecimal get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (BigDecimal) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetBigDecimalArrayAccessor implements GlobGetBigDecimalArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetBigDecimalArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public BigDecimal[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (BigDecimal[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetStringAccessor implements GlobGetStringAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetStringAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public String get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (String) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetStringArrayAccessor implements GlobGetStringArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetStringArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public String[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (String[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetBooleanAccessor implements GlobGetBooleanAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetBooleanAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Boolean get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Boolean) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetBooleanArrayAccessor implements GlobGetBooleanArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetBooleanArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public boolean[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (boolean[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetLongAccessor implements GlobGetLongAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetLongAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Long get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Long) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetLongArrayAccessor implements GlobGetLongArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetLongArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public long[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (long[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetDateAccessor implements GlobGetDateAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetDateAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public LocalDate get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (LocalDate) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetDateTimeAccessor implements GlobGetDateTimeAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetDateTimeAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public ZonedDateTime get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (ZonedDateTime) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetBytesAccessor implements GlobGetBytesAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetBytesAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public byte[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (byte[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetGlobAccessor implements GlobGetGlobAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetGlobAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Glob get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Glob) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetGlobArrayAccessor implements GlobGetGlobArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetGlobArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Glob[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Glob[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetGlobUnionAccessor implements GlobGetGlobAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetGlobUnionAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Glob get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Glob) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobGetGlobUnionArrayAccessor implements GlobGetGlobArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobGetGlobUnionArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public boolean isSet(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isSetAt(index);
-        }
-
-        @Override
-        public boolean isNull(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return ag.isNull(index);
-        }
-
-        public Glob[] get(Glob glob) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            return (Glob[]) ag.get(index);
-        }
-    }
-
-    private final static class DefaultGlobSetIntAccessor implements GlobSetIntAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetIntAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Integer value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetIntArrayAccessor implements GlobSetIntArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetIntArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, int[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetDoubleAccessor implements GlobSetDoubleAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetDoubleAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Double value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetDoubleArrayAccessor implements GlobSetDoubleArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetDoubleArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, double[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetBigDecimalAccessor implements GlobSetBigDecimalAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetBigDecimalAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, BigDecimal value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetBigDecimalArrayAccessor implements GlobSetBigDecimalArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetBigDecimalArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, BigDecimal[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetStringAccessor implements GlobSetStringAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetStringAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, String value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-
-    }
-
-    private final static class DefaultGlobSetStringArrayAccessor implements GlobSetStringArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetStringArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, String[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetBooleanAccessor implements GlobSetBooleanAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetBooleanAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Boolean value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetBooleanArrayAccessor implements GlobSetBooleanArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetBooleanArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, boolean[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetLongAccessor implements GlobSetLongAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetLongAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Long value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetLongArrayAccessor implements GlobSetLongArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetLongArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, long[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetDateAccessor implements GlobSetDateAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetDateAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, LocalDate value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetDateTimeAccessor implements GlobSetDateTimeAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetDateTimeAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, ZonedDateTime value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetBytesAccessor implements GlobSetBytesAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetBytesAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, byte[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetGlobAccessor implements GlobSetGlobAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetGlobAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Glob value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetGlobArrayAccessor implements GlobSetGlobArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetGlobArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Glob[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetGlobUnionAccessor implements GlobSetGlobAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetGlobUnionAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Glob value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
-        }
-    }
-
-    private final static class DefaultGlobSetGlobUnionArrayAccessor implements GlobSetGlobArrayAccessor {
-        private final int index;
-        private final GlobType type;
-
-        public DefaultGlobSetGlobUnionArrayAccessor(GlobType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public void set(MutableGlob glob, Glob[] value) {
-            final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
-            assert ag.getType() == type;
-            ag.set(index, value);
+    private record DefaultGlobGetIntAccessor(int index, GlobType type) implements GlobGetIntAccessor {
+            public DefaultGlobGetIntAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Integer get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Integer) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetIntArrayAccessor(int index, GlobType type) implements GlobGetIntArrayAccessor {
+            public DefaultGlobGetIntArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public int[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (int[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetDoubleAccessor(int index, GlobType type) implements GlobGetDoubleAccessor {
+            public DefaultGlobGetDoubleAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Double get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Double) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetDoubleArrayAccessor(int index, GlobType type) implements GlobGetDoubleArrayAccessor {
+            public DefaultGlobGetDoubleArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public double[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (double[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetBigDecimalAccessor(int index, GlobType type) implements GlobGetBigDecimalAccessor {
+            public DefaultGlobGetBigDecimalAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public BigDecimal get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (BigDecimal) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetBigDecimalArrayAccessor(int index,
+                                                         GlobType type) implements GlobGetBigDecimalArrayAccessor {
+            public DefaultGlobGetBigDecimalArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public BigDecimal[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (BigDecimal[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetStringAccessor(int index, GlobType type) implements GlobGetStringAccessor {
+            public DefaultGlobGetStringAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public String get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (String) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetStringArrayAccessor(int index, GlobType type) implements GlobGetStringArrayAccessor {
+            public DefaultGlobGetStringArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public String[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (String[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetBooleanAccessor(int index, GlobType type) implements GlobGetBooleanAccessor {
+            public DefaultGlobGetBooleanAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Boolean get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Boolean) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetBooleanArrayAccessor(int index, GlobType type) implements GlobGetBooleanArrayAccessor {
+            public DefaultGlobGetBooleanArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public boolean[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (boolean[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetLongAccessor(int index, GlobType type) implements GlobGetLongAccessor {
+            public DefaultGlobGetLongAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Long get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Long) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetLongArrayAccessor(int index, GlobType type) implements GlobGetLongArrayAccessor {
+            public DefaultGlobGetLongArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public long[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (long[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetDateAccessor(int index, GlobType type) implements GlobGetDateAccessor {
+            public DefaultGlobGetDateAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public LocalDate get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (LocalDate) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetDateTimeAccessor(int index, GlobType type) implements GlobGetDateTimeAccessor {
+            public DefaultGlobGetDateTimeAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public ZonedDateTime get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (ZonedDateTime) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetBytesAccessor(int index, GlobType type) implements GlobGetBytesAccessor {
+            public DefaultGlobGetBytesAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public byte[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (byte[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetGlobAccessor(int index, GlobType type) implements GlobGetGlobAccessor {
+            public DefaultGlobGetGlobAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Glob get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Glob) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetGlobArrayAccessor(int index, GlobType type) implements GlobGetGlobArrayAccessor {
+            public DefaultGlobGetGlobArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Glob[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Glob[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetGlobUnionAccessor(int index, GlobType type) implements GlobGetGlobAccessor {
+            public DefaultGlobGetGlobUnionAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Glob get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Glob) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobGetGlobUnionArrayAccessor(int index, GlobType type) implements GlobGetGlobArrayAccessor {
+            public DefaultGlobGetGlobUnionArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            @Override
+            public boolean isSet(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isSetAt(index);
+            }
+
+            @Override
+            public boolean isNull(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return ag.isNull(index);
+            }
+
+            public Glob[] get(Glob glob) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                return (Glob[]) ag.get(index);
+            }
+        }
+
+    private record DefaultGlobSetIntAccessor(int index, GlobType type) implements GlobSetIntAccessor {
+            public DefaultGlobSetIntAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Integer value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetIntArrayAccessor(int index, GlobType type) implements GlobSetIntArrayAccessor {
+            public DefaultGlobSetIntArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, int[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetDoubleAccessor(int index, GlobType type) implements GlobSetDoubleAccessor {
+            public DefaultGlobSetDoubleAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Double value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetDoubleArrayAccessor(int index, GlobType type) implements GlobSetDoubleArrayAccessor {
+            public DefaultGlobSetDoubleArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, double[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetBigDecimalAccessor(int index, GlobType type) implements GlobSetBigDecimalAccessor {
+            public DefaultGlobSetBigDecimalAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, BigDecimal value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetBigDecimalArrayAccessor(int index,
+                                                         GlobType type) implements GlobSetBigDecimalArrayAccessor {
+            public DefaultGlobSetBigDecimalArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, BigDecimal[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetStringAccessor(int index, GlobType type) implements GlobSetStringAccessor {
+            public DefaultGlobSetStringAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, String value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+
+        }
+
+    private record DefaultGlobSetStringArrayAccessor(int index, GlobType type) implements GlobSetStringArrayAccessor {
+            public DefaultGlobSetStringArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, String[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetBooleanAccessor(int index, GlobType type) implements GlobSetBooleanAccessor {
+            public DefaultGlobSetBooleanAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Boolean value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetBooleanArrayAccessor(int index, GlobType type) implements GlobSetBooleanArrayAccessor {
+            public DefaultGlobSetBooleanArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, boolean[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetLongAccessor(int index, GlobType type) implements GlobSetLongAccessor {
+            public DefaultGlobSetLongAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Long value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetLongArrayAccessor(int index, GlobType type) implements GlobSetLongArrayAccessor {
+            public DefaultGlobSetLongArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, long[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetDateAccessor(int index, GlobType type) implements GlobSetDateAccessor {
+            public DefaultGlobSetDateAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, LocalDate value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetDateTimeAccessor(int index, GlobType type) implements GlobSetDateTimeAccessor {
+            public DefaultGlobSetDateTimeAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, ZonedDateTime value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetBytesAccessor(int index, GlobType type) implements GlobSetBytesAccessor {
+            public DefaultGlobSetBytesAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, byte[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetGlobAccessor(int index, GlobType type) implements GlobSetGlobAccessor {
+            public DefaultGlobSetGlobAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Glob value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetGlobArrayAccessor(int index, GlobType type) implements GlobSetGlobArrayAccessor {
+            public DefaultGlobSetGlobArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Glob[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetGlobUnionAccessor(int index, GlobType type) implements GlobSetGlobAccessor {
+            public DefaultGlobSetGlobUnionAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Glob value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
+        }
+
+    private record DefaultGlobSetGlobUnionArrayAccessor(int index, GlobType type) implements GlobSetGlobArrayAccessor {
+            public DefaultGlobSetGlobUnionArrayAccessor(GlobType type, int index) {
+                this(index, type);
+            }
+
+            public void set(MutableGlob glob, Glob[] value) {
+                final AbstractDefaultGlob ag = (AbstractDefaultGlob) glob;
+                assert ag.getType() == type;
+                ag.set(index, value);
+            }
         }
-    }
 }

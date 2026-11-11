@@ -3,7 +3,6 @@ package org.globsframework.core.model;
 import java.util.Objects;
 import java.util.Optional;
 
-// experimental
 public record TGlob<T>(Glob data) {
 
     public static <T> TGlob<T> of(Glob glob) {

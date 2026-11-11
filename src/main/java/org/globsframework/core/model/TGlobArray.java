@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-// experimental
 public record TGlobArray<T>(Glob[] data) {
 
     public static <T> TGlobArray<T> of(Glob[] globs) {

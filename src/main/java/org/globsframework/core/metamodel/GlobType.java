@@ -107,7 +107,10 @@ public interface GlobType extends Annotations {
 
     // use with caution: call to next should always initialize a static final field to prevent to big value
     // it allocate an array in the implementation
-
+    // Caution if calling constructor with an index to not use the index of others.
+    // we do not passe the build to the Property to allow the build to not be static
+    // even if the property is static.
+    // but it mean the build is as if a static
      record Property<T>(int index) {
          private final static AtomicInteger count = new AtomicInteger();
 
