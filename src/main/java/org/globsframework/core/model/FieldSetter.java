@@ -6,6 +6,7 @@ import org.globsframework.core.utils.exceptions.ItemNotFound;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
 
 public interface FieldSetter<T extends FieldSetter<?>> {
     T set(DoubleField field, Double value) throws ItemNotFound;
@@ -45,6 +46,10 @@ public interface FieldSetter<T extends FieldSetter<?>> {
     T set(DateTimeField field, ZonedDateTime value) throws ItemNotFound;
 
     T set(GlobField<?> field, Glob value) throws ItemNotFound;
+
+    default T setNull(Field field) {
+        return setValue(field, null);
+    }
 
     default <D>
     T set(GlobField<D> field, TGlob<D> value) throws ItemNotFound{
