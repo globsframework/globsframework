@@ -2,8 +2,11 @@ package org.globsframework.core.model.utils;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.Field;
+import org.globsframework.core.metamodel.fields.impl.AbstractField;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.utils.exceptions.InvalidParameter;
+
+import static org.globsframework.core.metamodel.fields.impl.AbstractField.impl;
 
 public class FieldCheck {
 
@@ -14,25 +17,25 @@ public class FieldCheck {
     public static void checkIsKeyOf(Field field, GlobType type) {
         if (CheckGlob.shouldCheck) {
             check(field, type);
-            if (!field.isKeyField()) {
+            if (!impl(field).isKeyField()) {
                 throwKeyError(field);
             }
         } else {
-            assert field.getGlobType() == type;
+            assert impl(field).getGlobType() == type;
         }
     }
 
     public static void checkIsKeyOf(Field field, GlobType type, Object value) {
         if (CheckGlob.shouldCheck) {
             check(field, type);
-            field.checkValue(value);
-            if (!field.isKeyField()) {
+            impl(field).fastCheckValue(value);
+            if (!impl(field).isKeyField()) {
                 throwKeyError(field);
             }
         } else {
-            assert field.getGlobType() == type;
-            assert field.isKeyField();
-            assert field.checkValue(value);
+            assert impl(field).getGlobType() == type;
+            assert impl(field).isKeyField();
+            assert impl(field).fastCheckValue(value);
         }
     }
 
@@ -42,11 +45,11 @@ public class FieldCheck {
 
     static public void check(Field field, GlobType type) {
         if (CheckGlob.shouldCheck) {
-            if (field.getGlobType() != type) {
-                throwFieldError(field, type);
+            if (impl(field).getGlobType() != type) {
+                throwFieldError(impl(field), type);
             }
         } else {
-            assert field.getGlobType() == type;
+            assert impl(field).getGlobType() == type;
         }
     }
 
@@ -62,23 +65,23 @@ public class FieldCheck {
 
     static public void check(Field field, GlobType type, Object value) {
         if (CheckGlob.shouldCheck) {
-            if (field.getGlobType() != type) {
-                throwFieldError(field, type);
+            if (impl(field).getGlobType() != type) {
+                throwFieldError(impl(field), type);
             }
-            field.checkValue(value);
+            impl(field).fastCheckValue(value);
         } else {
-            assert field.getGlobType() == type;
-            assert field.checkValue(value);
+            assert impl(field).getGlobType() == type;
+            assert impl(field).fastCheckValue(value);
         }
     }
 
     static public void checkValue(Field field, Object value) {
         if (CheckGlob.shouldCheck) {
-            field.checkValue(value);
+            impl(field).fastCheckValue(value);
         }
     }
 
-    private static void throwFieldError(Field field, GlobType type) {
+    public static void throwFieldError(AbstractField field, GlobType type) {
         throw new InvalidParameter("Field '" + field.getName() + "' is declared for type '" +
                                    field.getGlobType().describe() + "'\n but not for \n'" + type.describe() + "'");
     }

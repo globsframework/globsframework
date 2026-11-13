@@ -4,6 +4,7 @@ import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.model.FieldSetter;
 import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.Glob;
+import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 import java.math.BigDecimal;
@@ -101,10 +102,6 @@ public abstract class AbstractFieldValue<T extends FieldSetter<?>> implements Fi
 
     public T set(GlobArrayUnionField field, Glob[] values) throws ItemNotFound {
         return doSet(field, values);
-    }
-
-    public T setValue(Field field, Object o) throws ItemNotFound {
-        return doSet(field, o);
     }
 
     protected abstract Object doGet(Field field);

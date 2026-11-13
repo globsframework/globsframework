@@ -2,6 +2,7 @@ package org.globsframework.core.model.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.*;
+import org.globsframework.core.metamodel.fields.impl.AbstractField;
 import org.globsframework.core.metamodel.links.Link;
 import org.globsframework.core.model.*;
 import org.globsframework.core.model.utils.FieldCheck;
@@ -14,6 +15,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.globsframework.core.metamodel.fields.impl.AbstractField.impl;
 
 public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, Key {
     private final GlobType type;
@@ -38,7 +42,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public <T extends FieldValueVisitor> T accept(T functor) throws Exception {
         for (Field field : type.getFields()) {
-            final int index = field.getIndex();
+            final int index = impl(field).getIndex();
             if (isSetAt(index)) { //  || field.isKeyField()
                 field.acceptValue(functor, values[index]);
             }
@@ -48,7 +52,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
 
     final public <CTX, T extends FieldValueVisitorWithContext<CTX>> T accept(T functor, CTX ctx) throws Exception {
         for (Field field : type.getFields()) {
-            final int index = field.getIndex();
+            final int index = impl(field).getIndex();
             if (isSetAt(index)) {
                 field.acceptValue(functor, values[index], ctx);
             }
@@ -59,7 +63,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     final public <T extends FieldValues.Functor>
     T apply(T functor) throws Exception {
         for (Field field : type.getFields()) {
-            int index = field.getIndex();
+            int index = impl(field).getIndex();
             if (isSetAt(index)) {  //  || field.isKeyField()
                 functor.process(field, values[index]);
             }
@@ -68,7 +72,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public Object uncheckGet(Field field) {
-        return values[field.getIndex()];
+        return values[impl(field).getIndex()];
     }
 
     final public Object get(int index) {
@@ -84,13 +88,13 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         setSetAt(index);
     }
 
-    private MutableGlob uncheckedSet(Field field, Object value) {
-        set(field.getIndex(), value);
+    private MutableGlob uncheckedSet(Object value, int index) {
+        set(index, value);
         return this;
     }
 
     final public boolean isSet(Field field) throws ItemNotFound {
-        return isSetAt(field.getIndex());
+        return isSetAt(impl(field).getIndex());
     }
 
     abstract public void setSetAt(int index);
@@ -100,7 +104,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     abstract public void clearSetAt(int index);
 
     final public MutableGlob unset(Field field) {
-        int index = field.getIndex();
+        int index = impl(field).getIndex();
         values[index] = null;
         clearSetAt(index);
         return this;
@@ -183,7 +187,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
                     }
                 }
                 final MutableGlob[] value = Arrays.copyOfRange(globs, 0, globs.length, MutableGlob[].class);
-                setObject(field, value);
+                setObjectNoValueCheck(value, impl(field));
                 return value;
             }
         } else {
@@ -192,95 +196,106 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public MutableGlob set(IntegerField field, Integer value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(IntegerField field, int value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(IntegerArrayField field, int[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(DoubleField field, Double value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(DoubleField field, double value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(DoubleArrayField field, double[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(LongField field, Long value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(LongField field, long value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(LongArrayField field, long[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(StringField field, String value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(StringArrayField field, String[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(BigDecimalField field, BigDecimal value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(BigDecimalArrayField field, BigDecimal[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(BooleanField field, Boolean value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(BytesField field, byte[] value) {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob setValue(Field field, Object value) {
-        return setObject(field, value);
+        return setObject(impl(field), value);
     }
 
     final public MutableGlob set(BooleanArrayField field, boolean[] value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(DateField field, LocalDate value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(DateTimeField field, ZonedDateTime value) throws ItemNotFound {
-        return setObject(field, value);
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(GlobField<?> field, Glob value) throws ItemNotFound {
-        return setObject(field, value);
+        if (value != null && FieldCheck.CheckGlob.shouldCheck) {
+            if (value.getType() != field.getTargetType()) {
+                throw new InvalidParameter("Value should be of type " + field.getTargetType().getName() + " but is of type " + value.getType().getName());
+            }
+        }
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(GlobArrayField<?> field, Glob[] values) throws ItemNotFound {
-        return setObject(field, values);
+        return setObject(impl(field), values);
     }
 
     final public MutableGlob set(GlobUnionField field, Glob value) throws ItemNotFound {
-        return setObject(field, value);
+        if (value != null && FieldCheck.CheckGlob.shouldCheck) {
+            if (!field.isValidType(value.getType())) {
+                throw new InvalidParameter("Value should be one type of " + field.getTargetTypes().stream().map(GlobType::getName).collect(Collectors.joining(", "))
+                                           + " but is of type " + value.getType().getName());
+            }
+        }
+        return setObjectNoValueCheck(value, impl(field));
     }
 
     final public MutableGlob set(GlobArrayUnionField field, Glob[] values) throws ItemNotFound {
-        return setObject(field, values);
+        return setObject(impl(field), values);
     }
 
     final public Key getTargetKey(Link link) {
@@ -300,7 +315,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     final public FieldValues getValues() {
         FieldValuesBuilder builder = FieldValuesBuilder.init();
         for (Field field : type.getFields()) {
-            if (!field.isKeyField()) {
+            if (!impl(field).isKeyField()) {
                 builder.setValue(field, uncheckGet(field));
             }
         }
@@ -321,23 +336,40 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         if (FieldCheck.CheckGlob.shouldCheck) {
             FieldCheck.check(field, type);
         } else {
-            assert type == field.getGlobType();
+            assert type == impl(field).getGlobType();
         }
         return uncheckGet(field);
     }
 
-    final public MutableGlob setObject(Field field, Object value) {
+    /** {@code setValue}, and the setters whose signature does not guarantee the value's class */
+    private MutableGlob setObject(AbstractField field, Object value) {
+        checkSet(field);
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            field.fastCheckValue(value);
+        } else {
+            assert field.fastCheckValue(value);
+        }
+        return uncheckedSet(value, field.getIndex());
+    }
+
+    /** the typed setters: the Java signature already guarantees the value's class */
+    private MutableGlob setObjectNoValueCheck(Object value, AbstractField abstractfield) {
+        checkSet(abstractfield);
+        return uncheckedSet(value, abstractfield.getIndex());
+    }
+
+    private void checkSet(AbstractField field) {
         if (FieldCheck.CheckGlob.shouldCheck) {
             if (hashCode != 0 && field.isKeyField()) {
                 throw new RuntimeException(field.getFullName() + " is a key value and the hashCode is already computed.");
             }
-            FieldCheck.check(field, type, value);
+            if (field.getGlobType() != type) {
+                FieldCheck.throwFieldError(field, type);
+            }
         } else {
             assert hashCode == 0 || !field.isKeyField();
             assert type == field.getGlobType();
-            assert field.checkValue(value);
         }
-        return uncheckedSet(field, value);
     }
 
     final public Key getKey() {
@@ -461,7 +493,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
             }
 
             public boolean contains(Field field) {
-                return field.isKeyField();
+                return impl(field).isKeyField();
             }
 
             public int size() {
@@ -510,7 +542,7 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     }
 
     final public boolean contains(Field field) {
-        return field.getGlobType().equals(type);
+        return impl(field).getGlobType().equals(type);
     }
 
     final public int size() {
@@ -533,9 +565,10 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
     final public MutableGlob duplicate() {
         AbstractDefaultGlob instantiate = (AbstractDefaultGlob) type.instantiate();
         for (Field field : type.getFields()) {
-            if (isSet(field)) {
-                if (isNull(field)) {
-                    instantiate.uncheckedSet(field, null);
+            AbstractField abstractField = impl(field);
+            if (isSetAt(abstractField.getIndex())) {
+                if (isNull(abstractField.getIndex())) {
+                    instantiate.uncheckedSet(null, abstractField.getIndex());
                 } else {
                     // 10% faster than a switch case
                     field.safeAccept(DuplicateFieldVisitorWithTwoContext.INSTANCE, instantiate, this);
@@ -550,71 +583,71 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         static DuplicateFieldVisitorWithTwoContext INSTANCE = new DuplicateFieldVisitorWithTwoContext();
 
         public void visitInteger(IntegerField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitIntegerArray(IntegerArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.get(field).clone());
+            instantiate.uncheckedSet(src.get(field).clone(), field.getIndex());
         }
 
         public void visitDouble(DoubleField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitDoubleArray(DoubleArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((double[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((double[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitBigDecimal(BigDecimalField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitBigDecimalArray(BigDecimalArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((BigDecimal[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((BigDecimal[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitString(StringField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitStringArray(StringArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((String[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((String[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitBoolean(BooleanField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitBooleanArray(BooleanArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((boolean[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((boolean[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitLong(LongField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitLongArray(LongArrayField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((long[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((long[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitDate(DateField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitDateTime(DateTimeField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, src.uncheckGet(field));
+            instantiate.uncheckedSet(src.uncheckGet(field), field.getIndex());
         }
 
         public void visitBytes(BytesField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((byte[]) src.uncheckGet(field)).clone());
+            instantiate.uncheckedSet(((byte[]) src.uncheckGet(field)).clone(), field.getIndex());
         }
 
         public void visitGlob(GlobField<?> field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((Glob) src.uncheckGet(field)).duplicate());
+            instantiate.uncheckedSet(((Glob) src.uncheckGet(field)).duplicate(), field.getIndex());
         }
 
         public void visitGlobArray(GlobArrayField<?> field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, duplicate((Glob[]) src.uncheckGet(field)));
+            instantiate.uncheckedSet(duplicate((Glob[]) src.uncheckGet(field)), field.getIndex());
         }
 
         private static Glob[] duplicate(Glob[] globs) {
@@ -626,13 +659,13 @@ public abstract class AbstractDefaultGlob implements MutableGlob, FieldValues, K
         }
 
         public void visitUnionGlob(GlobUnionField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
-            instantiate.uncheckedSet(field, ((Glob) src.uncheckGet(field)).duplicate());
+            instantiate.uncheckedSet(((Glob) src.uncheckGet(field)).duplicate(), field.getIndex());
         }
 
         public void visitUnionGlobArray(GlobArrayUnionField field, AbstractDefaultGlob instantiate, AbstractDefaultGlob src) throws Exception {
             Glob[] globs = (Glob[]) src.uncheckGet(field);
             final Glob[] duplicate = duplicate(globs);
-            instantiate.uncheckedSet(field, duplicate);
+            instantiate.uncheckedSet(duplicate, field.getIndex());
         }
     }
 

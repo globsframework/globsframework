@@ -10,6 +10,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public non-sealed interface GlobArrayUnionField extends Field, Function<FieldValuesAccessor, Glob[]> {
+    boolean isValidType(GlobType type);
+
     Collection<GlobType> getTargetTypes();
 
     GlobType getTargetType(String name);

@@ -35,6 +35,11 @@ final class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return this;
     }
 
+    public MutableFunctionalKey setValue(Field field, Object o) {
+        FieldCheck.checkValue(field, o);
+        return doSet(field, o);
+    }
+
     protected Object doGet(Field field) {
         if (field != functionalKeyBuilder.field) {
             throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");

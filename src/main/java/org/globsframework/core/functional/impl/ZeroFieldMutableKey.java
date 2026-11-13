@@ -87,4 +87,9 @@ public final class ZeroFieldMutableKey extends AbstractFieldValue<MutableFunctio
     public String toString() {
         return functionalKeyBuilder.type.getName();
     }
+
+    @Override
+    public MutableFunctionalKey setValue(Field field, Object value) throws ItemNotFound {
+        return doSet(field, value);
+    }
 }

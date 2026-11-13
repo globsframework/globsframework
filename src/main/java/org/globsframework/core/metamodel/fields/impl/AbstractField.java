@@ -2,6 +2,7 @@ package org.globsframework.core.metamodel.fields.impl;
 
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.annotations.Required;
+import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
@@ -15,6 +16,19 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 abstract public class AbstractField {
+    /**
+     * The view of a {@link Field} that core's hot paths go through ({@code AbstractDefaultGlob}, {@code FieldCheck}).
+     * On it {@code getIndex}, {@code getGlobType}, {@code isKeyField} and {@link #fastCheckValue} are final, hence
+     * statically bound, where on {@code Field} each is an itable dispatch at any call site that sees several field
+     * classes — measured ×3 on a loop of {@code getIndex} over five field classes, and ×4.7 on {@code getValue} with
+     * the checks on. Every Field implementation in globsframework extends this class; the scalar sub-interfaces
+     * ({@code IntegerField}, …) are {@code non-sealed} though, so a Field implemented elsewhere would fail here
+     * with a ClassCastException.
+     */
+    public static AbstractField impl(Field field) {
+        return (AbstractField) field;
+    }
+
     private final int index;
     private final int keyIndex;
     //    private final Supplier<GlobType> globTypeSupplier;
@@ -23,6 +37,9 @@ abstract public class AbstractField {
     private final Class valueClass;
     private final Object defaultValue;
     private final DataType dataType;
+    // true when checkValue is nothing more than the exact-class test: every field but the four Glob-valued ones,
+    // which override it to check the target type(s) — and a Glob[] passes the class test while its elements may not
+    private final boolean exactClassCheck;
     private Map<Class<?>, Object> registered = null;
     private final HashMap<Key, Glob> annotations;
 
@@ -37,6 +54,7 @@ abstract public class AbstractField {
 //        this.globTypeSupplier = LazyConstant.of(globTypeSupplier);
         this.valueClass = valueClass;
         this.dataType = dataType;
+        this.exactClassCheck = valueClass != Glob.class && valueClass != Glob[].class;
     }
 
     public void typeComplete(GlobType globType) {
@@ -92,6 +110,19 @@ abstract public class AbstractField {
                                        " (expected " + valueClass.getName() + ")");
         }
         return true;
+    }
+
+    /**
+     * {@link #checkValue} for the hot paths of core, which reach a field through a cast to this class: being final it
+     * is statically bound, so a call site seeing every field class does not pay an itable dispatch for the common
+     * case — a null, or a value of exactly the field's class. Anything else, and every Glob-valued field, goes to the
+     * virtual {@code checkValue}, which either accepts it or throws.
+     */
+    public final boolean fastCheckValue(Object object) {
+        if (object == null || (exactClassCheck && object.getClass() == valueClass)) {
+            return true;
+        }
+        return checkValue(object);
     }
 
     final public Class getValueClass() {

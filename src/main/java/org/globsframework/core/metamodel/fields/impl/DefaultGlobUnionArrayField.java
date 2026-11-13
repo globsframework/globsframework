@@ -21,6 +21,14 @@ public final class DefaultGlobUnionArrayField extends AbstractField implements G
         this.targetTypes = targetTypes;
     }
 
+    @Override
+    public boolean isValidType(GlobType type) {
+        if (targetTypesByName == null) {
+            fill();
+        }
+        return targetTypesByName.get(type.getName()) == type;
+    }
+
     public Collection<GlobType> getTargetTypes() {
         if (targetTypesByName == null) {
             fill();
@@ -200,9 +208,9 @@ public final class DefaultGlobUnionArrayField extends AbstractField implements G
 
     public boolean checkType(Glob[] globs) {
         final Collection<GlobType> tt = getTargetTypes();
-        for (int i = 0; i < globs.length; i++) {
-            if (globs[i] != null) {
-                if (!tt.contains(globs[i].getType())) {
+        for (Glob glob : globs) {
+            if (glob != null) {
+                if (!tt.contains(glob.getType())) {
                     return false;
                 }
             }

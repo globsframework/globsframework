@@ -41,6 +41,11 @@ final class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return this;
     }
 
+    public MutableFunctionalKey setValue(Field field, Object o) {
+        FieldCheck.checkValue(field, o);
+        return doSet(field, o);
+    }
+
     protected Object doGet(Field field) {
         if (field == functionalKeyBuilder.field1) return getOrNullValue(value1);
         if (field == functionalKeyBuilder.field2) return getOrNullValue(value2);

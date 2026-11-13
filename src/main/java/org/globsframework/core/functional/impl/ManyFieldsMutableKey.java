@@ -60,6 +60,11 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
         throw new ItemNotFound("Field " + field.getName() + " not part of the functional key");
     }
 
+    public MutableFunctionalKey setValue(Field field, Object o) {
+        FieldCheck.checkValue(field, o);
+        return doSet(field, o);
+    }
+
     protected Object doGet(Field field) {
         final int index = this.index[field.getIndex()];
         if (index >= 0) {

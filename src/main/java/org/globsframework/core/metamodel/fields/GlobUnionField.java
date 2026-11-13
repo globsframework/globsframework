@@ -11,6 +11,8 @@ import java.util.function.Function;
 public non-sealed interface GlobUnionField extends Field, Function<FieldValuesAccessor, Glob> {
     Collection<GlobType> getTargetTypes();
 
+    boolean isValidType(GlobType type);
+
     GlobType getTargetType(String name);
 
     default Glob apply(FieldValuesAccessor glob) {

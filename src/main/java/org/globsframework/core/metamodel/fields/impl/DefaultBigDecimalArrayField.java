@@ -1,10 +1,12 @@
 package org.globsframework.core.metamodel.fields.impl;
 
+
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.fields.*;
 import org.globsframework.core.metamodel.type.DataType;
 import org.globsframework.core.model.Glob;
 import org.globsframework.core.model.Key;
+import org.globsframework.core.utils.exceptions.InvalidParameter;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
@@ -15,6 +17,18 @@ import java.util.function.Supplier;
 public final class DefaultBigDecimalArrayField extends AbstractField implements BigDecimalArrayField {
     public DefaultBigDecimalArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, BigDecimal defaultValue, HashMap<Key, Glob> annotations) {
         super(name, globType, BigDecimal[].class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimalArray, annotations);
+    }
+
+    /**
+     * BigDecimal is not final: an array of a subclass is a BigDecimal[] (arrays are covariant) and is accepted,
+     * as the typed setter accepts it. The exact class still takes {@link #fastCheckValue}'s shortcut.
+     */
+    public boolean checkValue(Object object) throws InvalidParameter {
+        if (object != null && !(object instanceof BigDecimal[])) {
+            throw new InvalidParameter("Value '" + object + "' (" + object.getClass().getName()
+                                       + ") is not authorized for field: " + getName() + " (expected a BigDecimal[])");
+        }
+        return true;
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {

@@ -32,6 +32,14 @@ public final class DefaultGlobUnionField extends AbstractField implements GlobUn
         return targetTypesByName.values();
     }
 
+    @Override
+    public boolean isValidType(GlobType type) {
+        if (targetTypesByName == null) {
+            fill();
+        }
+        return targetTypesByName.get(type.getName()) == type;
+    }
+
     public synchronized void __add__(GlobType t) {
         if (targetTypesByName == null) {
             fill();
