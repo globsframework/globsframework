@@ -11,12 +11,13 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultBigDecimalField extends AbstractField implements BigDecimalField {
     public DefaultBigDecimalField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex,
-                                  BigDecimal defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, BigDecimal.class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimal, annotations);
+                                  BigDecimal defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, BigDecimal.class, index, keyIndex, isKeyField, defaultValue, DataType.BigDecimal, annotations, registered);
     }
 
     /**

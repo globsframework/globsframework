@@ -16,8 +16,8 @@ public final class DefaultGlobUnionArrayField extends AbstractField implements G
     private volatile Map<String, GlobType> targetTypesByName = null;
 
     public DefaultGlobUnionArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType>[] targetTypes,
-                                      int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
-        super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobUnionArray, annotations);
+                                      int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobUnionArray, annotations, registered);
         this.targetTypes = targetTypes;
     }
 

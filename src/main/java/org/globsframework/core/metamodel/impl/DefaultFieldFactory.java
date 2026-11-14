@@ -26,114 +26,114 @@ public class DefaultFieldFactory {
     public DefaultIntegerField addInteger(String name,
                                           boolean isKeyField,
                                           int keyIndex, int index,
-                                          Integer defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultIntegerField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), isKeyField);
+                                          Integer defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultIntegerField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), isKeyField);
     }
 
     public DefaultIntegerArrayField addIntegerArray(String name,
                                                     boolean isKeyField,
-                                                    int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultIntegerArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                                    int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultIntegerArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultBooleanArrayField addBooleanArray(String name,
                                                     boolean isKeyField,
-                                                    int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultBooleanArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                                    int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultBooleanArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultLongField addLong(String name,
                                     boolean isKeyField,
                                     int keyIndex, int index,
-                                    Long defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultLongField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), isKeyField);
+                                    Long defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultLongField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), isKeyField);
     }
 
     public DefaultLongArrayField addLongArray(String name,
                                               boolean isKeyField,
-                                              int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultLongArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                              int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultLongArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultDoubleField addDouble(String name,
                                         boolean isKeyField,
                                         final int keyIndex, int index,
-                                        Double defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultDoubleField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), isKeyField);
+                                        Double defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultDoubleField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), isKeyField);
     }
 
     public DefaultDoubleArrayField addDoubleArray(String name,
                                                   boolean isKeyField,
-                                                  int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultDoubleArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                                  int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultDoubleArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultStringField addString(String name,
                                         boolean isKeyField,
                                         int keyIndex, int index,
-                                        String defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultStringField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), isKeyField);
+                                        String defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultStringField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), isKeyField);
     }
 
     public DefaultStringArrayField addStringArray(String name,
                                                   boolean isKeyField,
-                                                  int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultStringArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                                  int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultStringArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultBooleanField addBoolean(String name,
                                           boolean isKeyField,
                                           final int keyIndex, int index,
-                                          Boolean defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultBooleanField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), isKeyField);
+                                          Boolean defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultBooleanField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), isKeyField);
     }
 
     public DefaultBigDecimalField addBigDecimal(String name,
                                                 boolean isKeyField,
                                                 int keyIndex, int index,
-                                                BigDecimal defaultValue, HashMap<Key, Glob> annotations) {
-        return add(new DefaultBigDecimalField(name, type, index, isKeyField, keyIndex, defaultValue, annotations), false);
+                                                BigDecimal defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultBigDecimalField(name, type, index, isKeyField, keyIndex, defaultValue, annotations, registered), false);
     }
 
     public DefaultBigDecimalArrayField addBigDecimalArray(String name,
                                                           boolean isKeyField,
-                                                          int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultBigDecimalArrayField(name, type, index, isKeyField, keyIndex, null, annotations), false);
+                                                          int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultBigDecimalArrayField(name, type, index, isKeyField, keyIndex, null, annotations, registered), false);
     }
 
     public DefaultDateTimeField addDateTime(String name,
                                             boolean isKeyField,
-                                            int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultDateTimeField(name, type, index, isKeyField, keyIndex, null, annotations), isKeyField);
+                                            int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultDateTimeField(name, type, index, isKeyField, keyIndex, null, annotations, registered), isKeyField);
     }
 
     public DefaultDateField addDate(String name,
                                     boolean isKeyField,
-                                    int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultDateField(name, type, index, isKeyField, keyIndex, null, annotations), isKeyField);
+                                    int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultDateField(name, type, index, isKeyField, keyIndex, null, annotations, registered), isKeyField);
     }
 
-    public DefaultBytesField addBytes(String name, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultBytesField(name, type, index, annotations), false);
+    public DefaultBytesField addBytes(String name, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultBytesField(name, type, index, annotations, registered), false);
     }
 
     public <T> DefaultGlobField<T> addGlob(String name, Supplier<GlobType> globType, boolean isKeyField,
-                                    int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobField<>(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
+                                    int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultGlobField<>(name, type, globType, index, isKeyField, keyIndex, annotations, registered), isKeyField);
     }
 
     public <T> DefaultGlobArrayField<T> addGlobArray(String name, Supplier<GlobType> globType, boolean isKeyField,
-                                              int keyIndex, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobArrayField<>(name, type, globType, index, isKeyField, keyIndex, annotations), isKeyField);
+                                              int keyIndex, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultGlobArrayField<>(name, type, globType, index, isKeyField, keyIndex, annotations, registered), isKeyField);
     }
 
     public DefaultGlobUnionField addGlobUnion(String fieldName, Supplier<GlobType>[] types,
-                                              int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobUnionField(fieldName, type, types, index, false, 0, annotations), false);
+                                              int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultGlobUnionField(fieldName, type, types, index, false, 0, annotations, registered), false);
     }
 
-    public DefaultGlobUnionArrayField addGlobArrayUnion(String fieldName, Supplier<GlobType>[] types, int index, HashMap<Key, Glob> annotations) {
-        return add(new DefaultGlobUnionArrayField(fieldName, type, types, index, false, 0, annotations), false);
+    public DefaultGlobUnionArrayField addGlobArrayUnion(String fieldName, Supplier<GlobType>[] types, int index, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        return add(new DefaultGlobUnionArrayField(fieldName, type, types, index, false, 0, annotations, registered), false);
     }
 
     private <T extends Field> T add(T field, boolean isKeyField) {

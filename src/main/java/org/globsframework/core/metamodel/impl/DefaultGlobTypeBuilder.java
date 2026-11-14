@@ -1,5 +1,6 @@
 package org.globsframework.core.metamodel.impl;
 
+import org.globsframework.core.metamodel.FieldBuilder;
 import org.globsframework.core.metamodel.GlobType;
 import org.globsframework.core.metamodel.GlobTypeBuilder;
 import org.globsframework.core.metamodel.annotations.*;
@@ -103,44 +104,44 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
     }
 
     public GlobTypeBuilder addStringField(String fieldName, Collection<Glob> annotations) {
-        createStringField(fieldName, annotations);
+        createStringField(fieldName, annotations, null);
         return this;
     }
 
-    private DefaultStringField createStringField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultStringField createStringField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultString.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultStringField field = factory.addString(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultString.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultString.VALUE) : null, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addStringArrayField(String fieldName, Collection<Glob> annotations) {
-        createStringArrayField(fieldName, annotations);
+        createStringArrayField(fieldName, annotations, null);
         return this;
     }
 
-    private DefaultStringArrayField createStringArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultStringArrayField createStringArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultStringArrayField field = factory.addStringArray(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultStringArrayField field = factory.addStringArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addIntegerField(String fieldName, Collection<Glob> globAnnotations) {
-        createIntegerField(fieldName, globAnnotations);
+        createIntegerField(fieldName, globAnnotations, null);
         return this;
     }
 
-    private DefaultIntegerField createIntegerField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultIntegerField createIntegerField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultInteger.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultIntegerField field = factory.addInteger(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultInteger.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultInteger.VALUE) : null, annotations, registered);
         index++;
         return field;
     }
@@ -160,307 +161,307 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return keyPos;
     }
 
-    private DefaultIntegerArrayField createIntegerArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultIntegerArrayField createIntegerArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultIntegerArrayField field = factory.addIntegerArray(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultIntegerArrayField field = factory.addIntegerArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addDoubleField(String fieldName, Collection<Glob> globAnnotations) {
-        createDoubleField(fieldName, globAnnotations);
+        createDoubleField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addDoubleArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        createDoubleArrayField(fieldName, globAnnotations);
+        createDoubleArrayField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addIntegerArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        createIntegerArrayField(fieldName, globAnnotations);
+        createIntegerArrayField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addLongArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        createLongArrayField(fieldName, globAnnotations);
+        createLongArrayField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addBigDecimalField(String fieldName, Collection<Glob> globAnnotations) {
-        createBigDecimalField(fieldName, globAnnotations);
+        createBigDecimalField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addBigDecimalArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        createBigDecimalArrayField(fieldName, globAnnotations);
+        createBigDecimalArrayField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addDateField(String fieldName, Collection<Glob> globAnnotations) {
-        createDateField(fieldName, globAnnotations);
+        createDateField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addDateTimeField(String fieldName, Collection<Glob> globAnnotations) {
-        createDateTimeField(fieldName, globAnnotations);
+        createDateTimeField(fieldName, globAnnotations, null);
         return this;
     }
 
-    private DefaultDoubleField createDoubleField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultDoubleField createDoubleField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultDouble.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultDoubleField doubleField = factory.addDouble(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultDouble.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultDouble.VALUE) : null, annotations, registered);
         index++;
         return doubleField;
     }
 
-    private DefaultDoubleArrayField createDoubleArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultDoubleArrayField createDoubleArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultDoubleArrayField field = factory.addDoubleArray(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultDoubleArrayField field = factory.addDoubleArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
-    private DefaultBigDecimalField createBigDecimalField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultBigDecimalField createBigDecimalField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultBigDecimal.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultBigDecimalField bigDecimalField = factory.addBigDecimal(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultBigDecimal.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultBigDecimal.VALUE) : null, annotations, registered);
         index++;
         return bigDecimalField;
     }
 
-    private DefaultBigDecimalArrayField createBigDecimalArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultBigDecimalArrayField createBigDecimalArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultBigDecimalArrayField bigDecimalArrayField =
-                factory.addBigDecimalArray(fieldName, keyPos != -1, keyPos, index, annotations);
+                factory.addBigDecimalArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return bigDecimalArrayField;
     }
 
-    private DefaultDateTimeField createDateTimeField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultDateTimeField createDateTimeField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultDateTimeField dateTimeField = factory.addDateTime(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultDateTimeField dateTimeField = factory.addDateTime(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return dateTimeField;
     }
 
-    private DefaultDateField createDateField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultDateField createDateField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultDateField dateField = factory.addDate(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultDateField dateField = factory.addDate(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return dateField;
     }
 
 
     public GlobTypeBuilder addLongField(String fieldName, Collection<Glob> globAnnotations) {
-        createLongField(fieldName, globAnnotations);
+        createLongField(fieldName, globAnnotations, null);
         return this;
     }
 
-    private DefaultLongField createLongField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultLongField createLongField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultLong.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultLongField longField = factory.addLong(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultLong.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultLong.VALUE) : null, annotations, registered);
         index++;
         return longField;
     }
 
-    private DefaultLongArrayField createLongArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultLongArrayField createLongArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultLongArrayField field = factory.addLongArray(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultLongArrayField field = factory.addLongArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addBooleanArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        createBooleanArrayField(fieldName, globAnnotations);
+        createBooleanArrayField(fieldName, globAnnotations, null);
         return this;
     }
 
-    private DefaultBooleanArrayField createBooleanArrayField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultBooleanArrayField createBooleanArrayField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultBooleanArrayField field = factory.addBooleanArray(fieldName, keyPos != -1, keyPos, index, annotations);
+        DefaultBooleanArrayField field = factory.addBooleanArray(fieldName, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addBooleanField(String fieldName, Collection<Glob> globAnnotations) {
-        createBooleanField(fieldName, globAnnotations);
+        createBooleanField(fieldName, globAnnotations, null);
         return this;
     }
 
-    private DefaultBooleanField createBooleanField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultBooleanField createBooleanField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob defaultValue = annotations.get(DefaultBoolean.KEY);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultBooleanField field = factory.addBoolean(fieldName, keyPos != -1, keyPos, index,
-                defaultValue != null ? defaultValue.get(DefaultBoolean.VALUE) : null, annotations);
+                defaultValue != null ? defaultValue.get(DefaultBoolean.VALUE) : null, annotations, registered);
         index++;
         return field;
     }
 
     public GlobTypeBuilder addBytesField(String fieldName, Collection<Glob> globAnnotations) {
-        createBytesField(fieldName, globAnnotations);
+        createBytesField(fieldName, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type) {
-        createGlobField(fieldName, type, globAnnotations);
+        createGlobField(fieldName, type, globAnnotations, null);
         return this;
     }
 
 
     public GlobTypeBuilder addGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType> type) {
-        createGlobArrayField(fieldName, type, globAnnotations);
+        createGlobArrayField(fieldName, type, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addUnionGlobField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types) {
-        createGlobUnionField(fieldName, types, globAnnotations);
+        createGlobUnionField(fieldName, types, globAnnotations, null);
         return this;
     }
 
     public GlobTypeBuilder addUnionGlobArrayField(String fieldName, Collection<Glob> globAnnotations, Supplier<GlobType>[] types) {
-        createGlobUnionArrayField(fieldName, types, globAnnotations);
+        createGlobUnionArrayField(fieldName, types, globAnnotations, null);
         return this;
     }
 
-    private DefaultBytesField createBytesField(String fieldName, Collection<Glob> globAnnotations) {
+    DefaultBytesField createBytesField(String fieldName, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
-        DefaultBytesField field = factory.addBytes(fieldName, index, annotations);
+        DefaultBytesField field = factory.addBytes(fieldName, index, annotations, registered);
         index++;
         return field;
     }
 
-    private <T> GlobField<T> createGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
+    <T> GlobField<T> createGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
-        DefaultGlobField<T> field = factory.addGlob(fieldName, globType, keyPos != -1, keyPos, index, annotations);
+        DefaultGlobField<T> field = factory.addGlob(fieldName, globType, keyPos != -1, keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
-    private <T> GlobArrayField<T> createGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations) {
+    <T> GlobArrayField<T> createGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         int keyPos = getOrUpdateKeyPos(annotations);
         DefaultGlobArrayField<T> field = factory.addGlobArray(fieldName, globType, keyPos != -1,
-                keyPos, index, annotations);
+                keyPos, index, annotations, registered);
         index++;
         return field;
     }
 
-    private GlobUnionField createGlobUnionField(String fieldName,
+    GlobUnionField createGlobUnionField(String fieldName,
                                                 Supplier<GlobType>[] types,
-                                                Collection<Glob> globAnnotations) {
+                                                Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob key = annotations.get(KeyField.UNIQUE_KEY);
         if (key != null) {
             throw new RuntimeException(fieldName + " of type unionField cannot be a key");
         }
-        DefaultGlobUnionField field = factory.addGlobUnion(fieldName, types, index, annotations);
+        DefaultGlobUnionField field = factory.addGlobUnion(fieldName, types, index, annotations, registered);
         index++;
         return field;
     }
 
-    private GlobArrayUnionField createGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> globAnnotations) {
+    GlobArrayUnionField createGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> globAnnotations, Map<Class<?>, Object> registered) {
         HashMap<Key, Glob> annotations = adaptAnnotation(globAnnotations);
         Glob key = annotations.get(KeyField.UNIQUE_KEY);
         if (key != null) {
             throw new RuntimeException(fieldName + " of type unionField cannot be a key");
         }
-        DefaultGlobUnionArrayField field = factory.addGlobArrayUnion(fieldName, types, index, annotations);
+        DefaultGlobUnionArrayField field = factory.addGlobArrayUnion(fieldName, types, index, annotations, registered);
         index++;
         return field;
     }
 
     public StringField declareStringField(String fieldName, Collection<Glob> globAnnotations) {
-        return createStringField(fieldName, globAnnotations);
+        return createStringField(fieldName, globAnnotations, null);
     }
 
     public StringArrayField declareStringArrayField(String fieldName, Collection<Glob> globAnnotations) {
-        return createStringArrayField(fieldName, globAnnotations);
+        return createStringArrayField(fieldName, globAnnotations, null);
     }
 
     public IntegerField declareIntegerField(String fieldName, Collection<Glob> annotations) {
-        return createIntegerField(fieldName, annotations);
+        return createIntegerField(fieldName, annotations, null);
     }
 
     public IntegerArrayField declareIntegerArrayField(String fieldName, Collection<Glob> annotations) {
-        return createIntegerArrayField(fieldName, annotations);
+        return createIntegerArrayField(fieldName, annotations, null);
     }
 
     public DoubleField declareDoubleField(String fieldName, Collection<Glob> annotations) {
-        return createDoubleField(fieldName, annotations);
+        return createDoubleField(fieldName, annotations, null);
     }
 
     public DoubleArrayField declareDoubleArrayField(String fieldName, Collection<Glob> annotations) {
-        return createDoubleArrayField(fieldName, annotations);
+        return createDoubleArrayField(fieldName, annotations, null);
     }
 
     public BigDecimalField declareBigDecimalField(String fieldName, Collection<Glob> annotations) {
-        return createBigDecimalField(fieldName, annotations);
+        return createBigDecimalField(fieldName, annotations, null);
     }
 
     public BigDecimalArrayField declareBigDecimalArrayField(String fieldName, Collection<Glob> annotations) {
-        return createBigDecimalArrayField(fieldName, annotations);
+        return createBigDecimalArrayField(fieldName, annotations, null);
     }
 
     public BooleanField declareBooleanField(String fieldName, Collection<Glob> annotations) {
-        return createBooleanField(fieldName, annotations);
+        return createBooleanField(fieldName, annotations, null);
     }
 
     public BooleanArrayField declareBooleanArrayField(String fieldName, Collection<Glob> annotations) {
-        return createBooleanArrayField(fieldName, annotations);
+        return createBooleanArrayField(fieldName, annotations, null);
     }
 
     public DateField declareDateField(String fieldName, Collection<Glob> annotations) {
-        return createDateField(fieldName, annotations);
+        return createDateField(fieldName, annotations, null);
     }
 
     public DateTimeField declareDateTimeField(String fieldName, Collection<Glob> annotations) {
-        return createDateTimeField(fieldName, annotations);
+        return createDateTimeField(fieldName, annotations, null);
     }
 
     public LongField declareLongField(String fieldName, Collection<Glob> annotations) {
-        return createLongField(fieldName, annotations);
+        return createLongField(fieldName, annotations, null);
     }
 
     public LongArrayField declareLongArrayField(String fieldName, Collection<Glob> annotations) {
-        return createLongArrayField(fieldName, annotations);
+        return createLongArrayField(fieldName, annotations, null);
     }
 
     public BytesField declareBytesField(String fieldName, Collection<Glob> annotations) {
-        return createBytesField(fieldName, annotations);
+        return createBytesField(fieldName, annotations, null);
     }
 
     public <T>  GlobField<T> declareGlobField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
-        return createGlobField(fieldName, globType, annotations);
+        return createGlobField(fieldName, globType, annotations, null);
     }
 
     public <T> GlobArrayField<T> declareGlobArrayField(String fieldName, Supplier<GlobType> globType, Collection<Glob> annotations) {
-        return createGlobArrayField(fieldName, globType, annotations);
+        return createGlobArrayField(fieldName, globType, annotations, null);
     }
 
     public GlobUnionField declareGlobUnionField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations) {
-        return createGlobUnionField(fieldName, types, annotations);
+        return createGlobUnionField(fieldName, types, annotations, null);
     }
 
     public GlobArrayUnionField declareGlobUnionArrayField(String fieldName, Supplier<GlobType>[] types, Collection<Glob> annotations) {
-        return createGlobUnionArrayField(fieldName, types, annotations);
+        return createGlobUnionArrayField(fieldName, types, annotations, null);
     }
 
     public Field declare(String fieldName, DataType dataType, Collection<Glob> annotations) {
@@ -514,39 +515,39 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
 
         Field newField = switch (field.getDataType()) {
             case String -> factory.addString(name, field.isKeyField(), keyIndex, index,
-                    ((String) field.getDefaultValue()), hashContainer);
-            case StringArray -> factory.addStringArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                    ((String) field.getDefaultValue()), hashContainer, null);
+            case StringArray -> factory.addStringArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
             case Double ->
                     factory.addDouble(name, field.isKeyField(), keyIndex, index, ((Double) field.getDefaultValue()),
-                            hashContainer);
-            case DoubleArray -> factory.addDoubleArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                            hashContainer, null);
+            case DoubleArray -> factory.addDoubleArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
             case BigDecimal ->
                     factory.addBigDecimal(name, field.isKeyField(), keyIndex, index, ((BigDecimal) field.getDefaultValue()),
-                            hashContainer);
+                            hashContainer, null);
             case BigDecimalArray ->
-                    factory.addBigDecimalArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                    factory.addBigDecimalArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
             case Long -> factory.addLong(name, field.isKeyField(), keyIndex, index, ((Long) field.getDefaultValue()),
-                    hashContainer);
-            case LongArray -> factory.addLongArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                    hashContainer, null);
+            case LongArray -> factory.addLongArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
             case Integer ->
                     factory.addInteger(name, field.isKeyField(), keyIndex, index, ((Integer) field.getDefaultValue()),
-                            hashContainer);
-            case IntegerArray -> factory.addIntegerArray(name, field.isKeyField(), keyIndex, index, hashContainer);
+                            hashContainer, null);
+            case IntegerArray -> factory.addIntegerArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
             case Boolean ->
                     factory.addBoolean(name, field.isKeyField(), keyIndex, index, ((Boolean) field.getDefaultValue()),
-                            hashContainer);
-            case BooleanArray -> factory.addBooleanArray(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Date -> factory.addDate(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer);
-            case Bytes -> factory.addBytes(name, index, hashContainer);
+                            hashContainer, null);
+            case BooleanArray -> factory.addBooleanArray(name, field.isKeyField(), keyIndex, index, hashContainer, null);
+            case Date -> factory.addDate(name, field.isKeyField(), keyIndex, index, hashContainer, null);
+            case DateTime -> factory.addDateTime(name, field.isKeyField(), keyIndex, index, hashContainer, null);
+            case Bytes -> factory.addBytes(name, index, hashContainer, null);
             case Glob ->
-                    factory.addGlob(name, () -> ((GlobField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlob(name, () -> ((GlobField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer, null);
             case GlobArray ->
-                    factory.addGlobArray(name, () ->((GlobArrayField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer);
+                    factory.addGlobArray(name, () ->((GlobArrayField<?>) field).getTargetType(), isKeyField, keyIndex, index, hashContainer, null);
             case GlobUnion ->
-                    factory.addGlobUnion(name, getSupplier(((GlobUnionField) field).getTargetTypes()), index, hashContainer);
+                    factory.addGlobUnion(name, getSupplier(((GlobUnionField) field).getTargetTypes()), index, hashContainer, null);
             case GlobUnionArray ->
-                    factory.addGlobArrayUnion(name, getSupplier(((GlobArrayUnionField) field).getTargetTypes()), index, hashContainer);
+                    factory.addGlobArrayUnion(name, getSupplier(((GlobArrayUnionField) field).getTargetTypes()), index, hashContainer, null);
         };
         index++;
         if (isKeyField) {
@@ -569,11 +570,6 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
             registered = new HashMap<>(4);
         }
         registered.put(klass, t);
-        return this;
-    }
-
-    public <T> GlobTypeBuilder register(Field field, Class<T> klass, T t) {
-        ((AbstractField) field).register(klass, t);
         return this;
     }
 
@@ -620,5 +616,9 @@ public class DefaultGlobTypeBuilder implements GlobTypeBuilder {
         return defaultMultiFieldUniqueIndex;
     }
 
+    @Override
+    public FieldBuilder buildField(String name, Glob... annotations) {
+        return new DefaultFieldBuilder(this, name, Arrays.asList(annotations));
+    }
 
 }

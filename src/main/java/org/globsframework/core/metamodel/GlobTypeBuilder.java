@@ -235,8 +235,6 @@ public interface GlobTypeBuilder {
 
     <T> GlobTypeBuilder register(Class<T> klass, T t);
 
-    <T> GlobTypeBuilder register(Field field, Class<T> klass, T t);
-
     GlobType build();
 
     boolean isKnown(String fieldName);
@@ -248,4 +246,10 @@ public interface GlobTypeBuilder {
     MultiFieldNotUniqueIndex addMultiFieldNotUniqueIndex(String name, Field... fields);
 
     MultiFieldUniqueIndex addMultiFieldUniqueIndex(String name, Field... fields);
+
+    /**
+     * Starts a field that needs more than its annotations — what is registered on it, fixed once the field is
+     * built: {@code buildField("name", annotations...).register(Foo.class, foo).asStringField()}.
+     */
+    FieldBuilder buildField(String name, Glob... annotations);
 }

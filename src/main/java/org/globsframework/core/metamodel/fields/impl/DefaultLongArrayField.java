@@ -9,11 +9,13 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultLongArrayField extends AbstractField implements LongArrayField {
-    public DefaultLongArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, long[].class, index, keyIndex, isKeyField, defaultValue, DataType.LongArray, annotations);
+    public DefaultLongArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Long defaultValue,
+                                 HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, long[].class, index, keyIndex, isKeyField, defaultValue, DataType.LongArray, annotations, registered);
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {

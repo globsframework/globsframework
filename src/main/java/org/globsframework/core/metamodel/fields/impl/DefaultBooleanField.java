@@ -8,11 +8,14 @@ import org.globsframework.core.model.Key;
 import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultBooleanField extends AbstractField implements BooleanField {
-    public DefaultBooleanField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, final int keyIndex, Boolean defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, Boolean.class, index, keyIndex, isKeyField, defaultValue, DataType.Boolean, annotations);
+    public DefaultBooleanField(String name, Supplier<GlobType> globType, int index,
+                               boolean isKeyField, final int keyIndex, Boolean defaultValue,
+                               HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, Boolean.class, index, keyIndex, isKeyField, defaultValue, DataType.Boolean, annotations, registered);
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {

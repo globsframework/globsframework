@@ -40,13 +40,16 @@ abstract public class AbstractField {
     // true when checkValue is nothing more than the exact-class test: every field but the four Glob-valued ones,
     // which override it to check the target type(s) — and a Glob[] passes the class test while its elements may not
     private final boolean exactClassCheck;
-    private Map<Class<?>, Object> registered = null;
+    // what the FieldBuilder registered, fixed when the field is built: null when nothing was
+    private final Map<Class<?>, Object> registered;
     private final HashMap<Key, Glob> annotations;
 
     protected AbstractField(String name, Supplier<GlobType> globTypeSupplier,
                             Class valueClass, int index, int keyIndex, boolean isKeyField,
-                            Object defaultValue, DataType dataType, HashMap<Key, Glob> annotations) {
+                            Object defaultValue, DataType dataType, HashMap<Key, Glob> annotations,
+                            Map<Class<?>, Object> registered) {
         this.annotations = annotations;
+        this.registered = registered == null || registered.isEmpty() ? null : Map.copyOf(registered);
         this.keyIndex = isKeyField ? keyIndex : -1;
         this.defaultValue = defaultValue;
         this.name = name;
@@ -152,13 +155,6 @@ abstract public class AbstractField {
 
     public void toString(StringBuilder buffer, Object value) {
         buffer.append(value);
-    }
-
-    public <T> void register(Class<T> klass, T t) {
-        if (registered == null) {
-            registered = new HashMap<>(4);
-        }
-        registered.put(klass, t);
     }
 
     public <T> T getRegistered(Class<T> klass) {

@@ -11,14 +11,15 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultGlobArrayField<T> extends AbstractField implements GlobArrayField<T> {
     private final Supplier<GlobType> targetType;
 
     public DefaultGlobArrayField(String name, Supplier<GlobType> globType, Supplier<GlobType> targetType,
-                                 int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations) {
-        super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobArray, annotations);
+                                 int index, boolean isKeyField, final int keyIndex, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, Glob[].class, index, keyIndex, isKeyField, null, DataType.GlobArray, annotations, registered);
         this.targetType = targetType; //LazyConstant.of(targetType);
     }
 

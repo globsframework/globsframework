@@ -9,11 +9,12 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultIntegerArrayField extends AbstractField implements IntegerArrayField {
-    public DefaultIntegerArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Integer defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, int[].class, index, keyIndex, isKeyField, defaultValue, DataType.IntegerArray, annotations);
+    public DefaultIntegerArrayField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, Integer defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, int[].class, index, keyIndex, isKeyField, defaultValue, DataType.IntegerArray, annotations, registered);
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {

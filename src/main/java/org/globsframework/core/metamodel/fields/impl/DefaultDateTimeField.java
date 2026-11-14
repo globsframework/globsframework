@@ -9,11 +9,13 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultDateTimeField extends AbstractField implements DateTimeField {
-    public DefaultDateTimeField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, ZonedDateTime defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, ZonedDateTime.class, index, keyIndex, isKeyField, defaultValue, DataType.DateTime, annotations);
+    public DefaultDateTimeField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, ZonedDateTime defaultValue,
+                                HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, ZonedDateTime.class, index, keyIndex, isKeyField, defaultValue, DataType.DateTime, annotations, registered);
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {

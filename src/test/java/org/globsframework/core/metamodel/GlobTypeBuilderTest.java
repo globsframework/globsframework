@@ -120,4 +120,38 @@ public class GlobTypeBuilderTest {
         assertTrue(type.hasAnnotation(DefaultString.KEY));
         assertTrue(type.hasAnnotation(DefaultLong.KEY));
     }
+
+    interface Marker {
+        String value();
+    }
+
+    @Test
+    public void buildFieldRegistersOnTheField() {
+        GlobTypeBuilder builder = GlobTypeBuilderFactory.create("withRegistered");
+        Marker marker = () -> "m";
+        StringField name = builder.buildField("name", KeyField.ZERO)
+                .register(Marker.class, marker)
+                .asStringField();
+        IntegerField count = builder.buildField("count").asIntegerField();
+        LongField other = builder.declareLongField("other");
+        GlobType type = builder.build();
+
+        assertSame(type.getField("name"), name);
+        assertTrue(name.isKeyField());
+        assertSame(marker, name.getRegistered(Marker.class));
+        assertNull(name.getRegistered(String.class));
+        assertNull(count.getRegistered(Marker.class));
+        assertNull(other.getRegistered(Marker.class));
+        assertEquals(1, count.getIndex());
+    }
+
+    @Test
+    public void aFieldBuilderBuildsOnce() {
+        GlobTypeBuilder builder = GlobTypeBuilderFactory.create("once");
+        FieldBuilder fieldBuilder = builder.buildField("name");
+        fieldBuilder.asStringField();
+        assertThrows(IllegalStateException.class, fieldBuilder::asStringField);
+        assertThrows(IllegalStateException.class, () -> fieldBuilder.register(Marker.class, () -> "m"));
+        assertThrows(NullPointerException.class, () -> builder.buildField("x").register(Marker.class, null));
+    }
 }

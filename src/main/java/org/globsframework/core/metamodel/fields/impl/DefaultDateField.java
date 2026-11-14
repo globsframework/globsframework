@@ -9,11 +9,13 @@ import org.globsframework.core.utils.exceptions.UnexpectedApplicationState;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class DefaultDateField extends AbstractField implements DateField {
-    public DefaultDateField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex, LocalDate defaultValue, HashMap<Key, Glob> annotations) {
-        super(name, globType, LocalDate.class, index, keyIndex, isKeyField, defaultValue, DataType.Date, annotations);
+    public DefaultDateField(String name, Supplier<GlobType> globType, int index, boolean isKeyField, int keyIndex,
+                            LocalDate defaultValue, HashMap<Key, Glob> annotations, Map<Class<?>, Object> registered) {
+        super(name, globType, LocalDate.class, index, keyIndex, isKeyField, defaultValue, DataType.Date, annotations, registered);
     }
 
     public <T extends FieldVisitor> T accept(T visitor) throws Exception {
