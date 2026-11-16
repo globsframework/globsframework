@@ -35,6 +35,12 @@ public class DefaultFunctionalKeyBuilderFactory implements FunctionalKeyBuilderF
             if (keys.size() == 2) {
                 return new TwoFunctionalKeyBuilder(keys.get(0), keys.get(1));
             }
+            if (keys.size() == 3) {
+                return new ThreeFunctionalKeyBuilder(keys.get(0), keys.get(1), keys.get(2));
+            }
+            if (keys.size() == 4) {
+                return new FourFunctionalKeyBuilder(keys.get(0), keys.get(1), keys.get(2), keys.get(3));
+            }
             return new ManyFunctionalKeyBuilder(keys.toArray(new Field[0]));
         } finally {
             keys.clear();

@@ -7,10 +7,10 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
+import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
-import java.util.Objects;
 
 final class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
@@ -106,6 +106,10 @@ final class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return functionalKeyBuilder;
     }
 
+    public boolean matches(FieldValues other) {
+        return matches(functionalKeyBuilder.field, value, other);
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -126,7 +130,7 @@ final class OneFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
 
     @Override
     public int hashCode() {
-        return functionalKeyBuilder.hash +  Objects.hashCode(value);
+        return functionalKeyBuilder.hash + valueHash(functionalKeyBuilder.field, value);
     }
 
     public boolean isSet(Field field) throws ItemNotFound {

@@ -7,10 +7,10 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
+import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.model.utils.FieldCheck;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
-import java.util.Objects;
 
 final class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
@@ -130,6 +130,11 @@ final class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         return functionalKeyBuilder;
     }
 
+    public boolean matches(FieldValues other) {
+        final TwoFunctionalKeyBuilder b = functionalKeyBuilder;
+        return matches(b.field1, value1, other) && matches(b.field2, value2, other);
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -164,8 +169,8 @@ final class TwoFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
     }
 
     public int hashCode() {
-        return 31 * (functionalKeyBuilder.hash + Objects.hashCode(value1))
-               + Objects.hashCode(value2);
+        return 31 * (functionalKeyBuilder.hash + valueHash(functionalKeyBuilder.field1, value1))
+               + valueHash(functionalKeyBuilder.field2, value2);
     }
 
     public boolean isSet(Field field) throws ItemNotFound {

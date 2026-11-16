@@ -14,7 +14,8 @@ import org.globsframework.core.utils.exceptions.ItemNotFound;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+
+import static org.globsframework.core.metamodel.fields.impl.AbstractField.impl;
 
 final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey>
         implements MutableFunctionalKey, FunctionalKey {
@@ -52,7 +53,7 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
             FieldCheck.check(field, functionalKeyBuilder.getType());
         }
 
-        final int index = this.index[field.getIndex()];
+        final int index = this.index[impl(field).getIndex()];
         if (index >= 0) {
             values[index] = o;
             return this;
@@ -66,7 +67,10 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     protected Object doGet(Field field) {
-        final int index = this.index[field.getIndex()];
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = this.index[impl(field).getIndex()];
         if (index >= 0) {
             return getOrNullValue(values[index]);
         }
@@ -82,7 +86,10 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public void unset(Field field) {
-        final int index = this.index[field.getIndex()];
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = this.index[impl(field).getIndex()];
         if (index >= 0) {
             values[index] = NULL_VALUE;
             return;
@@ -91,7 +98,7 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
     }
 
     public boolean contains(Field field) {
-        return this.index[field.getIndex()] >= 0;
+        return this.index[impl(field).getIndex()] >= 0;
     }
 
     public int size() {
@@ -142,22 +149,37 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
         return functionalKeyBuilder;
     }
 
+    public boolean matches(FieldValues other) {
+        final Field[] fields = functionalKeyBuilder.fields;
+        for (int i = 0; i < fields.length; i++) {
+            if (!matches(fields[i], values[i], other)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
         if (o instanceof ManyFieldsMutableKey that) {
-            final Field[] f1 = that.functionalKeyBuilder.fields;
-            final Field[] f2 = functionalKeyBuilder.fields;
-            for (int i = 0; i < values.length; i++) {
-                if (f1[i] != f2[i]) {
-                    return false;
+            final Object[] v1 = values;
+            final Object[] v2 = that.values;
+            if (v1.length != v2.length) {
+                return false;
+            }
+            final Field[] fields = functionalKeyBuilder.fields;
+            if (that.functionalKeyBuilder != functionalKeyBuilder && !Arrays.equals(fields, that.functionalKeyBuilder.fields)) {
+                return false;
+            }
+            for (int i = 0; i < v1.length; i++) {
+                final Object a = v1[i];
+                final Object b = v2[i];
+                if (a == b) { // both unset, or same reference
+                    continue;
                 }
-                if (values[i] == NULL_VALUE || that.values[i] == NULL_VALUE) {
-                    if (values[i] != that.values[i]) {
-                        return false;
-                    }
-                } else if (!f1[i].valueEqual(values[i], that.values[i])) {
+                if (a == NULL_VALUE || b == NULL_VALUE || !fields[i].valueEqual(a, b)) {
                     return false;
                 }
             }
@@ -169,14 +191,18 @@ final class ManyFieldsMutableKey extends AbstractFieldValue<MutableFunctionalKey
 
     public int hashCode() {
         int result = functionalKeyBuilder.hash; // make hash stable between run => use globtype.name
-        for (Object value : values) {
-            result = 31 * result + Objects.hashCode(value);
+        final Field[] fields = functionalKeyBuilder.fields;
+        for (int i = 0; i < values.length; i++) {
+            result = 31 * result + valueHash(fields[i], values[i]);
         }
         return result;
     }
 
     public boolean isSet(Field field) throws ItemNotFound {
-        final int index = this.index[field.getIndex()];
+        if (FieldCheck.CheckGlob.shouldCheck) {
+            FieldCheck.check(field, functionalKeyBuilder.getType());
+        }
+        final int index = this.index[impl(field).getIndex()];
         if (index >= 0) {
             return values[index] != NULL_VALUE;
         }

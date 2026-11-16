@@ -7,6 +7,7 @@ import org.globsframework.core.metamodel.fields.Field;
 import org.globsframework.core.metamodel.fields.FieldValueVisitor;
 import org.globsframework.core.metamodel.fields.FieldValueVisitorWithContext;
 import org.globsframework.core.model.FieldValue;
+import org.globsframework.core.model.FieldValues;
 import org.globsframework.core.utils.exceptions.ItemNotFound;
 
 public final class ZeroFieldMutableKey extends AbstractFieldValue<MutableFunctionalKey>
@@ -63,6 +64,10 @@ public final class ZeroFieldMutableKey extends AbstractFieldValue<MutableFunctio
 
     public FunctionalKeyBuilder getBuilder() {
         return functionalKeyBuilder;
+    }
+
+    public boolean matches(FieldValues other) {
+        return true;
     }
 
     public boolean equals(Object o) {

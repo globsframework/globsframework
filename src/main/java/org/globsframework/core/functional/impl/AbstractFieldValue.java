@@ -209,6 +209,21 @@ public abstract class AbstractFieldValue<T extends FieldSetter<?>> implements Fi
         return (Glob[]) doGet(field);
     }
 
+    /**
+     * Hash of one slot of a functional key, consistent with {@link Field#valueEqual} (arrays hash on their content)
+     * and stable from one JVM to the next ({@code NULL_VALUE} has an identity hash, so it must not reach hashCode).
+     */
+    static int valueHash(Field field, Object value) {
+        return value == NULL_VALUE ? 1 : value == null ? 0 : field.valueHash(value);
+    }
+
+    /** One slot of {@link org.globsframework.core.functional.FunctionalKey#matches}: unset reads as null. */
+    static boolean matches(Field field, Object keyValue, FieldValues other) {
+        final Object v = keyValue == NULL_VALUE ? null : keyValue;
+        final Object o = other.getValue(field);
+        return v == o || field.valueEqual(v, o);
+    }
+
     public Object getOrNullValue(Object o) {
         return o == NULL_VALUE ? null : o;
     }

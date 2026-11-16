@@ -106,4 +106,8 @@ public final class DefaultBytesField extends AbstractField implements BytesField
     public boolean valueEqual(Object o1, Object o2) {
         return Arrays.equals(((byte[]) o1), (byte[]) o2);
     }
+
+    public int valueHash(Object o) {
+        return Arrays.hashCode((byte[]) o);
+    }
 }

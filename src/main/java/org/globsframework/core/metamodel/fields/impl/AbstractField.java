@@ -16,19 +16,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 abstract public class AbstractField {
-    /**
-     * The view of a {@link Field} that core's hot paths go through ({@code AbstractDefaultGlob}, {@code FieldCheck}).
-     * On it {@code getIndex}, {@code getGlobType}, {@code isKeyField} and {@link #fastCheckValue} are final, hence
-     * statically bound, where on {@code Field} each is an itable dispatch at any call site that sees several field
-     * classes — measured ×3 on a loop of {@code getIndex} over five field classes, and ×4.7 on {@code getValue} with
-     * the checks on. Every Field implementation in globsframework extends this class; the scalar sub-interfaces
-     * ({@code IntegerField}, …) are {@code non-sealed} though, so a Field implemented elsewhere would fail here
-     * with a ClassCastException.
-     */
-    public static AbstractField impl(Field field) {
-        return (AbstractField) field;
-    }
-
     private final int index;
     private final int keyIndex;
     //    private final Supplier<GlobType> globTypeSupplier;
@@ -191,5 +178,19 @@ abstract public class AbstractField {
     public Glob findAnnotation(Key key) {
         return annotations.get(key);
     }
+
+    /**
+     * The view of a {@link Field} that core's hot paths go through ({@code AbstractDefaultGlob}, {@code FieldCheck}).
+     * On it {@code getIndex}, {@code getGlobType}, {@code isKeyField} and {@link #fastCheckValue} are final, hence
+     * statically bound, where on {@code Field} each is an itable dispatch at any call site that sees several field
+     * classes — measured ×3 on a loop of {@code getIndex} over five field classes, and ×4.7 on {@code getValue} with
+     * the checks on. Every Field implementation in globsframework extends this class; the scalar sub-interfaces
+     * ({@code IntegerField}, …) are {@code non-sealed} though, so a Field implemented elsewhere would fail here
+     * with a ClassCastException.
+     */
+    public static AbstractField impl(Field field) {
+        return (AbstractField) field;
+    }
+
 
 }

@@ -107,11 +107,11 @@ public final class DefaultGlobType implements GlobType {
         globFactory = GlobFactoryService.Builder.getBuilderFactory().getFactory(this);
     }
 
-    final public int getFieldCount() {
+    public int getFieldCount() {
         return fields.length;
     }
 
-    final public Field getField(String name) throws ItemNotFound {
+    public Field getField(String name) throws ItemNotFound {
         Field field = fieldsByName.get(name);
         if (field == null) {
             throw new ItemNotFound("Field '" + name + "' not found in type: " + this.name + " got " + fieldsByName.keySet());
@@ -194,10 +194,6 @@ public final class DefaultGlobType implements GlobType {
     public GlobFactory getGlobFactory() {
         return globFactory;
     }
-
-//    public <T> void register(Class<T> klass, T t) {
-//        registered.put(klass, t);
-//    }
 
     public <T> T getRegistered(Class<T> klass) {
         return (T) registered.get(klass);
